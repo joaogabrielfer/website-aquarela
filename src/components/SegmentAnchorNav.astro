@@ -14,22 +14,26 @@ const anchors = [
 ---
 
 <nav class="segment-anchor-nav" aria-label="Etapas de ensino">
-  {
-    anchors.map((a) => (
-      <a href={`/ensino#${a.slug}`} class="anchor-link">
-        {a.label}
-      </a>
-    ))
-  }
+  <div class="container segment-anchor-nav__inner">
+    {
+      anchors.map((a) => (
+        <a href={`/ensino#${a.slug}`} class="anchor-link">
+          {a.label}
+        </a>
+      ))
+    }
+  </div>
 </nav>
 
 <style>
   .segment-anchor-nav {
+    background: var(--surface-base);
+    padding: var(--space-4) 0;
+  }
+  .segment-anchor-nav__inner {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
-    background: var(--surface-base);
-    padding: var(--space-4) 0;
   }
   .anchor-link {
     display: inline-flex;
