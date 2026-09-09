@@ -1,6 +1,6 @@
 # Contrato de componentes
 
-**AQ-WEB-1.1.0** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
+**AQ-WEB-1.1.1** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
 
 Os nomes abaixo identificam responsabilidades; podem ser adaptados ao padrão de nomes da stack, mantendo uma correspondência no relatório de entrega. Reusar componentes entre rotas. Não criar variantes por página quando a diferença for apenas conteúdo.
 

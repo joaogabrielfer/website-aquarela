@@ -1,6 +1,6 @@
 # Modelo de conteúdo e publicação
 
-**AQ-WEB-1.1.0** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
+**AQ-WEB-1.1.1** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
 
 ## D01 — Evidência e estados
 
@@ -8,7 +8,7 @@
 
 Registro de aprovação precisa de `reviewedAt` (data ISO), `reviewedBy` (identificador interno fornecido pelo responsável) e fonte; o agente não pode preencher esses campos fingindo aprovação humana. Metadados de revisão, permissões e fontes internas são usados na validação/build e não enviados em JSON público nem embutidos no HTML.
 
-Modo padrão: `public`. `editorial-preview` deve ser ativado explicitamente no comando/configuração, exibir faixa “Prévia editorial — conteúdo pendente”, incluir noindex e aceitar placeholders identificados. `NODE_ENV=development` sozinho não autoriza publicar dados draft. Build de release recusa modo preview. Não usar um parâmetro público na URL para revelar drafts.
+Modo padrão: `public`. `editorial-preview` deve ser ativado explicitamente no comando/configuração, exibir faixa “Prévia”, incluir noindex e aceitar placeholders identificados. `NODE_ENV=development` sozinho não autoriza publicar dados draft. Build de release recusa modo preview. Não usar um parâmetro público na URL para revelar drafts.
 
 ## D02 — Tipos base
 

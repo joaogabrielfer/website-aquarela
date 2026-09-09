@@ -1,6 +1,6 @@
 # Contrato de implementação — Aquarela
 
-**Contrato AQ-WEB-1.1.0 · congelado em 09/09/2026.**
+**Contrato AQ-WEB-1.1.1 · congelado em 09/09/2026.**
 
 “Congelado” significa baseline normativa para implementar, não aprovação dos dados escolares nem validação de um site pronto. Alterações de escopo ou aparência exigem revisão explícita deste contrato; conteúdo factual pode ser completado conforme o modelo de publicação, sem redesenhar a interface.
 
@@ -123,3 +123,9 @@ foi revisada apenas para um `SeasonalBanner` V1 estreito, manual e sem
 agendamento, tracking, formulário ou imagem obrigatória; no máximo um banner
 ativo aparece após o Hero. O favicon é um derivado quadrado do símbolo circular
 preservado da logo fornecida.
+
+### Revisão AQ-WEB-1.1.1 — 09/09/2026
+
+O rótulo público da faixa do modo `editorial-preview` foi simplificado para
+“Prévia”, mantendo inalterados o nome técnico do modo, o `noindex`, os dados
+visíveis e os bloqueios de release.
