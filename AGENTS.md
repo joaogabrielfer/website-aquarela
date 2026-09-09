@@ -4,7 +4,7 @@ Guia operacional para agentes que trabalham neste repositório. Lido antes de qu
 
 ## 1. Autoridade normativa
 
-A fonte normativa é o **contrato AQ-WEB-1.0.0** (referido pelo usuário como "contrato da Astra" — Astra é o modelo autor do design), congelado em 08/09/2026, nos cinco arquivos de `design/`. Ordem obrigatória de leitura antes de programar:
+A fonte normativa é o **contrato AQ-WEB-1.1.0** (referido pelo usuário como "contrato da Astra" — Astra é o modelo autor do design), congelado em 09/09/2026, nos cinco arquivos de `design/`. Ordem obrigatória de leitura antes de programar:
 
 1. `design/design-spec.md` — escopo, tokens, variantes globais, qualidade.
 2. `design/routes.md` — rotas, ordem de seções, copy funcional, destinos.
@@ -25,7 +25,7 @@ sha256sum -c design-contract.sha256
 ## 2. Regras inegociáveis para qualquer agente
 
 1. **Não inventar dados.** Sem fotos, alunos, aprovações, depoimentos, endereços, horários ou instalações presumidos. Dados ausentes → estados vazios honestos (`EmptyState`) conforme `content-model.md` D06.
-2. **Escopo fechado.** Não implementar NewsCard, TeacherCard, formulários, filtros, busca, campanhas, depoimentos, vídeo, tour, feed social, chatbot nem qualquer feature P1 do estudo. Sem CMS, sem backend, sem dependência de Figma em runtime.
+2. **Escopo fechado.** Não implementar NewsCard, TeacherCard, formulários, filtros, busca, campanhas fora do SeasonalBanner V1 autorizado, depoimentos, vídeo, tour, feed social, chatbot nem qualquer feature P1 do estudo. Sem CMS, sem backend, sem dependência de Figma em runtime.
 3. **Só `approved` entra no build público.** Metadados de revisão (`reviewedAt`, `reviewedBy`, fonte) nunca são serializados para o browser — usar projeção pública estrita. O agente nunca preenche campos de aprovação fingindo revisão humana.
 4. **Preview editorial é explícito** (flag de ambiente, faixa "Prévia editorial — conteúdo pendente", noindex). `NODE_ENV=development` sozinho não autoriza exibir drafts. Build de release recusa modo preview. Fixtures de QA são sintéticas, marcadas e isoladas do build público.
 5. **Tokens exatos** de `design-spec.md` §3–4 (cores, espaços, raios, tipografia). Não usar paleta padrão de biblioteca. Fonte Outfit em WOFF2 local (baixar do repositório oficial google/fonts, OFL) com licença preservada em `public/fonts/`; sem requisição de fonte a terceiros em runtime.

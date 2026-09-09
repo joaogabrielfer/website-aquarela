@@ -11,6 +11,8 @@ import {
   FAQ,
   Media,
   PageCopy,
+  HomePageCopy,
+  SeasonalBanner,
   PrivacyFrontmatter,
   School,
   Segment,
@@ -84,6 +86,12 @@ const environments =
   parse('environments.yaml', Environment.array(), read('environments.yaml')) ??
   [];
 const media = parse('media.yaml', Media.array(), read('media.yaml')) ?? [];
+const seasonalBanners =
+  parse(
+    'seasonal-banners.yaml',
+    SeasonalBanner.array(),
+    read('seasonal-banners.yaml'),
+  ) ?? [];
 
 const pageDir = path.join(root, 'pages');
 const pageFiles = fs.existsSync(pageDir)
@@ -91,7 +99,11 @@ const pageFiles = fs.existsSync(pageDir)
   : [];
 const pages = pageFiles.map((file) => ({
   file,
-  value: parse(`pages/${file}`, PageCopy, read(`pages/${file}`)),
+  value: parse(
+    `pages/${file}`,
+    file === 'home.yaml' ? HomePageCopy : PageCopy,
+    read(`pages/${file}`),
+  ),
 }));
 const albumDir = path.join(root, 'albums');
 const albumFiles = fs.existsSync(albumDir)
@@ -115,6 +127,11 @@ unique('activities.yaml', activities);
 unique('approvals.yaml', approvals);
 unique('environments.yaml', environments);
 unique('media.yaml', media);
+unique('seasonal-banners.yaml', seasonalBanners);
+if (seasonalBanners.filter((banner) => banner.active).length > 1)
+  errors.push(
+    'seasonal-banners.yaml: no máximo um SeasonalBanner pode estar active',
+  );
 unique(
   'albums',
   albums.map(({ value }) => value),
@@ -245,6 +262,28 @@ for (const { file, value } of pages) {
     ]);
 }
 
+for (const banner of seasonalBanners) {
+  if (banner.href !== null && !banner.href.startsWith('/'))
+    errors.push(
+      `seasonal-banners.yaml [${banner.id}].href: somente rotas internas são permitidas`,
+    );
+  requireApprovedFields(
+    `seasonal-banners.yaml [${banner.id}]`,
+    banner.review.status,
+    [['title', banner.title]],
+  );
+}
+
+const homePage = pages.find(({ file }) => file === 'home.yaml')?.value;
+if (homePage && 'heroImageId' in homePage) {
+  const heroImageId = homePage.heroImageId as string | null;
+  checkMediaRef('pages/home.yaml', 'heroImageId', heroImageId);
+  if (homePage.review.status === 'approved' && !eligibleMedia(heroImageId))
+    errors.push(
+      'pages/home.yaml.heroImageId: mídia approved, usageApproved e arquivo local são obrigatórios quando a Home é approved',
+    );
+}
+
 const faqs = parse('faqs.yaml', FAQ.array(), read('faqs.yaml')) ?? [];
 unique('faqs.yaml', faqs);
 for (const group of ['ensino', 'atividades', 'visita'] as const) {
@@ -313,5 +352,5 @@ if (errors.length > 0) {
   process.exit(1);
 }
 console.log(
-  'Conteúdo válido: schemas D02-D07 e regras condicionais conferidos.',
+  'Conteúdo válido: schemas D02-D08 e regras condicionais conferidos.',
 );

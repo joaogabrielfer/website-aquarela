@@ -1,0 +1,12 @@
+- id: demonstracao-aviso-sazonal
+  eyebrow: Demonstração editorial
+  title: Espaço para aviso sazonal
+  body: Rematrícula, volta às aulas e outros avisos podem ocupar este espaço após aprovação do colégio.
+  ctaLabel: null
+  href: null
+  active: true
+  review:
+    status: draft
+    source: fixture sintética para demonstração com o cliente
+    reviewedAt: null
+    reviewedBy: null

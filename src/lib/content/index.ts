@@ -9,6 +9,8 @@ import {
   Environment as EnvironmentSchema,
   Segment as SegmentSchema,
   PageCopy as PageCopySchema,
+  HomePageCopy as HomePageCopySchema,
+  SeasonalBanner as SeasonalBannerSchema,
   Album as AlbumSchema,
   FAQ as FAQSchema,
   Media as MediaSchema,
@@ -100,6 +102,14 @@ export type PublicEnvironment = Omit<
   'review'
 >;
 export type PublicPageCopy = Omit<z.infer<typeof PageCopySchema>, 'review'>;
+export type PublicHomePageCopy = Omit<
+  z.infer<typeof HomePageCopySchema>,
+  'review'
+>;
+export type PublicSeasonalBanner = Omit<
+  z.infer<typeof SeasonalBannerSchema>,
+  'review'
+>;
 export type PublicFAQ = Omit<z.infer<typeof FAQSchema>, 'review'>;
 
 /* ------------------------------------------------------------------ */
@@ -346,12 +356,31 @@ export const getPageCopy = (id: string): PublicPageCopy | null => {
   try {
     const raw = loadYaml(`pages/${id}.yaml`) as unknown;
     if (!raw) return null;
-    const parsed = PageCopySchema.parse(raw);
+    const parsed = (id === 'home' ? HomePageCopySchema : PageCopySchema).parse(
+      raw,
+    );
     if (!isVisible(parsed.review)) return null;
     return project(parsed);
   } catch {
     return null;
   }
+};
+
+/** Copy da home, incluindo a referência editorial opcional do Hero. */
+export const getHomePageCopy = (): PublicHomePageCopy | null => {
+  const copy = getPageCopy('home');
+  return copy as PublicHomePageCopy | null;
+};
+
+/** Banners ativos, limitados a um por chamada e projetados sem metadados. */
+export const getSeasonalBanners = (): PublicSeasonalBanner[] => {
+  const raw = loadYaml('seasonal-banners.yaml') as unknown;
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((entry) => SeasonalBannerSchema.parse(entry))
+    .filter((banner) => banner.active && isVisible(banner.review))
+    .slice(0, 1)
+    .map(project);
 };
 
 /* ------------------------------------------------------------------ */

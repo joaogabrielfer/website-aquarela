@@ -19,7 +19,7 @@ Pré-requisitos: Node.js >=22 e pnpm 11.3. Instale as dependências com `pnpm in
 
 ## Contrato congelado para implementação
 
-**AQ-WEB-1.0.0**, de 08/09/2026. Começar por estes cinco arquivos, nesta ordem:
+**AQ-WEB-1.1.0**, de 09/09/2026. Começar por estes cinco arquivos, nesta ordem:
 
 1. [design/design-spec.md](./design/design-spec.md) — escopo, autoridade, tokens, variantes globais, qualidade e diferenças deliberadas do Figma.
 2. [design/routes.md](./design/routes.md) — rotas, ordem de seções, copy funcional e destinos de todas as ações.
@@ -40,7 +40,7 @@ O projeto usa GPT-5.6 Sol no Codex como lead de arquitetura, integração e revi
 - [Logo original](./assets/logo-aquarela.PNG) — cópia sem alterações do arquivo fornecido; o original permanece em Downloads.
 - [Arquivo no Figma](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA) — exploração visual parcial das cinco telas iniciais.
 
-Fotos, oferta detalhada, dados de aprovações e informações complementares ainda precisam ser fornecidos ou confirmados pelo colégio. O contrato permite implementar e testar a estrutura sem inventar esses dados. O `build:release` permanece bloqueado até identidade/localidade, copy da home, quatro segmentos com mídia elegível, contato, privacidade e a referência da foto principal do Hero serem modelados/aprovados. Conclusão técnica e aprovação para lançamento são marcos separados.
+Fotos, oferta detalhada, dados de aprovações e informações complementares ainda precisam ser fornecidos ou confirmados pelo colégio. O contrato permite implementar e testar a estrutura sem inventar esses dados. O `build:release` permanece bloqueado até identidade/localidade, copy da home, quatro segmentos com mídia elegível, contato, privacidade e a referência elegível da foto principal do Hero serem aprovados. Sem `PageCopy` approved, o público usa H1 neutro e não recebe meta description; o preview editorial mostra copy pendente e a fixture sintética de SeasonalBanner.
 
 ## Deploy e entregas do responsável
 
@@ -56,4 +56,4 @@ O deploy automático de produção deve permanecer desativado até os bloqueios 
 
 ## Prompt de entrega ao agente implementador
 
-> Implemente o site institucional Aquarela conforme o contrato AQ-WEB-1.0.0 nos cinco arquivos de `design/`. Leia todos antes de programar e verifique `design-contract.sha256`. O contrato é a fonte normativa; DESIGN.md é pesquisa histórica e o Figma é uma referência visual parcial. Preserve as divergências intencionais especificadas. Não adicione features, altere identidade ou invente dados para preencher lacunas. Não implemente NewsCard, TeacherCard, formulário, filtros ou recursos P1 fora da baseline. Use o modelo de conteúdo e os estados de preview/publicação previstos. Inspecione a stack existente; se ainda não houver aplicação, escolha uma solução com geração estática e registre a decisão técnica. Execute a matriz de validação responsiva e os testes comportamentais definidos, corrija os problemas e entregue evidências. Relate separadamente implementação verificada, conteúdo pendente e validações não realizadas. Não publique automaticamente.
+> Implemente o site institucional Aquarela conforme o contrato AQ-WEB-1.1.0 nos cinco arquivos de `design/`. Leia todos antes de programar e verifique `design-contract.sha256`. O contrato é a fonte normativa; DESIGN.md é pesquisa histórica e o Figma é uma referência visual parcial. Preserve as divergências intencionais especificadas. Não invente dados nem implemente recursos P1 fora da baseline; SeasonalBanner V1 é a única revisão autorizada. Use os modelos e estados de preview/publicação previstos. Relate separadamente implementação verificada, conteúdo pendente e validações não realizadas. Não publique automaticamente.

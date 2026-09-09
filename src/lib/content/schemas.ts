@@ -85,6 +85,34 @@ export const PageCopy = z.object({
   metaDescription: z.string(),
   review: Review,
 });
+export const HomePageCopy = PageCopy.extend({
+  heroImageId: z.string().nullable(),
+});
+export const SeasonalBanner = z
+  .object({
+    id,
+    eyebrow: optionalText,
+    title: z.string(),
+    body: optionalText,
+    ctaLabel: optionalText,
+    href: z
+      .string()
+      .regex(
+        /^\/(?!\/)[A-Za-z0-9._~!$&'()*+,;=:@%\-/]*(?:#[A-Za-z0-9._~!$&'()*+,;=:@%\-/]*)?$/,
+      )
+      .nullable(),
+    active: z.boolean(),
+    review: Review,
+  })
+  .superRefine((value, ctx) => {
+    if ((value.ctaLabel === null) !== (value.href === null)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['ctaLabel'],
+        message: 'ctaLabel e href devem ser informados juntos ou omitidos',
+      });
+    }
+  });
 const baseReview = { review: Review };
 export const Segment = z.object({
   id,

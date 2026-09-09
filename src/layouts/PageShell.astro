@@ -7,15 +7,11 @@ import { BUILD_MODE, IS_CF_PREVIEW, SITE_URL } from '../lib/env';
 
 interface Props {
   title: string;
-  description?: string;
+  description?: string | undefined;
   ogImage?: string;
 }
 
-const {
-  title,
-  description = 'Aquarela Colégio e Curso em Paulista/PE.',
-  ogImage,
-} = Astro.props;
+const { title, description, ogImage } = Astro.props;
 const noindex = BUILD_MODE === 'editorial-preview' || IS_CF_PREVIEW;
 const fullTitle =
   title === 'Aquarela Colégio e Curso | Paulista/PE'
@@ -32,16 +28,29 @@ const ogImageUrl =
     ><meta charset="UTF-8" /><meta
       name="viewport"
       content="width=device-width"
-    /><title>{fullTitle}</title><meta
-      name="description"
-      content={description}
-    />{noindex && <meta name="robots" content="noindex" />}{
-      canonicalUrl && <link rel="canonical" href={canonicalUrl} />
-    }{
+    /><title>{fullTitle}</title>{
+      description && <meta name="description" content={description} />
+    }{noindex && <meta name="robots" content="noindex" />}<link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/favicon-32.png"
+    /><link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/favicon-192.png"
+    /><link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/apple-touch-icon.png"
+    />{canonicalUrl && <link rel="canonical" href={canonicalUrl} />}{
       SITE_URL && (
         <>
           <meta property="og:title" content={fullTitle} />
-          <meta property="og:description" content={description} />
+          {description && (
+            <meta property="og:description" content={description} />
+          )}
           <meta property="og:type" content="website" />
           <meta property="og:url" content={canonicalUrl} />
           <meta property="og:locale" content="pt_BR" />

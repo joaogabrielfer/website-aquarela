@@ -1,0 +1,88 @@
+---
+import type { PublicSeasonalBanner } from '../lib/content';
+
+interface Props {
+  banner: PublicSeasonalBanner;
+}
+
+const { banner } = Astro.props;
+---
+
+<aside class="seasonal-banner" aria-label="Aviso sazonal">
+  <div class="container seasonal-banner__inner">
+    <div class="seasonal-banner__copy">
+      {
+        banner.eyebrow && (
+          <p class="seasonal-banner__eyebrow">{banner.eyebrow}</p>
+        )
+      }
+      <h2>{banner.title}</h2>
+      {banner.body && <p>{banner.body}</p>}
+    </div>
+    {
+      banner.ctaLabel && banner.href && (
+        <a class="seasonal-banner__cta" href={banner.href}>
+          {banner.ctaLabel}
+        </a>
+      )
+    }
+  </div>
+</aside>
+
+<style>
+  .seasonal-banner {
+    background: var(--surface-paper);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: var(--space-8) 0;
+  }
+  .seasonal-banner__inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+  .seasonal-banner__copy {
+    max-width: 65ch;
+  }
+  .seasonal-banner__eyebrow {
+    margin: 0 0 var(--space-2);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  h2 {
+    margin: 0;
+    color: var(--text-ink);
+    font-size: 1.875rem;
+    line-height: 1.15;
+  }
+  .seasonal-banner__copy > p:last-child {
+    margin: var(--space-3) 0 0;
+    color: var(--text-ink);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .seasonal-banner__cta {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    border-radius: var(--radius-pill);
+    background: var(--action-primary);
+    color: white;
+    padding: 10px 16px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: normal;
+  }
+  @media (hover: hover) {
+    .seasonal-banner__cta:hover {
+      background: var(--action-hover);
+    }
+  }
+  @media (max-width: 767px) {
+    .seasonal-banner__inner {
+      flex-direction: column;
+    }
+  }
+</style>

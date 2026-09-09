@@ -12,7 +12,17 @@ name:
 tagline:
   { value: 'Presente em todos os momentos da sua vida!', review: *review }
 phoneE164: { value: '+5581982177132', review: *review }
-whatsappE164: null
+whatsappE164:
+  {
+    value: '+5581982177132',
+    review:
+      {
+        status: observed,
+        source: 'Confirmação direta do responsável nesta conversa em 09/09/2026',
+        reviewedAt: null,
+        reviewedBy: null,
+      },
+  }
 locality: { value: Paulista/PE, review: *review }
 address:
   {

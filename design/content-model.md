@@ -1,6 +1,6 @@
 # Modelo de conteúdo e publicação
 
-**AQ-WEB-1.0.0** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
+**AQ-WEB-1.1.0** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
 
 ## D01 — Evidência e estados
 
@@ -61,6 +61,12 @@ type PageCopy = {
   title: string;
   intro: string | null;
   metaDescription: string;
+  review: Review;
+};
+type HomePageCopy = PageCopy & { heroImageId: string | null };
+type SeasonalBanner = {
+  id: string; eyebrow: string | null; title: string; body: string | null;
+  ctaLabel: string | null; href: string | null; active: boolean;
   review: Review;
 };
 type Proposal = {
@@ -136,7 +142,7 @@ Fonte histórica consultada em 08/09/2026: [Instagram público](https://www.inst
 | --- | --- | --- |
 | Nome | Aquarela Colégio e Curso | Confirmar revisão editorial |
 | Slogan | Presente em todos os momentos da sua vida! | Preservar referência; aprovar copy final |
-| Telefone | +5581982177132 | Aprovar para contato; WhatsApp continua null |
+| Telefone | +5581982177132 | Aprovar para contato; o mesmo número também foi confirmado como WhatsApp, ainda `observed` e pendente de aprovação editorial |
 | Localidade | Paulista/PE | Aprovar texto de localização |
 | Endereço | Rua Araxá, Loteamento Conceição, Paulista/PE | Número/CEP null; mapa null |
 | Etapas | Destaques de Infantil, Anos Iniciais, Anos Finais, Médio | Criar estrutura; detalhes pendentes |
@@ -196,3 +202,24 @@ Exemplo de pauta, sem dados inventados de oferta:
 Validação deve permitir registro incompleto não publicado, mas rejeitar sua promoção a approved com campos obrigatórios vazios. Drafts podem ficar em arquivo editorial separado; nunca serializar o objeto editorial completo para o browser. Criar uma projeção pública dos campos estritamente usados na interface.
 
 Validar no build: IDs/slugs, enums, E.164, URLs, datas, obrigatórios condicionais, referências de mídia, permissão de publicação, modo de build e bloqueios de lançamento. Mensagens indicam registro/campo. Separar `check-content` de validação de lançamento para que desenvolvimento possa testar estados vazios sem fingir que há aprovação.
+
+### D08 — Revisão 1.1.0: Home, banner e fallbacks
+
+`pages/home.yaml` usa `HomePageCopy`, com `heroImageId` nullable. Quando
+preenchido, o ID deve existir em `media.yaml`; se a Home for `approved`, a
+mídia precisa estar `approved`, `usageApproved` e existir no caminho local.
+Preview resolve mídia visível; público/release resolve apenas mídia aprovada.
+
+`SeasonalBanner` tem os campos `id`, `eyebrow`, `title`, `body`, `ctaLabel`,
+`href`, `active` e `review`. `ctaLabel` e `href` são ambos presentes ou ambos
+nulos, e `href` aceita apenas rota interna segura. A Home limita a um registro
+ativo. Público filtra `active` + `approved`; preview pode incluir `draft` e
+`observed`. A fixture de demonstração é sintética e nunca entra no público.
+
+Sem `PageCopy` approved, cada rota usa H1 funcional neutro (por exemplo,
+“Ensino”, “Galeria” e “Aquarela Colégio e Curso” na Home) e omite
+`meta description` e `og:description`; não se inventa fallback editorial.
+
+O telefone e o WhatsApp permanecem aprovações independentes. A confirmação
+direta do número nesta revisão é registrada como `observed`, sem preencher
+`reviewedAt` ou `reviewedBy`.

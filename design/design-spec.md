@@ -1,6 +1,6 @@
 # Contrato de implementação — Aquarela
 
-**Contrato AQ-WEB-1.0.0 · congelado em 08/09/2026.**
+**Contrato AQ-WEB-1.1.0 · congelado em 09/09/2026.**
 
 “Congelado” significa baseline normativa para implementar, não aprovação dos dados escolares nem validação de um site pronto. Alterações de escopo ou aparência exigem revisão explícita deste contrato; conteúdo factual pode ser completado conforme o modelo de publicação, sem redesenhar a interface.
 
@@ -22,7 +22,7 @@ Este contrato substitui as recomendações abertas do [estudo DESIGN.md](../DESI
 
 Implementar as sete rotas institucionais, álbum, privacidade e 404 de `routes.md`. Marketing escolar, sem login, matrícula transacional, gerenciamento de alunos, pagamentos, marketplace, blog, notícias ou cards de professores. NewsCard e TeacherCard eram exemplos de especificação, não requisitos do Aquarela.
 
-V1 inclui: segmentos, contatos condicionados à confirmação, menu mobile, FAQ, álbuns com lightbox e paginação progressiva local, metadados e estados sem conteúdo. Não inclui filtros de ano/categoria, campanhas, depoimentos, vídeo, formulário, tour, feed social ou chatbot. As propostas P1 do estudo ficam fora da baseline mesmo que haja componentes semelhantes numa biblioteca.
+V1 inclui: segmentos, contatos condicionados à confirmação, menu mobile, FAQ, álbuns com lightbox e paginação progressiva local, metadados e estados sem conteúdo. Não inclui filtros de ano/categoria, campanhas fora do SeasonalBanner V1 autorizado nesta revisão, depoimentos, vídeo, formulário, tour, feed social ou chatbot. As propostas P1 do estudo ficam fora da baseline mesmo que haja componentes semelhantes numa biblioteca.
 
 Não instalar CMS ou criar backend para esta versão. Usar conteúdo estático estruturado e gerar HTML público indexável. Preservar stack existente, se houver; caso o checkout continue sem aplicação, o implementador pode escolher uma solução com geração estática e registrar a escolha, comandos e versões no README. Framework é liberdade técnica; layout, rotas, comportamento e conteúdo não são. Nenhuma dependência de Figma em tempo de execução. Não publicar automaticamente como parte da implementação.
 
@@ -109,6 +109,17 @@ Separar no relatório final: (1) implementação verificada, (2) conteúdo pende
 
 ## 9. Controle de mudança
 
-Baseline 1.0.0 congela tokens, componentes, rotas, responsive e comportamentos. O agente não deve trocar fontes, criar páginas/features extras, mudar proporções ou remover uma rota por preferência. Ajustes técnicos sem mudança de comportamento são permitidos.
+Baseline 1.1.0 congela tokens, componentes, rotas, responsive e comportamentos. O agente não deve trocar fontes, criar páginas/features extras, mudar proporções ou remover uma rota por preferência. Ajustes técnicos sem mudança de comportamento são permitidos.
 
 Para revisão autorizada: descrever motivo/impacto, atualizar todos os arquivos afetados e incrementar a versão compartilhada. Não editar o contrato para justificar retrospectivamente uma implementação divergente. Conteúdo aprovado substitui registros pendentes sem revisão de versão quando não altera schema ou escopo.
+
+### Revisão AQ-WEB-1.1.0 — 09/09/2026
+
+Revisão autorizada para preparar a demonstração da Home: H1 e metadados usam
+fallbacks funcionais neutros no público sem `PageCopy` approved, e o preview
+editorial pode exibir a copy pendente. A Home ganhou `heroImageId` nullable,
+com mídia elegível obrigatória quando approved. A proibição geral de campanhas
+foi revisada apenas para um `SeasonalBanner` V1 estreito, manual e sem
+agendamento, tracking, formulário ou imagem obrigatória; no máximo um banner
+ativo aparece após o Hero. O favicon é um derivado quadrado do símbolo circular
+preservado da logo fornecida.

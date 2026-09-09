@@ -1,6 +1,6 @@
 # Contrato de componentes
 
-**AQ-WEB-1.0.0** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
+**AQ-WEB-1.1.0** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
 
 Os nomes abaixo identificam responsabilidades; podem ser adaptados ao padrão de nomes da stack, mantendo uma correspondência no relatório de entrega. Reusar componentes entre rotas. Não criar variantes por página quando a diferença for apenas conteúdo.
 
@@ -95,3 +95,12 @@ VisitCTA: fundo navy, H2 e apoio brancos, botão inverse “Quero conhecer”; s
 EmptyState: fundo paper, padding 32/24 px, título H2 ou H3 conforme contexto, texto ink, link real. Sem spinner, animação ou número fictício. Aprovações/Galeria usam os textos de routes; Atividades: “Consulte as atividades do Aquarela”, apoio “Converse com a equipe para conhecer as opções disponíveis.”; Espaço: “Conheça a escola de perto”, apoio “Fale com a equipe para combinar uma visita.”; etapa: “Converse com a equipe sobre esta etapa.” Não prometer data de atualização.
 
 AssetPlaceholder existe **apenas no preview editorial explícito**: ocupa mesma proporção da mídia, fundo paper, borda tracejada muted e rótulo “Foto oficial pendente”. Não é imagem gerada, não aparece no build público. Conteúdo faltante em produção segue regras de bloqueio/omissão, nunca renderiza texto técnico.
+
+## C11 — SeasonalBanner
+
+Componente opcional reutilizável, no máximo uma vez na Home, imediatamente após
+o Hero e antes das etapas. Exibe conteúdo textual e CTA/destino opcional em par;
+destinos são rotas internas seguras. Não possui carrossel, autoplay, dismiss,
+agendamento automático, imagem obrigatória, formulário, backend ou tracking.
+O público só recebe registros `active` e `approved`; preview explícito também
+pode mostrar draft/observed. A fixture sintética não é conteúdo real.

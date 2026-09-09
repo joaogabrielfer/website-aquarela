@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import fs from 'node:fs';
 import {
   getSegments,
   getActivities,
@@ -10,13 +11,19 @@ import {
   getEnvironments,
   getEnvironmentPhotos,
   getPageCopy,
+  getHomePageCopy,
+  getSeasonalBanners,
   getFaqs,
   getPrivacyDoc,
   isVisible,
   project,
 } from '../../src/lib/content';
 import { renderPrivacyMarkdown } from '../../src/lib/privacy';
-import { Album } from '../../src/lib/content/schemas';
+import {
+  Album,
+  HomePageCopy,
+  SeasonalBanner,
+} from '../../src/lib/content/schemas';
 
 /* ------------------------------------------------------------------ */
 /*  isVisible e project (existentes, ampliados)                       */
@@ -266,6 +273,85 @@ describe('getPageCopy', () => {
   it('retorna null para ID inexistente', () => {
     const copy = getPageCopy('inexistente');
     expect(copy).toBeNull();
+  });
+});
+
+describe('projeção da revisão Home', () => {
+  it('não expõe PageCopy draft nem banner draft no público', () => {
+    expect(getHomePageCopy()).toBeNull();
+    expect(getSeasonalBanners()).toEqual([]);
+  });
+});
+
+describe('revisão Home 1.1.0', () => {
+  const review = {
+    status: 'draft' as const,
+    source: 'fixture sintética',
+    reviewedAt: null,
+    reviewedBy: null,
+  };
+
+  it('aceita heroImageId nullable no PageCopy especializado', () => {
+    expect(
+      HomePageCopy.safeParse({
+        id: 'home',
+        title: 'Demonstração',
+        intro: null,
+        metaDescription: '',
+        heroImageId: null,
+        review,
+      }).success,
+    ).toBe(true);
+  });
+
+  it('exige par completo para CTA do SeasonalBanner', () => {
+    const base = {
+      id: 'aviso',
+      eyebrow: null,
+      title: 'Aviso',
+      body: null,
+      active: true,
+      review,
+    };
+    expect(
+      SeasonalBanner.safeParse({ ...base, ctaLabel: 'Saiba mais', href: null })
+        .success,
+    ).toBe(false);
+    expect(
+      SeasonalBanner.safeParse({
+        ...base,
+        ctaLabel: 'Saiba mais',
+        href: '/visite',
+      }).success,
+    ).toBe(true);
+  });
+
+  it('recusa destino externo ou protocolo inseguro', () => {
+    const base = {
+      id: 'aviso',
+      eyebrow: null,
+      title: 'Aviso',
+      body: null,
+      ctaLabel: 'Abrir',
+      active: true,
+      review,
+    };
+    expect(
+      SeasonalBanner.safeParse({ ...base, href: 'https://example.com' })
+        .success,
+    ).toBe(false);
+    expect(
+      SeasonalBanner.safeParse({
+        ...base,
+        href: 'javascript:alert(1)',
+      }).success,
+    ).toBe(false);
+  });
+
+  it('mantém saída de release 0 quando não há bloqueios', () => {
+    const source = fs.readFileSync('scripts/check-release.ts', 'utf8');
+    expect(source).toContain('if (blockers.length === 0)');
+    expect(source).toContain('process.exit(0)');
   });
 });
 

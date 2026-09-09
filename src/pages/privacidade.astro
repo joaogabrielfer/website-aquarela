@@ -1,22 +1,26 @@
 ---
 import PageShell from '../layouts/PageShell.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
-import { getPrivacyDoc } from '../lib/content';
+import { getPageCopy, getPrivacyDoc } from '../lib/content';
 import { renderPrivacyMarkdown } from '../lib/privacy';
 import { pageTitles } from '../lib/copy';
 
 const privacy = getPrivacyDoc();
+const pageCopy = getPageCopy('privacidade');
 const renderedBody = renderPrivacyMarkdown(privacy.body);
 ---
 
-<PageShell title={pageTitles.privacidade}>
+<PageShell
+  title={pageTitles.privacidade}
+  description={pageCopy?.metaDescription}
+>
   <section class="privacy-page">
     <div class="container privacy-inner">
       <Breadcrumb
         items={[{ label: 'Início', href: '/' }, { label: 'Privacidade' }]}
       />
 
-      <h1>Privacidade</h1>
+      <h1>{pageCopy?.title ?? pageTitles.privacidade}</h1>
 
       {
         renderedBody ? (

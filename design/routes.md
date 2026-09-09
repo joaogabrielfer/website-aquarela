@@ -1,6 +1,6 @@
 # Rotas e composição
 
-**AQ-WEB-1.0.0** · Normativo. Complementa [design-spec.md](./design-spec.md).
+**AQ-WEB-1.1.0** · Normativo. Complementa [design-spec.md](./design-spec.md).
 
 ## R01 — Regras globais
 
@@ -19,15 +19,20 @@ As condições de dados são as de `content-model.md`. Se uma seção opcional n
 | Ordem / ID | Composição | Dados / ação |
 | --- | --- | --- |
 | 1 `inicio` | HeroHome, fundo paper | Rótulo “Aquarela Colégio e Curso · Paulista/PE”; H1 “Presente em cada fase. Pronto para novas descobertas.”; apoio “Conheça as etapas de ensino, os espaços e as experiências do Aquarela.” |
-| 2 `etapas` | SectionHeading + 4 SegmentCard, fundo branco | H2 “Ensino em cada fase”; ordem Infantil, Anos Iniciais, Anos Finais, Médio; destinos na tabela de Ensino abaixo |
-| 3 `proposta` | MediaText, fundo paper | H2 “O jeito Aquarela de aprender”; foto + 3 fatos pedagógicos aprovados; ocultar bloco se conteúdo incompleto |
-| 4 `espacos` | GalleryPreview de ambientes, fundo branco | H2 “Espaço para novas descobertas”; até 3 fotos de ambientes distintos; link “Conheça nosso espaço” → `/nosso-espaco`; ocultar sem fotos |
-| 5 `atividades` | 3 ActivityCard resumidos, fundo paper | H2 “Além da sala de aula”; seleção editorial; link “Ver atividades” → `/atividades`; ocultar sem dados |
-| 6 `conquistas` | Até 3 ApprovalCard, fundo branco | H2 “Histórias e conquistas”; link “Conheça as aprovações” → `/aprovacoes`; ocultar sem dados |
-| 7 `vida-aquarela` | Até 3 AlbumCard, fundo paper | H2 “A vida no Aquarela”; recentes por data decrescente, ID desempata; link “Ver galeria” → `/galeria`; ocultar sem dados |
-| 8 `visita` | VisitCTA, fundo navy | H2 “Venha conhecer o Aquarela”; CTA “Quero conhecer” → `/visite` |
+| 2 `banner-sazonal` | SeasonalBanner opcional, após o Hero | No máximo um banner `active`; público somente approved, preview pode mostrar draft/observed; CTA/destino opcionais em par |
+| 3 `etapas` | SectionHeading + 4 SegmentCard, fundo branco | H2 “Ensino em cada fase”; ordem Infantil, Anos Iniciais, Anos Finais, Médio; destinos na tabela de Ensino abaixo |
+| 4 `proposta` | MediaText, fundo paper | H2 “O jeito Aquarela de aprender”; foto + 3 fatos pedagógicos aprovados; ocultar bloco se conteúdo incompleto |
+| 5 `espacos` | GalleryPreview de ambientes, fundo branco | H2 “Espaço para novas descobertas”; até 3 fotos de ambientes distintos; link “Conheça nosso espaço” → `/nosso-espaco`; ocultar sem fotos |
+| 6 `atividades` | 3 ActivityCard resumidos, fundo paper | H2 “Além da sala de aula”; seleção editorial; link “Ver atividades” → `/atividades`; ocultar sem dados |
+| 7 `conquistas` | Até 3 ApprovalCard, fundo branco | H2 “Histórias e conquistas”; link “Conheça as aprovações” → `/aprovacoes`; ocultar sem dados |
+| 8 `vida-aquarela` | Até 3 AlbumCard, fundo paper | H2 “A vida no Aquarela”; recentes por data decrescente, ID desempata; link “Ver galeria” → `/galeria`; ocultar sem dados |
+| 9 `visita` | VisitCTA, fundo navy | H2 “Venha conhecer o Aquarela”; CTA “Quero conhecer” → `/visite` |
 
 Hero: CTA principal “Quero conhecer” → `/visite`; secundário “Explore nosso ensino” → `/ensino`. Sem FAQ duplicado na home. Header/Footer são shell externo, não itens numerados de conteúdo.
+
+Sem `PageCopy` approved, o público usa H1 funcional neutro e omite meta
+description/og:description; o preview editorial pode usar `PageCopy` draft ou
+observed. Após o Hero pode haver no máximo um SeasonalBanner ativo.
 
 ### `/ensino` — Ensino · sem frame
 

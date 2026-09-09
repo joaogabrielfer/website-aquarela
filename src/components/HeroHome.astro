@@ -8,12 +8,13 @@ interface Props {
   title: string;
   support: string;
   imageSrc?: string | null;
-  imageAlt?: string;
+  imageAlt?: string | undefined;
 }
 
 const { title, support, imageSrc, imageAlt } = Astro.props;
 const showImage = imageSrc !== null && imageSrc !== undefined;
 const showPlaceholder = BUILD_MODE === 'editorial-preview' && !showImage;
+const showMedia = showImage || showPlaceholder;
 ---
 
 <section class="hero-home">
@@ -21,44 +22,46 @@ const showPlaceholder = BUILD_MODE === 'editorial-preview' && !showImage;
     <div class="hero-copy">
       <p class="hero-eyebrow">{eyebrow}</p>
       <h1 class="hero-title">{title}</h1>
-      <p class="hero-support">{support}</p>
+      {support && <p class="hero-support">{support}</p>}
       <div class="hero-actions">
         <Button href="/visite" variant="primary">Quero conhecer</Button>
         <Button href="/ensino" variant="secondary">Explore nosso ensino</Button>
       </div>
     </div>
-    <div class="hero-media">
-      <!-- Decorative arc behind the media -->
-      <svg
-        class="hero-arc"
-        aria-hidden="true"
-        viewBox="0 0 200 200"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          cx="100"
-          cy="100"
-          r="95"
-          stroke="var(--brand-red)"
-          stroke-width="2"
-          opacity="0.2"></circle>
-      </svg>
-      {
-        showImage ? (
-          <img
-            class="hero-photo"
-            src={imageSrc}
-            alt={imageAlt || 'Aquarela Colégio e Curso'}
-            width="600"
-            height="450"
-            fetchpriority="high"
-          />
-        ) : showPlaceholder ? (
-          <AssetPlaceholder aspectRatio="4/3" />
-        ) : null
-      }
-    </div>
+    {
+      showMedia ? (
+        <div class="hero-media">
+          <svg
+            class="hero-arc"
+            aria-hidden="true"
+            viewBox="0 0 200 200"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="100"
+              cy="100"
+              r="95"
+              stroke="var(--brand-red)"
+              stroke-width="2"
+              opacity="0.2"
+            />
+          </svg>
+          {showImage ? (
+            <img
+              class="hero-photo"
+              src={imageSrc}
+              alt={imageAlt || 'Aquarela Colégio e Curso'}
+              width="600"
+              height="450"
+              fetchpriority="high"
+            />
+          ) : (
+            <AssetPlaceholder aspectRatio="4/3" />
+          )}
+        </div>
+      ) : null
+    }
   </div>
 </section>
 
@@ -112,10 +115,9 @@ const showPlaceholder = BUILD_MODE === 'editorial-preview' && !showImage;
   }
   .hero-arc {
     position: absolute;
-    width: 120%;
-    height: 120%;
-    top: -10%;
-    left: -10%;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
     z-index: 0;
   }

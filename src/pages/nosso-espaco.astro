@@ -31,11 +31,11 @@ const envData = environments.map((env, i) => {
 
 <PageShell
   title={pageTitles['nosso-espaco']}
-  description={pageCopy?.metaDescription ?? 'Conheça o espaço do Aquarela.'}
+  description={pageCopy?.metaDescription}
 >
   <PageIntro
     breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Nosso espaço' }]}
-    title={h1['nosso-espaco']}
+    title={pageCopy?.title ?? h1['nosso-espaco']}
     intro={pageCopy?.intro ?? undefined}
     variant="space"
   />

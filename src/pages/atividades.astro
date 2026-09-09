@@ -21,12 +21,11 @@ const hasActivities = activities.length > 0;
 
 <PageShell
   title={pageTitles.atividades}
-  description={pageCopy?.metaDescription ??
-    'Conheça as atividades do Aquarela.'}
+  description={pageCopy?.metaDescription}
 >
   <PageIntro
     breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Atividades' }]}
-    title={h1.atividades}
+    title={pageCopy?.title ?? h1.atividades}
     intro={pageCopy?.intro ?? undefined}
     variant="activities"
   />

@@ -18,13 +18,10 @@ const faqs = getFaqs('visita');
 const interestQuery = Astro.url.searchParams.get('interesse');
 ---
 
-<PageShell
-  title={pageTitles.visite}
-  description={pageCopy?.metaDescription ?? 'Entre em contato com o Aquarela.'}
->
+<PageShell title={pageTitles.visite} description={pageCopy?.metaDescription}>
   <PageIntro
     breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Visite' }]}
-    title={h1.visite}
+    title={pageCopy?.title ?? h1.visite}
     intro={pageCopy?.intro ?? undefined}
     variant="paper"
   />

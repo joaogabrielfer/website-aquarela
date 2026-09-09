@@ -38,13 +38,13 @@ const hasApprovedContact = Boolean(
         ) : (
           <>
             {school.locality && <p>{school.locality}</p>}
+            {school.whatsappE164 && (
+              <a href={whatsappUrl(school.whatsappE164)}>WhatsApp</a>
+            )}
             {school.phoneE164 && (
               <a href={`tel:${school.phoneE164}`}>
                 {formatPhone(school.phoneE164)}
               </a>
-            )}
-            {school.whatsappE164 && (
-              <a href={whatsappUrl(school.whatsappE164)}>WhatsApp</a>
             )}
             {school.instagramUrl && (
               <a href={school.instagramUrl} target="_blank" rel="noopener">

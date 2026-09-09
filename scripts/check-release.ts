@@ -3,7 +3,7 @@ import path from 'node:path';
 import yaml from 'js-yaml';
 import {
   Media,
-  PageCopy,
+  HomePageCopy,
   PrivacyFrontmatter,
   School,
   Segment,
@@ -16,15 +16,10 @@ const blockers: string[] = [];
 const approved = (review: { status: string }): boolean =>
   review.status === 'approved';
 
-// O contrato ainda não possui um campo que ligue uma mídia ao Hero da home.
-blockers.push(
-  'foto principal da home: referência ao Hero ainda não modelada no contrato',
-);
-
 const schoolResult = School.safeParse(read('school.yaml'));
 const mediaResult = Media.array().safeParse(read('media.yaml'));
 const segmentsResult = Segment.array().safeParse(read('segments.yaml'));
-const homeResult = PageCopy.safeParse(read('pages/home.yaml'));
+const homeResult = HomePageCopy.safeParse(read('pages/home.yaml'));
 if (!schoolResult.success)
   blockers.push(
     'school.yaml inválido; identidade/localidade não podem ser verificadas',
@@ -68,6 +63,9 @@ const eligibleMedia = (id: string | null): boolean => {
   if (!item || !approved(item.review) || !item.usageApproved) return false;
   return fs.existsSync(path.resolve('public', item.src.replace(/^\//, '')));
 };
+
+if (homeResult.success && !eligibleMedia(homeResult.data.heroImageId))
+  blockers.push('foto principal da home aprovada e elegível ausente');
 
 const requiredSlugs = [
   'educacao-infantil',
@@ -115,6 +113,10 @@ else {
 
 if (process.env.APP_BUILD_MODE === 'editorial-preview') {
   blockers.push('build de release não pode usar editorial-preview');
+}
+if (blockers.length === 0) {
+  console.log('Release elegível: bloqueios D06 não encontrados.');
+  process.exit(0);
 }
 console.error('Bloqueios de lançamento D06:');
 for (const blocker of blockers) console.error(`- ${blocker}`);

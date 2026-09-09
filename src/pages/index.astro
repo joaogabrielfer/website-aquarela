@@ -1,6 +1,7 @@
 ---
 import PageShell from '../layouts/PageShell.astro';
 import HeroHome from '../components/HeroHome.astro';
+import SeasonalBanner from '../components/SeasonalBanner.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import SegmentCard from '../components/SegmentCard.astro';
 import MediaText from '../components/MediaText.astro';
@@ -11,24 +12,30 @@ import AlbumCard from '../components/AlbumCard.astro';
 import VisitCTA from '../components/VisitCTA.astro';
 import { h1, pageTitles } from '../lib/copy';
 import {
-  getPageCopy,
+  getHomePageCopy,
+  getSeasonalBanners,
   getSegments,
   getFeaturedActivities,
   getFeaturedApprovals,
   getEnvironmentPhotos,
   getAlbums,
+  getMediaById,
 } from '../lib/content';
 
-const pageCopy = getPageCopy('home');
+const pageCopy = getHomePageCopy();
 const segments = getSegments();
 const featuredActivities = getFeaturedActivities(3);
 const featuredApprovals = getFeaturedApprovals(3);
 const environmentPhotos = getEnvironmentPhotos().slice(0, 3);
 const albums = getAlbums().slice(0, 3);
+const seasonalBanner = getSeasonalBanners()[0] ?? null;
 
-// Home photo: look for approved media referenced somewhere
-// In preview mode, we use AssetPlaceholder if no photo
+// The Home PageCopy owns the explicit Hero media reference.
+// In preview mode, we use AssetPlaceholder if no photo.
 const support = pageCopy?.intro ?? '';
+const heroMedia = pageCopy?.heroImageId
+  ? getMediaById(pageCopy.heroImageId)
+  : null;
 
 // Check if proposal data exists (would come from a proposal content file)
 // getProposal() is not yet implemented; section omitted when null
@@ -40,13 +47,15 @@ const getProposal = (): {
 const proposal = getProposal();
 ---
 
-<PageShell
-  title={pageTitles.home}
-  description={pageCopy?.metaDescription ??
-    'Conheça o Aquarela Colégio e Curso em Paulista/PE.'}
->
+<PageShell title={pageTitles.home} description={pageCopy?.metaDescription}>
   {/* 1. HeroHome — fundo paper */}
-  <HeroHome title={h1.home} support={support} />
+  <HeroHome
+    title={pageCopy?.title ?? h1.home}
+    support={support}
+    imageSrc={heroMedia?.src ?? null}
+    imageAlt={heroMedia?.alt}
+  />
+  {seasonalBanner && <SeasonalBanner banner={seasonalBanner} />}
 
   {/* 2. Etapas — fundo branco */}
   <section class="section-etas" id="etapas">

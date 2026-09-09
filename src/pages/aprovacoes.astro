@@ -14,12 +14,11 @@ const hasApprovals = groups.length > 0;
 
 <PageShell
   title={pageTitles.aprovacoes}
-  description={pageCopy?.metaDescription ??
-    'Conheça as aprovações do Aquarela.'}
+  description={pageCopy?.metaDescription}
 >
   <PageIntro
     breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Aprovações' }]}
-    title={h1.aprovacoes}
+    title={pageCopy?.title ?? h1.aprovacoes}
     intro={pageCopy?.intro ?? undefined}
     variant="achievements"
   />

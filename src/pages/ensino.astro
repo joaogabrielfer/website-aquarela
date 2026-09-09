@@ -22,14 +22,10 @@ const intro = pageCopy?.intro ?? undefined;
 const tones: Array<'white' | 'paper'> = ['white', 'paper', 'white', 'paper'];
 ---
 
-<PageShell
-  title={pageTitles.ensino}
-  description={pageCopy?.metaDescription ??
-    'Conheça as etapas de ensino do Aquarela.'}
->
+<PageShell title={pageTitles.ensino} description={pageCopy?.metaDescription}>
   <PageIntro
     breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Ensino' }]}
-    title={h1.ensino}
+    title={pageCopy?.title ?? h1.ensino}
     intro={intro}
     variant="paper"
   />
