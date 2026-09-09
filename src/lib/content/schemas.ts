@@ -94,6 +94,7 @@ export const SeasonalBanner = z
     eyebrow: optionalText,
     title: z.string(),
     body: optionalText,
+    tone: z.enum(['paper', 'red', 'navy', 'purple']),
     ctaLabel: optionalText,
     href: z
       .string()

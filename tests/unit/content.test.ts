@@ -310,6 +310,7 @@ describe('revisão Home 1.1.0', () => {
       eyebrow: null,
       title: 'Aviso',
       body: null,
+      tone: 'red',
       active: true,
       review,
     };
@@ -332,6 +333,7 @@ describe('revisão Home 1.1.0', () => {
       eyebrow: null,
       title: 'Aviso',
       body: null,
+      tone: 'red',
       ctaLabel: 'Abrir',
       active: true,
       review,
@@ -346,6 +348,22 @@ describe('revisão Home 1.1.0', () => {
         href: 'javascript:alert(1)',
       }).success,
     ).toBe(false);
+  });
+
+  it('limita o tom do SeasonalBanner à paleta autorizada', () => {
+    const result = SeasonalBanner.safeParse({
+      id: 'aviso',
+      eyebrow: null,
+      title: 'Aviso',
+      body: null,
+      tone: 'verde-arbitrario',
+      ctaLabel: null,
+      href: null,
+      active: true,
+      review,
+    });
+
+    expect(result.success).toBe(false);
   });
 
   it('mantém saída de release 0 quando não há bloqueios', () => {
