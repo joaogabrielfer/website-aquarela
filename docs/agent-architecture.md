@@ -31,6 +31,22 @@ Antes de iniciar, Sol informa o escopo do lote, recomenda um provider com um mot
 
 Nenhum Luna deve ser criado enquanto essa escolha estiver pendente. Spark continua no OpenCode Go salvo nova instrução explícita do usuário.
 
+## Preflight de implementação
+
+Antes de qualquer edição de código, Sol resolve duas decisões com o usuário: o
+modo de preview que determina o prefixo da branch e o trabalhador que escreverá
+o lote. A decisão não pode ser corrigida apenas depois do primeiro commit.
+
+- Trabalho fora de fase: perguntar se deve usar preview editorial, salvo quando
+  o próprio pedido já responder; em ambos os casos, conferir o prefixo antes de
+  editar.
+- Luna: informar o escopo, consultar limites, recomendar e aguardar a escolha
+  Codex ou OpenCode Go.
+- Spark: informar que usa OpenCode Go, recomendar conforme complexidade e limites
+  e aguardar autorização ou a escolha de elevar o lote a Luna.
+- Sol pode ler contrato, inspecionar o checkout e consultar telemetria enquanto
+  aguarda, mas não editar a implementação nem iniciar o trabalhador.
+
 ## Gestão das franquias
 
 Antes de recomendar o provider de um Luna, no início de fases longas e após rate limits, Sol consulta os limites atuais quando a integração permitir. Para Codex, usa a leitura nativa de usage/rate limits do host (ou `account/rateLimits/read` via app-server). Para OpenCode Go, usa `GET https://opencode.ai/zen/go/v1/usage` ou o status oficial equivalente. Segredos ficam somente no processo que consulta o provider; subagentes recebem no máximo um resumo sanitizado.

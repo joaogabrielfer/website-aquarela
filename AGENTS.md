@@ -132,6 +132,39 @@ Os perfis usados quando o provider escolhido é OpenCode ficam em `.opencode/age
 - `spark-page`, `spark-css`, `spark-tests`: implementação barata e delimitada; não criam agentes.
 - `spark-a11y`, `spark-audit`: inspeção read-only; não criam agentes.
 
+### 5.0 Preflight obrigatório antes de implementar
+
+Antes da primeira edição de código de cada tarefa, Sol deve concluir e comunicar
+um preflight bloqueante. Não é permitido começar a implementação e corrigir
+branch ou delegação retrospectivamente. O preflight contém, nesta ordem:
+
+1. **Modo e branch:** classificar a tarefa como fase formal, editorial ou build
+   público. Para trabalho fora de fase, fazer a pergunta da §5.6, salvo quando o
+   pedido atual já escolher explicitamente o modo. Mesmo quando dispensada a
+   pergunta, declarar a classificação e conferir se o nome da branch tem o
+   prefixo correspondente antes de editar. Divergência deve ser resolvida antes
+   da implementação conforme §5.6.
+2. **Responsável pela implementação:** decompor o lote e declarar quem escreverá
+   o código: Luna ou Spark, segundo a tabela desta seção. Sol não absorve
+   silenciosamente implementação rotineira atribuída a Luna/Spark; permanece
+   responsável por contrato, arquitetura, integração e revisão.
+3. **Portão do agente:** se for Luna, fazer a pergunta de provider da §5.2 e
+   aguardar a resposta. Se for Spark, informar que ele usa OpenCode Go e perguntar
+   se o usuário autoriza Spark ou prefere elevar o lote a Luna; aguardar a
+   resposta. Consultar limites conforme §5.3 antes de recomendar.
+
+Formato mínimo para uma tarefa fora de fase que ainda não escolheu nenhuma das
+duas decisões:
+
+> Esta tarefa deve usar preview editorial? Recomendo `<sim|não>` porque `<motivo>`.
+> Para a implementação (`<escopo>`), proponho `<Luna|Spark>` porque `<motivo>`.
+> `<pergunta de provider da §5.2 ou autorização de Spark>`
+
+Se o pedido já responder uma dessas decisões, registrar a escolha e perguntar
+somente o que faltar. Inspeção read-only, leitura do contrato e consulta de
+limites podem ocorrer antes das respostas; edição de código e criação de agente,
+não.
+
 ### 5.1 Hierarquia e nesting
 
 Hierarquia normal: `Usuário → Sol/Codex → Luna (Codex ou OpenCode) ou Spark (OpenCode)`. Só existe um segundo nível quando Sol classifica explicitamente uma tarefa como grande e decomponível: `Sol → Luna lead → spark-*`. Não há nenhum outro nesting. Se Luna estiver no Codex, os Spark ainda são iniciados pela CLI OpenCode e não ganham visibilidade nativa no painel de agentes do T3 Code.
@@ -189,8 +222,8 @@ Credenciais nunca entram em prompts, logs, arquivos do repositório ou contexto 
 
 ### 5.5 Protocolo de delegação
 
-1. Sol verifica `sha256sum -c design-contract.sha256` e inspeciona o estado atual antes de delegar.
-2. Se a tarefa pede Luna, Sol cumpre o portão da seção 5.2 antes de iniciar o agente.
+1. Sol conclui o preflight bloqueante da §5.0, verifica `sha256sum -c design-contract.sha256` e inspeciona o estado atual antes de delegar.
+2. Nenhum trabalhador começa e nenhum arquivo de implementação é editado antes das escolhas exigidas pela §5.0; para Luna, a escolha de provider continua sendo feita a cada lote.
 3. Cada prompt informa objetivo, arquivos de posse exclusiva, arquivos proibidos, trechos normativos relevantes, critérios de aceite e comandos de verificação. Subagentes começam com contexto novo.
 4. Paralelização só ocorre entre tarefas com arquivos exclusivos. Nunca dois agentes editam o mesmo arquivo; arquivos compartilhados são integrados sequencialmente pelo Sol ou por um único Luna.
 5. O trabalhador não faz `commit`, `push`, `reset`, troca de branch nem outra mutação git. A única exceção é `luna-lead`, que pode criar commits locais seguindo integralmente a §5.4. Todos entregam um resumo curto com alterações, verificações e pendências.
