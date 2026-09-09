@@ -55,9 +55,10 @@ const proposal = getProposal();
     imageSrc={heroMedia?.src ?? null}
     imageAlt={heroMedia?.alt}
   />
+  {/* 2. Banner sazonal — opcional, após o Hero */}
   {seasonalBanner && <SeasonalBanner banner={seasonalBanner} />}
 
-  {/* 2. Etapas — fundo branco */}
+  {/* 3. Etapas — fundo branco */}
   <section class="section-etas" id="etapas">
     <div class="container">
       <SectionHeading title="Ensino em cada fase" />
@@ -68,6 +69,14 @@ const proposal = getProposal();
               slug={seg.slug}
               name={seg.name}
               summary={seg.summary}
+              imageUrl={
+                seg.imageId ? (getMediaById(seg.imageId)?.src ?? null) : null
+              }
+              imageAlt={
+                seg.imageId
+                  ? (getMediaById(seg.imageId)?.alt ?? seg.name)
+                  : seg.name
+              }
             />
           ))
         }
@@ -75,7 +84,7 @@ const proposal = getProposal();
     </div>
   </section>
 
-  {/* 3. Proposta — fundo paper (omitida sem dados) */}
+  {/* 4. Proposta — fundo paper (omitida sem dados) */}
   {
     proposal !== null && proposal !== undefined && (
       <section class="section-proposta" id="proposta">
@@ -89,13 +98,14 @@ const proposal = getProposal();
     )
   }
 
-  {/* 4. Espaços — fundo branco (omitida sem fotos de ambientes) */}
+  {/* 5. Espaços — fundo branco (omitida sem fotos de ambientes) */}
   {
     environmentPhotos.length > 0 && (
       <section class="section-espacos" id="espacos">
         <div class="container">
           <SectionHeading title="Espaço para novas descobertas" />
           <GalleryPreview
+            class="home-gallery-preview"
             photos={environmentPhotos.map((p) => ({
               src: p.src,
               alt: p.alt,
@@ -110,7 +120,7 @@ const proposal = getProposal();
     )
   }
 
-  {/* 5. Atividades — fundo paper (omitida sem featured) */}
+  {/* 6. Atividades — fundo paper (omitida sem featured) */}
   {
     featuredActivities.length > 0 && (
       <section class="section-atividades" id="atividades">
@@ -133,7 +143,7 @@ const proposal = getProposal();
     )
   }
 
-  {/* 6. Conquistas — fundo branco (omitida sem featured) */}
+  {/* 7. Conquistas — fundo branco (omitida sem featured) */}
   {
     featuredApprovals.length > 0 && (
       <section class="section-conquistas" id="conquistas">
@@ -147,6 +157,16 @@ const proposal = getProposal();
                 institution={app.institution}
                 selectionProcess={app.selectionProcess}
                 year={app.year}
+                portraitUrl={
+                  app.portraitId
+                    ? (getMediaById(app.portraitId)?.src ?? null)
+                    : null
+                }
+                portraitAlt={
+                  app.portraitId
+                    ? (getMediaById(app.portraitId)?.alt ?? app.displayName)
+                    : app.displayName
+                }
               />
             ))}
           </div>
@@ -158,7 +178,7 @@ const proposal = getProposal();
     )
   }
 
-  {/* 7. Vida Aquarela — fundo paper (omitida sem álbuns) */}
+  {/* 8. Vida Aquarela — fundo paper (omitida sem álbuns) */}
   {
     albums.length > 0 && (
       <section class="section-vida" id="vida-aquarela">
@@ -171,6 +191,8 @@ const proposal = getProposal();
                 title={album.title}
                 date={album.date}
                 category={album.category}
+                coverUrl={getMediaById(album.coverId)?.src ?? null}
+                coverAlt={getMediaById(album.coverId)?.alt ?? album.title}
               />
             ))}
           </div>
@@ -182,7 +204,7 @@ const proposal = getProposal();
     )
   }
 
-  {/* 8. Visita — fundo navy */}
+  {/* 9. Visita — fundo navy */}
   <VisitCTA />
 </PageShell>
 
@@ -202,13 +224,16 @@ const proposal = getProposal();
   .segment-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: var(--space-4);
     margin-top: var(--space-6);
   }
   .card-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+  .home-gallery-preview {
     margin-top: var(--space-6);
   }
   .section-link {
@@ -222,17 +247,26 @@ const proposal = getProposal();
   @media (min-width: 768px) {
     .segment-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-5);
     }
     .card-grid--3 {
       grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-5);
+    }
+    .segment-grid,
+    .card-grid,
+    .home-gallery-preview {
+      margin-top: var(--space-8);
     }
   }
   @media (min-width: 1100px) {
     .segment-grid {
       grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-6);
     }
     .card-grid--3 {
       grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
     }
   }
   @media (min-width: 768px) {

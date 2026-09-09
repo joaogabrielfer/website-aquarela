@@ -3,17 +3,52 @@ import PageShell from '../layouts/PageShell.astro';
 import { h1 } from '../lib/copy';
 ---
 
-<PageShell title="Página não encontrada"
-  ><section class="container not-found">
-    <h1>{h1.notFound}</h1><p>Não encontramos a página que você procura.</p><p>
-      <a href="/">Voltar ao início</a> · <a href="/visite"
-        >Falar com o colégio</a
-      >
-    </p>
-  </section></PageShell
->
+<PageShell title="Página não encontrada">
+  <section class="container not-found">
+    <h1>{h1.notFound}</h1>
+    <p>Não encontramos a página que você procura.</p>
+    <nav class="not-found-actions" aria-label="Ações">
+      <ul>
+        <li><a href="/">Voltar ao início</a></li>
+        <li><a href="/visite">Falar com o colégio</a></li>
+      </ul>
+    </nav>
+  </section>
+</PageShell>
 <style>
   .not-found {
-    padding-block: 80px;
+    padding-block: var(--space-12);
+  }
+  .not-found h1 {
+    margin: 0 0 var(--space-4);
+  }
+  .not-found p {
+    margin: 0 0 var(--space-6);
+  }
+  .not-found-actions ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .not-found-actions a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--brand-navy);
+    font-weight: 500;
+    text-decoration: underline;
+  }
+  @media (min-width: 768px) {
+    .not-found {
+      padding-block: var(--space-16);
+    }
+  }
+  @media (min-width: 1100px) {
+    .not-found {
+      padding-block: var(--space-20);
+    }
   }
 </style>

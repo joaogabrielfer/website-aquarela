@@ -14,12 +14,14 @@ const hasEnvironments = environments.length > 0;
 
 // Pre-process environment data for rendering
 const envData = environments.map((env, i) => {
-  const coverMedia = env.images[0] ? getMediaById(env.images[0]) : null;
   const allPhotos = env.images
     .map((imgId) => getMediaById(imgId))
     .filter(
       (p): p is NonNullable<ReturnType<typeof getMediaById>> => p !== null,
     );
+  // If an earlier configured image is not public, the first eligible image
+  // remains the editorial cover for this environment.
+  const coverMedia = allPhotos[0] ?? null;
   return {
     env,
     index: i,
@@ -90,7 +92,7 @@ const envData = environments.map((env, i) => {
   .env-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: var(--space-4);
   }
   @media (min-width: 768px) {
     .section-environments,
@@ -99,6 +101,7 @@ const envData = environments.map((env, i) => {
     }
     .env-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-5);
     }
   }
   @media (min-width: 1100px) {

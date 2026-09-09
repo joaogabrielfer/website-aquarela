@@ -16,56 +16,80 @@ export const getStaticPaths = () => {
 
 const { slug } = Astro.params;
 const album = getAlbum(slug!);
-
-// getStaticPaths only generates visible albums,
-// but if slug is somehow invalid, the host serves 404.html
-if (!album) {
-  return Astro.redirect('/404');
+const isMissing = album === null;
+if (isMissing) {
+  // In SSR/dev, preserve the HTTP semantics of an unknown slug. In a static
+  // build, getStaticPaths emits only published albums and the host serves the
+  // generated 404.html for any other slug.
+  Astro.response.status = 404;
 }
 
-const photos = getAlbumPhotos(slug!);
-const title = album.title;
-const formattedDate = formatCivilDate(album.date);
+const photos = album ? getAlbumPhotos(slug!) : [];
+const title = album?.title ?? 'Página não encontrada';
+const formattedDate = album ? formatCivilDate(album.date) : null;
 ---
 
-<PageShell title={`${title} | Aquarela Colégio e Curso`}>
-  <section class="album-page">
-    <div class="container album-inner">
-      <Breadcrumb
-        items={[
-          { label: 'Início', href: '/' },
-          { label: 'Galeria', href: '/galeria' },
-          { label: title },
-        ]}
-      />
+<PageShell title={title}>
+  {
+    album ? (
+      <section class="album-page">
+        <div class="container album-inner">
+          <Breadcrumb
+            items={[
+              { label: 'Início', href: '/' },
+              { label: 'Galeria', href: '/galeria' },
+              { label: title },
+            ]}
+          />
 
-      <h1 class="album-title">{title}</h1>
+          <h1 class="album-title">{title}</h1>
 
-      <div class="album-meta">
-        <span class="album-date">{formattedDate}</span>
-        <span class="album-category">{album.category}</span>
-      </div>
+          <div class="album-meta">
+            <span class="album-date">{formattedDate}</span>
+            <span class="album-category">{album.category}</span>
+          </div>
 
-      {album.intro && <p class="album-intro">{album.intro}</p>}
+          {album.intro && <p class="album-intro">{album.intro}</p>}
 
-      <PhotoGridIsland
-        client:load
-        photos={photos.map((p) => ({
-          src: p.src,
-          alt: p.alt,
-          caption: p.caption,
-        }))}
-      />
+          <PhotoGridIsland
+            client:load
+            photos={photos.map((p) => ({
+              src: p.src,
+              alt: p.alt,
+              caption: p.caption,
+              width: p.width,
+              height: p.height,
+            }))}
+          />
 
-      <a href="/galeria" class="back-link">Voltar à galeria</a>
-    </div>
-  </section>
+          <a href="/galeria" class="back-link">
+            Voltar à galeria
+          </a>
+        </div>
+      </section>
+    ) : (
+      <section class="album-not-found">
+        <div class="container album-inner">
+          <h1>Página não encontrada</h1>
+          <p>Não encontramos o álbum que você procura.</p>
+          <p>
+            <a href="/galeria">Voltar à galeria</a> ·{' '}
+            <a href="/visite">Falar com o colégio</a>
+          </p>
+        </div>
+      </section>
+    )
+  }
 
-  <Lightbox client:only="svelte" />
+  {album && <Lightbox client:only="svelte" />}
 </PageShell>
 
 <style>
   .album-page {
+    padding: var(--space-12) 0;
+    background: var(--surface-base);
+  }
+  .album-not-found {
     padding: var(--space-12) 0;
     background: var(--surface-base);
   }
@@ -107,7 +131,8 @@ const formattedDate = formatCivilDate(album.date);
     text-decoration: underline;
   }
   @media (min-width: 768px) {
-    .album-page {
+    .album-page,
+    .album-not-found {
       padding: var(--space-16) 0;
     }
     .album-title {
@@ -115,7 +140,8 @@ const formattedDate = formatCivilDate(album.date);
     }
   }
   @media (min-width: 1100px) {
-    .album-page {
+    .album-page,
+    .album-not-found {
       padding: var(--space-20) 0;
     }
     .album-title {
