@@ -1,6 +1,6 @@
 # Arquitetura operacional de agentes
 
-Esta documentação descreve como GPT-5.6 Sol no Codex delega implementação e auditoria para Luna no Codex ou OpenCode Go e para Spark no OpenCode Go. Ela não altera o contrato visual AQ-WEB-1.0.0.
+Esta documentação descreve como GPT-5.6 Sol no Codex delega implementação e auditoria para Luna no Codex ou OpenCode Go e para Spark no OpenCode Go. Ela não altera o contrato visual AQ-WEB-1.1.0.
 
 ## Responsabilidades
 
@@ -56,6 +56,34 @@ Sol e `luna-lead` podem criar commits locais durante uma fase de implementação
 6. não fazer `push`, `amend` ou reescrita de histórico sem pedido explícito.
 
 Os títulos seguem o padrão do T3 Code: Conventional Commits em inglês e linguagem simples, no formato `type(scope): concise description`, sem ponto final. Exemplos: `feat(header): implement responsive navigation`, `test(gallery): cover lightbox keyboard behavior` e `fix(content): reject incomplete approved records`. Ao concluir a fase, o lead relata hashes, títulos e checks de cada checkpoint.
+
+## Branches, worktrees e PRs no T3 Code
+
+O T3 pode criar uma nova worktree inicialmente em uma branch temporária e o renomeio automático para um nome legível é best effort. Antes do primeiro commit, o lead inspeciona a branch. Há autorização permanente apenas para renomear uma vez a branch local atual, ainda não publicada/compartilhada e sem commit próprio da tarefa, para uma destas formas:
+
+- `phase/<numero>-<slug>` para trabalho de fase, sempre com preview editorial;
+- `editorial/<slug>` para mudança pontual aprovada para preview editorial;
+- `<tipo>/<slug>` para build público, com tipo coerente com a preocupação.
+
+Em nova worktree cujo trabalho não pertence a uma fase, o lead pergunta **“Esta tarefa deve usar preview editorial? Recomendo `<sim|não>` porque `<motivo curto>`.”**, salvo quando o pedido já decide o modo. Drafts, dados observed e placeholders justificam recomendar `editorial`; reprodução exata do site público justifica recomendar uma branch comum.
+
+O nome da branch controla o build remoto; o nome do PR não. A branch `preview` é uma integração editorial estável e reservada ao link do cliente: não é branch primária de feature e só recebe merge/fast-forward escolhido pelo usuário. Push, merge, fast-forward, rebase, abertura de PR e renomeio de branch já publicada continuam exigindo autorização explícita.
+
+Commits e títulos de PR usam Conventional Commit em inglês: `type(scope): concise description`. O PR tem uma preocupação principal e corpo com resumo, checks, conteúdo pendente, validações não executadas e URL de preview quando disponível; a base padrão é `main`.
+
+## Roteamento de builds no Cloudflare Pages
+
+O dashboard executa `pnpm build:cloudflare`. O script versionado aplica:
+
+| Branch              | Modo              | Uso                                   |
+| ------------------- | ----------------- | ------------------------------------- |
+| `main`              | public            | produção estável                      |
+| `preview`           | editorial-preview | link estável do cliente               |
+| prefixo `phase`     | editorial-preview | fase em desenvolvimento               |
+| prefixo `editorial` | editorial-preview | mudança pontual com conteúdo pendente |
+| qualquer outra      | public            | preview técnico fiel ao público       |
+
+Todas as branches não-main continuam sendo Preview Deployments do Cloudflare e recebem `noindex`; o modo editorial é uma camada adicional de visibilidade de conteúdo.
 
 ## Prompt de delegação
 

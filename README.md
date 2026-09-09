@@ -8,6 +8,7 @@ Pré-requisitos: Node.js >=22 e pnpm 11.3. Instale as dependências com `pnpm in
 
 - `pnpm dev` — servidor local
 - `pnpm build` / `pnpm preview` — build público e pré-visualização
+- `pnpm build:cloudflare` — escolhe o modo pelo nome da branch no Pages
 - `pnpm build:preview` — prévia editorial explícita
 - `pnpm build:release` — verifica bloqueios editoriais e tenta o build de release
 - `pnpm check` — verificação Astro/TypeScript
@@ -48,6 +49,11 @@ O hosting planejado é Cloudflare Pages, com build estático em `dist`, sem
 Functions ou Workers. O checklist detalhado do dashboard, as decisões ainda
 abertas e o formato de entrega de textos, fotos e aprovações estão em
 [user-to-do.md](./user-to-do.md).
+
+O Pages executa `pnpm build:cloudflare`: `main` publica o modo normal;
+`preview`, `phase*` e `editorial*` publicam preview editorial; as demais
+branches geram preview técnico com conteúdo público. A branch `preview` mantém o
+link estável enviado ao cliente e recebe somente integrações escolhidas.
 
 Pull requests podem executar o workflow `quality`, que valida lint, tipos,
 conteúdo, testes, formatação e o build público. Esse workflow não publica o site.

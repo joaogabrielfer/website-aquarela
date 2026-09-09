@@ -36,13 +36,31 @@ cliente. Não significa aprovação editorial nem autorização de publicação.
 ## Deploy Cloudflare Pages
 
 - Projeto público conectado ao GitHub; branch de produção `main`.
-- Build: `pnpm build`; saída: `dist`; `NODE_VERSION=22` ou superior.
+- Build: `pnpm build:cloudflare`; saída: `dist`.
+- Em Settings → Builds & deployments, manter `main` como Production branch e
+  configurar Preview branch control como todas as branches não-production.
+- `NODE_VERSION=22` ou superior nos ambientes Production e Preview.
 - `SITE_URL=https://website-aquarela.pages.dev` na produção, seguido de novo
   build.
 - Não ativar Functions/Workers. Manter automação de produção desativada até
   `pnpm build:release` deixar de apontar bloqueios editoriais.
-- Branches não-main podem usar previews; não publicar `build:preview` na
-  `main`.
+- `main` usa build público; `preview`, `editorial*` e `phase*` usam preview
+  editorial; as demais branches usam build público. Não definir
+  `APP_BUILD_MODE` no dashboard.
+- Usar `preview.website-aquarela.pages.dev` como link editorial estável do
+  cliente depois do primeiro push da branch `preview`.
+
+## Fluxo de branches e PRs
+
+- Fase formal: `phase/<numero>-<slug>`, com preview editorial automático.
+- Mudança pontual fora de fase: o agente pergunta se deve usar preview
+  editorial e recomenda conforme a necessidade de drafts/placeholders.
+- Mudança pontual editorial: `editorial/<slug>`; mudança pública: branch
+  Conventional correspondente, como `feat/<slug>` ou `fix/<slug>`.
+- `preview` recebe por merge/fast-forward somente o que for escolhido para o
+  cliente; `main` recebe somente fases/features encerradas.
+- Commits e títulos de PR: Conventional Commit em inglês. Push, merge e abertura
+  de PR continuam dependendo de autorização explícita.
 
 ## Aprovação
 

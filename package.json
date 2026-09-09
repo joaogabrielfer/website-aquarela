@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "APP_BUILD_MODE=public astro build",
+    "build:cloudflare": "node scripts/build-cloudflare.mjs",
     "build:preview": "APP_BUILD_MODE=editorial-preview astro build",
     "build:release": "APP_BUILD_MODE=release pnpm check-release && APP_BUILD_MODE=release astro build",
     "preview": "astro preview",

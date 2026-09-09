@@ -31,7 +31,7 @@ sha256sum -c design-contract.sha256
 5. **Tokens exatos** de `design-spec.md` §3–4 (cores, espaços, raios, tipografia). Não usar paleta padrão de biblioteca. Fonte Outfit em WOFF2 local (baixar do repositório oficial google/fonts, OFL) com licença preservada em `public/fonts/`; sem requisição de fonte a terceiros em runtime.
 6. **Idioma: pt-BR** em toda a interface, copy funcional e documentação do projeto. Copy funcional (navegação, CTAs, EmptyStates, controles) está congelada em `routes.md`/`components.md`; não reescrever.
 7. **Acessibilidade é critério de aceitação**: contraste ≥4,5:1 em texto normal, alvos ≥44×44 px, anel de foco global, um H1 por rota, `lang="pt-BR"`, skip link, teclado completo (menu, lightbox, paginação).
-8. **Não publicar automaticamente.** Existe autorização permanente apenas para commits locais incrementais feitos por agentes lead durante fases de implementação, conforme §5.4. `push`, publicação, troca de branch, `reset`, `rebase`, `merge`, `cherry-pick` e demais mutações de histórico continuam exigindo pedido explícito do usuário.
+8. **Não publicar automaticamente.** Existe autorização permanente apenas para commits locais incrementais feitos por agentes lead durante fases de implementação, conforme §5.4, e para o renomeio único da branch local temporária de uma nova worktree T3 antes do primeiro commit, conforme §5.6. `push`, publicação, outras trocas ou renomeios de branch, `reset`, `rebase`, `merge`, `cherry-pick` e demais mutações de histórico continuam exigindo pedido explícito do usuário.
 9. **Relatórios separam**: (1) implementação verificada, (2) conteúdo pendente, (3) validações não executadas. Não marcar item como aprovado sem evidência.
 10. **Repositório público no GitHub.** Nunca commitar segredos, tokens ou dados privados; o modelo de conteúdo já veda dados de revisão no output público — manter essa disciplina também em config e CI.
 
@@ -92,7 +92,7 @@ Pipeline de conteúdo: `content/` → schemas Zod → `check-content` → filtro
 
 Ilhas compartilham estado via store único (uma instância de menu/lightbox por vez; nunca dois dialogs sobrepostos). Primeira leva de itens de grades paginadas é renderizada no servidor; a ilha anexa lotes mantendo foco e anunciando via status `polite`.
 
-### Modos de build e ambientes de deploy (decisão do usuário, 08/09/2026)
+### Modos de build e ambientes de deploy (decisões do usuário, 08–09/09/2026)
 
 Dois eixos ortogonais: **modo editorial** (dados) e **ambiente de deploy** (URL/índice):
 
@@ -103,8 +103,10 @@ Dois eixos ortogonais: **modo editorial** (dados) e **ambiente de deploy** (URL/
 | `release`           | só `approved` + bloqueios D06          | não                                    | indexável |
 
 - Local: `pnpm dev` e `pnpm build` = `public`; `pnpm build:preview` = `editorial-preview`; `pnpm build:release` = `release`.
-- **Cloudflare Pages** (quando o hosting for ativado): branch `main` → produção (`<projeto>.pages.dev`); qualquer outra branch → URL de preview `<hash>.<projeto>.pages.dev` + alias `<branch>.<projeto>.pages.dev`. O Pages injeta `CF_PAGES_BRANCH` e `CF_PAGES_URL` no build: o build de branch **não-main** usa `SITE_URL=$CF_PAGES_URL` (canonical/OG apontam para a URL dev real, sem config extra) e adiciona noindex para não competir com produção nos buscadores.
-- **Independente do ambiente de deploy**: dados não-`approved` só aparecem se o modo editorial-preview for pedido explicitamente. Um deploy dev no Pages ainda é `public` por padrão — o usuário decide se o primeiro deploy será `build:preview` para ver placeholders enquanto o colégio não aprova nada. Preview editorial nunca vai para a `main`.
+- Cloudflare usa `pnpm build:cloudflare`, que lê `CF_PAGES_BRANCH`: `main` e branches comuns executam build `public`; `preview` e qualquer branch cujo nome comece por `editorial` ou `phase` executam `editorial-preview`.
+- `main` é a produção estável em `website-aquarela.pages.dev`. `preview` é a integração editorial estável enviada ao cliente. `phase/*` representa uma fase de trabalho e `editorial/*` uma mudança pontual que precisa mostrar conteúdo pendente. As demais branches geram previews técnicos no modo público.
+- Toda branch não-main recebe URL de preview `<hash>.<projeto>.pages.dev` e alias estável derivado do nome. O Pages injeta `CF_PAGES_BRANCH` e `CF_PAGES_URL`; o build usa a URL real do preview em canonical/OG e adiciona noindex.
+- `preview` não é branch de desenvolvimento primária nem recebe conteúdo automaticamente: o usuário escolhe quais branches integrar nela. Merge/fast-forward e push continuam exigindo autorização explícita. Preview editorial nunca vai para a `main`.
 
 ## 5. Arquitetura de agentes — Sol no Codex + OpenCode Go
 
@@ -199,6 +201,20 @@ Credenciais nunca entram em prompts, logs, arquivos do repositório ou contexto 
 
 O protocolo executável e os exemplos estão em `docs/agent-architecture.md` e `scripts/agents/`.
 
+### 5.6 Branches, worktrees T3 e pull requests
+
+Ao iniciar uma thread em uma **nova worktree** pelo T3 Code, o lead confere a branch antes do primeiro commit. O T3 pode começar com um nome temporário e seu renomeio automático é best effort; por autorização permanente e restrita do usuário, o lead pode renomear **uma vez** a branch local atual se ela ainda não tiver sido publicada nem compartilhada e ainda não possuir commit próprio da tarefa:
+
+- trabalho pertencente a uma fase formal → `phase/<numero>-<slug>` e preview editorial;
+- trabalho fora de fase com preview editorial aprovado → `editorial/<slug>`;
+- trabalho fora de fase sem preview editorial → `<tipo>/<slug>`, usando `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `build` ou `ci` conforme a preocupação principal.
+
+Para trabalho fora de uma fase, antes de renomear a branch ou implementar, perguntar: **“Esta tarefa deve usar preview editorial? Recomendo `<sim|não>` porque `<motivo curto>`.”** A pergunta é dispensada se o pedido atual já escolher explicitamente o modo. Recomendar editorial quando a avaliação depender de draft/observed/placeholders; recomendar build público quando o objetivo for reproduzir exatamente o que visitantes receberão. Se a branch já estiver publicada ou possuir trabalho compartilhado, não renomear sem autorização específica.
+
+A branch `preview` é reservada à integração do que o usuário decidiu mostrar ao cliente. Não iniciar feature diretamente nela. Atualizá-la por merge ou fast-forward somente com autorização explícita e sem presumir que toda mudança de fase deve ser mostrada.
+
+Commits seguem §5.4. Quando o usuário pedir abertura de PR, o título também usa Conventional Commit em inglês (`type(scope): concise description`) e descreve a preocupação principal; o corpo separa resumo, checks, conteúdo pendente, validações não executadas e URL de preview quando existir. A base é `main`, salvo instrução explícita diferente. Criar PR e fazer push continuam dependendo de pedido explícito.
+
 ## 6. Fases de trabalho
 
 - **Fase 0 (Sol)** — verificação do contrato, decisão de stack/hosting e arquitetura operacional.
@@ -225,8 +241,8 @@ Matriz obrigatória em `design/responsive.md` B05 (7 páginas em 390×844 e 1440
 Executado pelo usuário no dashboard (o agente não tem acesso); nada disso envolve segredos:
 
 1. **Criar projeto Pages** conectado ao repositório público do GitHub.
-2. **Build settings:** comando `pnpm build`, diretório de saída `dist`, variável de ambiente `NODE_VERSION=22` (ou superior).
-3. **Branch de produção = `main`.** Deploys de outras branches viram URLs de preview automaticamente; o build usa `CF_PAGES_URL` como `SITE_URL` nelas, sem configuração extra (seção 4).
+2. **Build settings:** comando `pnpm build:cloudflare`, diretório de saída `dist`, variável de ambiente `NODE_VERSION=22` (ou superior) em Production e Preview.
+3. **Branch de produção = `main`; Preview branch control = todas as branches não-production.** `preview`, `editorial*` e `phase*` usam preview editorial; as demais usam build público. Todos os deploys não-main continuam noindex e usam `CF_PAGES_URL` sem configuração extra (seção 4).
 4. **Variável `SITE_URL` (produção)**: `https://<projeto>.pages.dev`; é pública (vai para canonical/sitemap/OG), não é segredo. Só é necessária para a `main`.
 5. **Não ativar** nenhuma integração de Functions/Workers — o site é 100% estático.
 6. **Domínio próprio (.com.br), quando comprado:** Custom Domain no dashboard → seguir o assistente de DNS → atualizar `SITE_URL` → rebuild. O `sitemap.xml` e canonicals se regeneram sozinhos.
