@@ -1,6 +1,6 @@
 # Arquitetura operacional de agentes
 
-Esta documentação descreve como GPT-5.6 Sol no Codex delega implementação e auditoria para Luna no Codex ou OpenCode Go e para Spark no OpenCode Go. Ela não altera o contrato visual AQ-WEB-1.1.2.
+Esta documentação descreve como GPT-5.6 Sol no Codex delega implementação e auditoria para Luna no Codex ou OpenCode Go e para Spark no OpenCode Go. Ela não altera o contrato visual AQ-WEB-1.1.3.
 
 ## Responsabilidades
 

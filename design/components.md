@@ -1,6 +1,6 @@
 # Contrato de componentes
 
-**AQ-WEB-1.1.2** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
+**AQ-WEB-1.1.3** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
 
 Os nomes abaixo identificam responsabilidades; podem ser adaptados ao padrão de nomes da stack, mantendo uma correspondência no relatório de entrega. Reusar componentes entre rotas. Não criar variantes por página quando a diferença for apenas conteúdo.
 
@@ -88,7 +88,7 @@ FAQ usa details/summary nativo, todos fechados inicialmente e múltiplos podem f
 
 ContactPanel: introdução, interesse validado se houver, telefone/endereço/horário aprovados, grupo de links condicionais. Em `/visite`, telefone é primary; se WhatsApp estiver confirmado, passa a primary e telefone vira secondary; mapa é text. Não oferecer um controle de escolha de etapa: o contexto vem do link anterior, e texto “Ver todas as etapas” permite voltar a `/ensino`.
 
-VisitCTA: fundo navy, H2 e apoio brancos, botão inverse “Quero conhecer”; sem inputs. Fundo escuro não muda a versão da marca. Footer branco, borda superior subtle, logo original, assinatura aprovada, links de navegação, contatos e privacidade. Sua composição é compacta: padding vertical 32/20 px, gap principal 24 px, logo visível com 160 px e navegação distribuída em duas subcolunas, preservando alvos de 44 px. Ano de copyright pode ser ano corrente; ano de aprovação/evento nunca deve ser inferido disso.
+VisitCTA: fundo navy, H2 e apoio brancos, botão inverse “Quero conhecer”; sem inputs. Fundo escuro não muda a versão da marca. Footer branco, borda superior subtle, logo original, assinatura aprovada, links de navegação, contatos e privacidade. Sua composição é compacta: padding vertical 32/20 px, gap principal 24 px, logo visível com 160 px e navegação distribuída em duas subcolunas de largura pelo conteúdo, separadas por 24 px e preservando alvos de 44 px. Ano de copyright pode ser ano corrente; ano de aprovação/evento nunca deve ser inferido disso.
 
 ## C10 — EmptyState / AssetPlaceholder
 

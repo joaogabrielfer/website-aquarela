@@ -20,7 +20,7 @@ Pré-requisitos: Node.js >=22 e pnpm 11.3. Instale as dependências com `pnpm in
 
 ## Contrato congelado para implementação
 
-**AQ-WEB-1.1.2**, de 09/09/2026. Começar por estes cinco arquivos, nesta ordem:
+**AQ-WEB-1.1.3**, de 09/09/2026. Começar por estes cinco arquivos, nesta ordem:
 
 1. [design/design-spec.md](./design/design-spec.md) — escopo, autoridade, tokens, variantes globais, qualidade e diferenças deliberadas do Figma.
 2. [design/routes.md](./design/routes.md) — rotas, ordem de seções, copy funcional e destinos de todas as ações.
@@ -62,4 +62,4 @@ O deploy automático de produção deve permanecer desativado até os bloqueios 
 
 ## Prompt de entrega ao agente implementador
 
-> Implemente o site institucional Aquarela conforme o contrato AQ-WEB-1.1.2 nos cinco arquivos de `design/`. Leia todos antes de programar e verifique `design-contract.sha256`. O contrato é a fonte normativa; DESIGN.md é pesquisa histórica e o Figma é uma referência visual parcial. Preserve as divergências intencionais especificadas. Não invente dados nem implemente recursos P1 fora da baseline; SeasonalBanner V1 é a única revisão autorizada. Use os modelos e estados de preview/publicação previstos. Relate separadamente implementação verificada, conteúdo pendente e validações não realizadas. Não publique automaticamente.
+> Implemente o site institucional Aquarela conforme o contrato AQ-WEB-1.1.3 nos cinco arquivos de `design/`. Leia todos antes de programar e verifique `design-contract.sha256`. O contrato é a fonte normativa; DESIGN.md é pesquisa histórica e o Figma é uma referência visual parcial. Preserve as divergências intencionais especificadas. Não invente dados nem implemente recursos P1 fora da baseline; SeasonalBanner V1 é a única revisão autorizada. Use os modelos e estados de preview/publicação previstos. Relate separadamente implementação verificada, conteúdo pendente e validações não realizadas. Não publique automaticamente.

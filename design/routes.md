@@ -1,6 +1,6 @@
 # Rotas e composição
 
-**AQ-WEB-1.1.2** · Normativo. Complementa [design-spec.md](./design-spec.md).
+**AQ-WEB-1.1.3** · Normativo. Complementa [design-spec.md](./design-spec.md).
 
 ## R01 — Regras globais
 

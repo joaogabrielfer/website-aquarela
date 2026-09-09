@@ -87,9 +87,9 @@ const hasApprovedContact = Boolean(
   }
   .footer-grid nav {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: max-content max-content;
     align-content: start;
-    column-gap: var(--space-4);
+    column-gap: var(--space-6);
     row-gap: var(--space-1);
   }
   .footer-grid nav strong {
