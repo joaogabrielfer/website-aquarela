@@ -14,11 +14,20 @@ const { photos, class: className } = Astro.props;
 const maxPhotos = photos.slice(0, 3);
 const main = maxPhotos[0];
 const secondary = maxPhotos.slice(1);
+const isOnePhotoLayout = maxPhotos.length === 1;
+const isTwoPhotoLayout = maxPhotos.length === 2;
 ---
 
 {
   main && (
-    <div class:list={['gallery-preview', className]}>
+    <div
+      class:list={[
+        'gallery-preview',
+        { 'gallery-preview--one': isOnePhotoLayout },
+        { 'gallery-preview--two': isTwoPhotoLayout },
+        className,
+      ]}
+    >
       <div class="gallery-preview-main">
         <img
           src={main.src}
@@ -82,15 +91,20 @@ const secondary = maxPhotos.slice(1);
     .gallery-preview {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: auto auto;
+      gap: var(--space-5);
     }
     .gallery-preview-main {
       grid-column: 1 / -1;
+    }
+    .gallery-preview-secondary {
+      gap: var(--space-5);
     }
   }
   @media (min-width: 1100px) {
     .gallery-preview {
       grid-template-columns: 2fr 1fr;
       grid-template-rows: 1fr 1fr;
+      gap: var(--space-6);
     }
     .gallery-preview-main {
       grid-row: 1 / -1;
@@ -102,6 +116,24 @@ const secondary = maxPhotos.slice(1);
       grid-template-columns: 1fr;
       grid-template-rows: subgrid;
       grid-row: 1 / -1;
+      gap: var(--space-6);
+    }
+    /* With only two approved photos, keep both columns equivalent. The
+       asymmetric lead-plus-stack composition is reserved for three photos. */
+    .gallery-preview--two {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+    }
+    .gallery-preview--one {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+    .gallery-preview--two .gallery-preview-main {
+      grid-row: auto;
+    }
+    .gallery-preview--two .gallery-preview-secondary {
+      grid-row: auto;
+      grid-template-rows: auto;
     }
   }
 </style>

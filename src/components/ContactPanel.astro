@@ -113,6 +113,11 @@ const hasAnyContact = hasPhone || hasWhatsapp || hasMap;
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
+    /* Pages provide the global container; avoid compounding its gutters when
+       the panel is placed inside a section container. */
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
   }
   .contact-panel-intro {
     margin: 0;

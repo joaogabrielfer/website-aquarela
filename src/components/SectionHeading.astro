@@ -49,9 +49,14 @@ const { title, intro, link, id, class: className } = Astro.props;
     font-weight: 500;
     text-decoration: underline;
     align-self: flex-start;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
-  .section-heading-link:hover {
-    color: var(--text-ink);
+  @media (hover: hover) {
+    .section-heading-link:hover {
+      color: var(--text-ink);
+    }
   }
   @media (min-width: 768px) {
     h2 {

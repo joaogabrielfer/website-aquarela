@@ -14,7 +14,7 @@ interface Props {
   ages?: string | null;
   shifts?: string[];
   imageUrl?: string | null;
-  imageAlt?: string;
+  imageAlt?: string | undefined;
   tone?: 'white' | 'paper';
 }
 
@@ -31,7 +31,10 @@ const {
   tone = 'white',
 } = Astro.props;
 
-const hasContent = description || experiences.length >= 2;
+// A published detail needs both approved descriptive copy and the two
+// experiences required by the content model. Incomplete segments keep their
+// anchor/title and use the neutral state below.
+const hasContent = Boolean(description && experiences.length >= 2);
 const hasMeta = grades || ages || shifts.length > 0;
 const showImage = imageUrl !== null && imageUrl !== undefined;
 const showPlaceholder = BUILD_MODE === 'editorial-preview' && !showImage;
@@ -194,6 +197,9 @@ const ctaHref = `/visite?interesse=${slug}`;
       grid-template-columns: 1fr 1fr;
       gap: var(--space-12);
       align-items: center;
+    }
+    .segment-detail-media {
+      order: -1;
     }
     .segment-detail-title {
       font-size: 2.5rem;

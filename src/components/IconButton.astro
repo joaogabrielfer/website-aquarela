@@ -3,6 +3,7 @@ interface Props {
   icon: string;
   accessibleLabel: string;
   href?: string;
+  disabled?: boolean;
   class?: string;
   type?: 'button' | 'submit' | 'reset';
 }
@@ -11,14 +12,22 @@ const {
   icon,
   accessibleLabel,
   href,
+  disabled = false,
   class: className,
   type = 'button',
   ...rest
 } = Astro.props;
 
-const isLink = href !== undefined;
+const isLink = href !== undefined && !disabled;
 const Tag = isLink ? 'a' : 'button';
-const tagProps = isLink ? { href } : { type };
+const tagProps = isLink
+  ? { href }
+  : {
+      type,
+      disabled,
+      'aria-disabled': disabled || undefined,
+      tabindex: disabled ? -1 : undefined,
+    };
 ---
 
 <Tag
@@ -48,8 +57,21 @@ const tagProps = isLink ? { href } : { type };
     text-decoration: none;
     cursor: pointer;
   }
-  .icon-btn:hover {
-    background: var(--surface-paper);
+  .icon-btn:disabled,
+  .icon-btn[aria-disabled='true'] {
+    background: var(--surface-disabled);
+    color: var(--text-disabled);
+    border-color: var(--surface-disabled);
+    cursor: not-allowed;
+  }
+  @media (hover: hover) {
+    .icon-btn:hover {
+      background: var(--surface-paper);
+    }
+    .icon-btn:disabled:hover,
+    .icon-btn[aria-disabled='true']:hover {
+      background: var(--surface-disabled);
+    }
   }
   .icon-btn:focus-visible {
     outline: 3px solid var(--brand-navy);

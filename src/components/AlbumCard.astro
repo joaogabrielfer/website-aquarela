@@ -55,7 +55,12 @@ const formattedDate = formatCivilDate(date);
     text-decoration: none;
     color: inherit;
   }
-  .album-card:hover,
+  @media (hover: hover) {
+    .album-card:hover {
+      box-shadow: var(--shadow);
+      border-color: var(--brand-navy);
+    }
+  }
   .album-card:focus-within {
     box-shadow: var(--shadow);
     border-color: var(--brand-navy);

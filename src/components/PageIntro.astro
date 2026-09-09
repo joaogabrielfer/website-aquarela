@@ -22,7 +22,9 @@ const { breadcrumb, title, intro, variant = 'default' } = Astro.props;
       breadcrumb && (
         <Breadcrumb
           items={breadcrumb}
-          tone={variant === 'space' ? 'dark' : 'light'}
+          tone={
+            variant === 'space' || variant === 'achievements' ? 'dark' : 'light'
+          }
         />
       )
     }
