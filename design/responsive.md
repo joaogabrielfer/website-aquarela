@@ -1,6 +1,6 @@
 # Contrato responsivo e validação visual
 
-**AQ-WEB-1.1.1** · Autoridade para medidas. Layout fluido entre os intervalos abaixo; não escalar uma captura Figma como imagem.
+**AQ-WEB-1.1.3** · Autoridade para medidas. Layout fluido entre os intervalos abaixo; não escalar uma captura Figma como imagem.
 
 ## B01 — Breakpoints
 
@@ -77,5 +77,9 @@ Fixtures de QA podem ter conteúdo sintético claramente marcado e isolado do bu
 
 SeasonalBanner usa os mesmos gutters e tokens de superfície do container; em
 mobile empilha copy e CTA, permitindo altura natural e wrap sem overflow.
+SegmentAnchorNav usa esse mesmo container em todas as larguras. No Footer, a
+navegação interna usa duas subcolunas de largura pelo conteúdo e gap de 24 px,
+inclusive quando os três blocos principais se reorganizam segundo a tabela; os
+alvos permanecem com no mínimo 44 px.
 
 Comparação com Figma: avaliar grid, linguagem, proporções e marca; aplicar diferenças de design-spec em vez de copiar pixels contraditórios. Guardar resultados no diretório de QA escolhido pelo implementador e referenciá-los no relatório. Captura não substitui teste manual de foco, menu e links. Informar se faltou ambiente para alguma verificação, sem marcar o item como aprovado.

@@ -352,5 +352,5 @@ if (errors.length > 0) {
   process.exit(1);
 }
 console.log(
-  'Conteúdo válido: schemas D02-D08 e regras condicionais conferidos.',
+  'Conteúdo válido: schemas D02-D09 e regras condicionais conferidos.',
 );

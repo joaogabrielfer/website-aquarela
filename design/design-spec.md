@@ -1,6 +1,6 @@
 # Contrato de implementação — Aquarela
 
-**Contrato AQ-WEB-1.1.1 · congelado em 09/09/2026.**
+**Contrato AQ-WEB-1.1.3 · congelado em 09/09/2026.**
 
 “Congelado” significa baseline normativa para implementar, não aprovação dos dados escolares nem validação de um site pronto. Alterações de escopo ou aparência exigem revisão explícita deste contrato; conteúdo factual pode ser completado conforme o modelo de publicação, sem redesenhar a interface.
 
@@ -129,3 +129,17 @@ preservado da logo fornecida.
 O rótulo público da faixa do modo `editorial-preview` foi simplificado para
 “Prévia”, mantendo inalterados o nome técnico do modo, o `noindex`, os dados
 visíveis e os bloqueios de release.
+
+### Revisão AQ-WEB-1.1.2 — 09/09/2026
+
+Revisão visual autorizada antes da Fase 2: o rodapé passa a usar composição
+mais compacta sem reduzir alvos interativos; `SegmentAnchorNav` alinha seus
+links ao container global; e `SeasonalBanner` recebe tom editorial restrito à
+paleta segura `paper | red | navy | purple`. A fixture sintética de preview usa
+`red`; cores arbitrárias continuam proibidas.
+
+### Revisão AQ-WEB-1.1.3 — 09/09/2026
+
+Refinamento autorizado do Footer: as duas subcolunas internas de navegação
+passam a medir pelo conteúdo e usam gap de 24 px em todas as faixas, reforçando
+que pertencem ao mesmo grupo sem alterar ordem, alvos ou colunas principais.

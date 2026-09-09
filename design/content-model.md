@@ -1,6 +1,6 @@
 # Modelo de conteúdo e publicação
 
-**AQ-WEB-1.1.1** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
+**AQ-WEB-1.1.3** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
 
 ## D01 — Evidência e estados
 
@@ -66,6 +66,7 @@ type PageCopy = {
 type HomePageCopy = PageCopy & { heroImageId: string | null };
 type SeasonalBanner = {
   id: string; eyebrow: string | null; title: string; body: string | null;
+  tone: 'paper' | 'red' | 'navy' | 'purple';
   ctaLabel: string | null; href: string | null; active: boolean;
   review: Review;
 };
@@ -211,7 +212,9 @@ mídia precisa estar `approved`, `usageApproved` e existir no caminho local.
 Preview resolve mídia visível; público/release resolve apenas mídia aprovada.
 
 `SeasonalBanner` tem os campos `id`, `eyebrow`, `title`, `body`, `ctaLabel`,
-`href`, `active` e `review`. `ctaLabel` e `href` são ambos presentes ou ambos
+`href`, `tone`, `active` e `review`. `tone` é obrigatório e aceita somente
+`paper`, `red`, `navy` ou `purple`; a escolha é feita junto ao conteúdo estático,
+sem aceitar cor livre. `ctaLabel` e `href` são ambos presentes ou ambos
 nulos, e `href` aceita apenas rota interna segura. A Home limita a um registro
 ativo. Público filtra `active` + `approved`; preview pode incluir `draft` e
 `observed`. A fixture de demonstração é sintética e nunca entra no público.
@@ -223,3 +226,9 @@ Sem `PageCopy` approved, cada rota usa H1 funcional neutro (por exemplo,
 O telefone e o WhatsApp permanecem aprovações independentes. A confirmação
 direta do número nesta revisão é registrada como `observed`, sem preencher
 `reviewedAt` ou `reviewedBy`.
+
+### D09 — Revisão 1.1.2: tom do banner
+
+O tom do `SeasonalBanner` passa a ser dado editorial projetado para a interface.
+A fixture sintética de demonstração usa `red`. A validação recusa valores fora
+da enumeração para impedir contraste desconhecido ou paleta arbitrária.
