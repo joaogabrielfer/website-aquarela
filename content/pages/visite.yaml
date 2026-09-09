@@ -1,0 +1,13 @@
+{
+  id: visite,
+  title: 'Venha conhecer o Aquarela',
+  intro: null,
+  metaDescription: 'Entre em contato com o Aquarela.',
+  review:
+    {
+      status: draft,
+      source: 'https://www.instagram.com/aquarelacolegioecurso/',
+      reviewedAt: null,
+      reviewedBy: null,
+    },
+}

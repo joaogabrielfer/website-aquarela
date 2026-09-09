@@ -1,0 +1,157 @@
+---
+import Button from './Button.astro';
+import TextLink from './TextLink.astro';
+import { getPublicSchool } from '../lib/content/school';
+import { whatsappUrl, telUrl } from '../lib/urls';
+import { resolveInterest } from '../lib/interest';
+import { BUILD_MODE } from '../lib/env';
+
+interface Segment {
+  slug: string;
+  name: string;
+}
+
+interface Activity {
+  slug: string;
+  name: string;
+}
+
+interface Props {
+  interestQuery?: string | null;
+  segments?: Segment[];
+  activities?: Activity[];
+}
+
+const { interestQuery = null, segments = [], activities = [] } = Astro.props;
+
+const school = getPublicSchool();
+const resolvedInterest = resolveInterest(interestQuery, segments, activities);
+const isPreview = BUILD_MODE === 'editorial-preview';
+
+const hasPhone = school.phoneE164 !== null;
+const hasWhatsapp = school.whatsappE164 !== null;
+const hasMap = school.mapUrl !== null;
+const hasAnyContact = hasPhone || hasWhatsapp || hasMap;
+---
+
+<div class="contact-panel">
+  <div class="container contact-panel-inner">
+    <p class="contact-panel-intro">
+      Converse com a equipe para combinar sua visita.
+    </p>
+
+    {
+      resolvedInterest && (
+        <div class="contact-panel-interest">
+          <p class="interest-label">Sobre: {resolvedInterest.humanName}</p>
+          <TextLink href="/ensino">Ver todas as etapas</TextLink>
+        </div>
+      )
+    }
+
+    {
+      isPreview && !hasAnyContact ? (
+        <div class="contact-panel-pending">
+          <p>Contato aguardando confirmação</p>
+        </div>
+      ) : (
+        <div class="contact-panel-contacts">
+          {/* WhatsApp primary when confirmed, phone secondary */}
+          {hasWhatsapp && school.whatsappE164 && (
+            <Button
+              href={whatsappUrl(
+                school.whatsappE164,
+                resolvedInterest?.humanName,
+              )}
+              variant="primary"
+            >
+              Conversar no WhatsApp
+            </Button>
+          )}
+
+          {hasPhone && school.phoneE164 && (
+            <Button
+              href={telUrl(school.phoneE164)}
+              variant={hasWhatsapp ? 'secondary' : 'primary'}
+            >
+              Ligar para o colégio
+            </Button>
+          )}
+
+          {hasMap && school.mapUrl && (
+            <TextLink href={school.mapUrl}>Como chegar</TextLink>
+          )}
+
+          {school.officeHours && (
+            <div class="contact-panel-detail">
+              <strong>Horário:</strong> {school.officeHours}
+            </div>
+          )}
+
+          {school.address && (
+            <div class="contact-panel-detail">
+              <strong>Endereço:</strong> {school.address.street}
+              {school.address.number && `, ${school.address.number}`} —{' '}
+              {school.address.neighborhood}, {school.address.city}/
+              {school.address.state}
+              {school.address.postalCode && ` — ${school.address.postalCode}`}
+            </div>
+          )}
+        </div>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .contact-panel {
+    background: var(--surface-paper);
+    padding: var(--space-8) 0;
+    border-radius: var(--radius-card);
+  }
+  .contact-panel-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .contact-panel-intro {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--text-ink);
+  }
+  .contact-panel-interest {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .interest-label {
+    margin: 0;
+    font-weight: 500;
+    color: var(--text-ink);
+  }
+  .contact-panel-contacts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+  .contact-panel-pending {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .contact-panel-detail {
+    color: var(--text-ink);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .contact-panel-detail strong {
+    font-weight: 500;
+  }
+
+  @media (min-width: 768px) {
+    .contact-panel {
+      padding: var(--space-10);
+    }
+  }
+</style>

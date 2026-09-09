@@ -1,0 +1,107 @@
+---
+interface Photo {
+  src: string;
+  alt: string;
+  caption?: string | null;
+}
+
+interface Props {
+  photos: Photo[];
+  class?: string;
+}
+
+const { photos, class: className } = Astro.props;
+const maxPhotos = photos.slice(0, 3);
+const main = maxPhotos[0];
+const secondary = maxPhotos.slice(1);
+---
+
+{
+  main && (
+    <div class:list={['gallery-preview', className]}>
+      <div class="gallery-preview-main">
+        <img
+          src={main.src}
+          alt={main.alt}
+          width="800"
+          height="600"
+          loading="lazy"
+        />
+      </div>
+      {secondary.length > 0 && (
+        <div class="gallery-preview-secondary">
+          {secondary.map((photo) => (
+            <div class="gallery-preview-thumb">
+              <img
+                src={photo.src}
+                alt={photo.alt}
+                width="400"
+                height="300"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+<style>
+  .gallery-preview {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .gallery-preview-main {
+    overflow: hidden;
+    border-radius: var(--radius-card);
+  }
+  .gallery-preview-main img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+  }
+  .gallery-preview-secondary {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .gallery-preview-thumb {
+    overflow: hidden;
+    border-radius: var(--radius-card);
+  }
+  .gallery-preview-thumb img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+  }
+  @media (min-width: 768px) and (max-width: 1099px) {
+    .gallery-preview {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+    }
+    .gallery-preview-main {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 1100px) {
+    .gallery-preview {
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+    .gallery-preview-main {
+      grid-row: 1 / -1;
+    }
+    .gallery-preview-main img {
+      height: 100%;
+    }
+    .gallery-preview-secondary {
+      grid-template-columns: 1fr;
+      grid-template-rows: subgrid;
+      grid-row: 1 / -1;
+    }
+  }
+</style>

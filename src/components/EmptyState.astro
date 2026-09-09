@@ -1,0 +1,52 @@
+---
+import TextLink from './TextLink.astro';
+
+interface Props {
+  title: string;
+  text?: string;
+  link?: { href: string; label: string } | undefined;
+  headingLevel?: 'h2' | 'h3';
+  class?: string;
+}
+
+const {
+  title,
+  text,
+  link,
+  headingLevel = 'h2',
+  class: className,
+} = Astro.props;
+const Tag = headingLevel;
+---
+
+<div class:list={['empty-state', className]}>
+  <Tag class="empty-state-title">{title}</Tag>
+  {text && <p class="empty-state-text">{text}</p>}
+  {link && <TextLink href={link.href}>{link.label}</TextLink>}
+</div>
+
+<style>
+  .empty-state {
+    background: var(--surface-paper);
+    padding: var(--space-8) var(--space-6);
+    border-radius: var(--radius-card);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+  .empty-state-title {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  .empty-state-text {
+    margin: 0;
+    color: var(--text-ink);
+  }
+  @media (min-width: 768px) {
+    .empty-state {
+      padding: var(--space-8);
+    }
+  }
+</style>

@@ -1,0 +1,13 @@
+{
+  id: home,
+  title: 'Presente em cada fase. Pronto para novas descobertas.',
+  intro: 'Conheça as etapas de ensino, os espaços e as experiências do Aquarela.',
+  metaDescription: 'Conheça o Aquarela Colégio e Curso em Paulista/PE.',
+  review:
+    {
+      status: draft,
+      source: 'https://www.instagram.com/aquarelacolegioecurso/',
+      reviewedAt: null,
+      reviewedBy: null,
+    },
+}

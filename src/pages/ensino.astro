@@ -1,0 +1,62 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import PageIntro from '../components/PageIntro.astro';
+import SegmentAnchorNav from '../components/SegmentAnchorNav.astro';
+import SegmentDetail from '../components/SegmentDetail.astro';
+import FAQ from '../components/FAQ.astro';
+import VisitCTA from '../components/VisitCTA.astro';
+import { h1, pageTitles } from '../lib/copy';
+import {
+  getSegments,
+  getFaqs,
+  getMediaById,
+  getPageCopy,
+} from '../lib/content';
+
+const pageCopy = getPageCopy('ensino');
+const segments = getSegments();
+const faqs = getFaqs('ensino');
+const intro = pageCopy?.intro ?? undefined;
+
+// Alternar tons branco/paper por segmento
+const tones: Array<'white' | 'paper'> = ['white', 'paper', 'white', 'paper'];
+---
+
+<PageShell
+  title={pageTitles.ensino}
+  description={pageCopy?.metaDescription ??
+    'Conheça as etapas de ensino do Aquarela.'}
+>
+  <PageIntro
+    breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Ensino' }]}
+    title={h1.ensino}
+    intro={intro}
+    variant="paper"
+  />
+
+  <SegmentAnchorNav />
+
+  {
+    segments.map((seg, i) => {
+      const media = seg.imageId ? getMediaById(seg.imageId) : null;
+      return (
+        <SegmentDetail
+          slug={seg.slug}
+          name={seg.name}
+          description={seg.description}
+          experiences={seg.experiences}
+          grades={seg.grades}
+          ages={seg.ages}
+          shifts={seg.shifts}
+          imageUrl={media?.src ?? null}
+          imageAlt={media?.alt ?? seg.name}
+          tone={tones[i] ?? 'white'}
+        />
+      );
+    })
+  }
+
+  {faqs.length > 0 && <FAQ items={faqs} />}
+
+  <VisitCTA />
+</PageShell>

@@ -1,0 +1,54 @@
+---
+import AlbumCard from './AlbumCard.astro';
+
+interface Album {
+  slug: string;
+  title: string;
+  date: string;
+  category: string;
+  coverUrl?: string | null;
+  coverAlt?: string;
+}
+
+interface Props {
+  albums: Album[];
+  initialCount?: number;
+  class?: string;
+}
+
+const { albums, initialCount = 9, class: className } = Astro.props;
+const visible = albums.slice(0, initialCount);
+---
+
+<div class:list={['album-grid', className]}>
+  {
+    visible.map((album) => (
+      <AlbumCard
+        slug={album.slug}
+        title={album.title}
+        date={album.date}
+        category={album.category}
+        coverUrl={album.coverUrl}
+        coverAlt={album.coverAlt}
+      />
+    ))
+  }
+</div>
+
+<style>
+  .album-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  @media (min-width: 768px) {
+    .album-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1100px) {
+    .album-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+interface Props {
+  title: string;
+  intro?: string;
+  link?: { href: string; label: string };
+  id?: string;
+  class?: string;
+}
+
+const { title, intro, link, id, class: className } = Astro.props;
+---
+
+<div class:list={['section-heading', className]} {id}>
+  <div class="section-heading-text">
+    <h2>{title}</h2>
+    {intro && <p class="reading">{intro}</p>}
+  </div>
+  {
+    link && (
+      <a href={link.href} class="section-heading-link">
+        {link.label}
+      </a>
+    )
+  }
+</div>
+
+<style>
+  .section-heading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .section-heading-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  h2 {
+    margin: 0;
+    font-size: 1.875rem;
+    line-height: 1.15;
+  }
+  p {
+    margin: 0;
+    color: var(--text-ink);
+  }
+  .section-heading-link {
+    color: var(--brand-navy);
+    font-weight: 500;
+    text-decoration: underline;
+    align-self: flex-start;
+  }
+  .section-heading-link:hover {
+    color: var(--text-ink);
+  }
+  @media (min-width: 768px) {
+    h2 {
+      font-size: 2.25rem;
+    }
+  }
+  @media (min-width: 1100px) {
+    h2 {
+      font-size: 2.5rem;
+    }
+  }
+</style>

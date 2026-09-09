@@ -1,0 +1,28 @@
+---
+interface Props {
+  href: string;
+  class?: string;
+}
+const { href, class: className } = Astro.props;
+---
+
+<a {href} class:list={['text-link', className]}>
+  <slot />
+</a>
+
+<style>
+  .text-link {
+    color: var(--brand-navy);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .text-link:hover {
+    color: var(--text-ink);
+  }
+  :global(.focus-on-navy) .text-link:focus-visible,
+  .text-link:focus-visible {
+    outline: 3px solid var(--brand-navy);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px white;
+  }
+</style>

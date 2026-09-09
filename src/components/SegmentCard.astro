@@ -1,0 +1,105 @@
+---
+import AssetPlaceholder from './AssetPlaceholder.astro';
+
+interface Props {
+  slug: string;
+  name: string;
+  summary?: string | null;
+  imageUrl?: string | null;
+  imageAlt?: string;
+  class?: string;
+}
+
+const {
+  slug,
+  name,
+  summary,
+  imageUrl,
+  imageAlt,
+  class: className,
+} = Astro.props;
+const href = `/ensino#${slug}`;
+---
+
+<a {href} class:list={['segment-card', className]}>
+  {
+    imageUrl ? (
+      <div class="card-media">
+        <img
+          src={imageUrl}
+          alt={imageAlt || name}
+          width="400"
+          height="300"
+          loading="lazy"
+        />
+      </div>
+    ) : (
+      <AssetPlaceholder aspectRatio="4/3" />
+    )
+  }
+  <div class="card-body">
+    <h3 class="card-title">{name}</h3>
+    {summary && <p class="card-summary">{summary}</p>}
+    <span class="card-link">Conhecer esta etapa</span>
+  </div>
+</a>
+
+<style>
+  .segment-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-base);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+  }
+  .segment-card:hover,
+  .segment-card:focus-within {
+    box-shadow: var(--shadow);
+    border-color: var(--brand-navy);
+  }
+  .segment-card:focus-visible {
+    outline: 3px solid var(--brand-navy);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px white;
+  }
+  .card-media {
+    overflow: hidden;
+  }
+  .card-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+  }
+  .card-body {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1;
+  }
+  .card-title {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  .card-summary {
+    margin: 0;
+    color: var(--text-ink);
+  }
+  .card-link {
+    color: var(--brand-navy);
+    font-weight: 500;
+    text-decoration: underline;
+    margin-top: auto;
+  }
+  @media (max-width: 767px) {
+    .card-body {
+      padding: var(--space-5);
+    }
+  }
+</style>

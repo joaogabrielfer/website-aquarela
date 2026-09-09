@@ -1,0 +1,33 @@
+name:
+  {
+    value: Aquarela Colégio e Curso,
+    review:
+      &review {
+        status: observed,
+        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        reviewedAt: null,
+        reviewedBy: null,
+      },
+  }
+tagline:
+  { value: 'Presente em todos os momentos da sua vida!', review: *review }
+phoneE164: { value: '+5581982177132', review: *review }
+whatsappE164: null
+locality: { value: Paulista/PE, review: *review }
+address:
+  {
+    value:
+      {
+        street: Rua Araxá,
+        neighborhood: Loteamento Conceição,
+        city: Paulista,
+        state: PE,
+        number: null,
+        postalCode: null,
+      },
+    review: *review,
+  }
+mapUrl: null
+officeHours: null
+instagramUrl:
+  { value: 'https://www.instagram.com/aquarelacolegioecurso/', review: *review }

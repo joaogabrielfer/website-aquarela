@@ -1,0 +1,60 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import PageIntro from '../components/PageIntro.astro';
+import ContactPanel from '../components/ContactPanel.astro';
+import FAQ from '../components/FAQ.astro';
+import { h1, pageTitles } from '../lib/copy';
+import {
+  getActivities,
+  getSegments,
+  getFaqs,
+  getPageCopy,
+} from '../lib/content';
+
+const pageCopy = getPageCopy('visite');
+const segments = getSegments();
+const activities = getActivities();
+const faqs = getFaqs('visita');
+const interestQuery = Astro.url.searchParams.get('interesse');
+---
+
+<PageShell
+  title={pageTitles.visite}
+  description={pageCopy?.metaDescription ?? 'Entre em contato com o Aquarela.'}
+>
+  <PageIntro
+    breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Visite' }]}
+    title={h1.visite}
+    intro={pageCopy?.intro ?? undefined}
+    variant="paper"
+  />
+
+  <section class="section-contact">
+    <div class="container">
+      <ContactPanel
+        interestQuery={interestQuery}
+        segments={segments.map((s) => ({ slug: s.slug, name: s.name }))}
+        activities={activities.map((a) => ({ slug: a.slug, name: a.name }))}
+      />
+    </div>
+  </section>
+
+  {faqs.length > 0 && <FAQ items={faqs} />}
+</PageShell>
+
+<style>
+  .section-contact {
+    padding: var(--space-12) 0;
+    background: var(--surface-base);
+  }
+  @media (min-width: 768px) {
+    .section-contact {
+      padding: var(--space-16) 0;
+    }
+  }
+  @media (min-width: 1100px) {
+    .section-contact {
+      padding: var(--space-20) 0;
+    }
+  }
+</style>

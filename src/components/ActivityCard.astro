@@ -1,0 +1,140 @@
+---
+interface Props {
+  variant: 'summary' | 'detail';
+  name: string;
+  summary?: string;
+  description?: string;
+  audience?: string;
+  shifts?: string[];
+  location?: string | null;
+  conditions?: string | null;
+  slug?: string;
+  imageUrl?: string | null;
+  imageAlt?: string;
+  class?: string;
+}
+
+const {
+  variant,
+  name,
+  summary,
+  description,
+  audience,
+  shifts,
+  location,
+  conditions,
+  slug,
+  imageUrl,
+  imageAlt,
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={['activity-card', `activity-card--${variant}`, className]}>
+  {
+    imageUrl && (
+      <div class="card-media">
+        <img
+          src={imageUrl}
+          alt={imageAlt || name}
+          width="400"
+          height="300"
+          loading="lazy"
+        />
+      </div>
+    )
+  }
+  <div class="card-body">
+    <h3 class="card-title">{name}</h3>
+    {variant === 'summary' && summary && <p class="card-text">{summary}</p>}
+    {
+      variant === 'detail' && (
+        <>
+          {description && <p class="card-text">{description}</p>}
+          {audience && (
+            <p class="card-text">
+              <strong>Público:</strong> {audience}
+            </p>
+          )}
+          {shifts && shifts.length > 0 && (
+            <p class="card-text">
+              <strong>Turnos:</strong> {shifts.join(', ')}
+            </p>
+          )}
+          {location && (
+            <p class="card-text">
+              <strong>Local:</strong> {location}
+            </p>
+          )}
+          {conditions && (
+            <p class="card-text">
+              <strong>Condições:</strong> {conditions}
+            </p>
+          )}
+        </>
+      )
+    }
+    {
+      variant === 'summary' && (
+        <a href="/atividades" class="card-link">
+          Ver atividades
+        </a>
+      )
+    }
+    {
+      variant === 'detail' && slug && (
+        <a href={`/visite?interesse=atividade-${slug}`} class="card-link">
+          Consultar esta atividade
+        </a>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .activity-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-base);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .card-media {
+    overflow: hidden;
+  }
+  .card-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+  }
+  .card-body {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1;
+  }
+  .card-title {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  .card-text {
+    margin: 0;
+    color: var(--text-ink);
+  }
+  .card-link {
+    color: var(--brand-navy);
+    font-weight: 500;
+    text-decoration: underline;
+    margin-top: auto;
+  }
+  @media (max-width: 767px) {
+    .card-body {
+      padding: var(--space-5);
+    }
+  }
+</style>

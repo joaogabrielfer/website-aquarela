@@ -1,0 +1,107 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import PageIntro from '../components/PageIntro.astro';
+import ActivityCard from '../components/ActivityCard.astro';
+import FAQ from '../components/FAQ.astro';
+import EmptyState from '../components/EmptyState.astro';
+import VisitCTA from '../components/VisitCTA.astro';
+import { h1, pageTitles, empty } from '../lib/copy';
+import {
+  getActivities,
+  getFaqs,
+  getMediaById,
+  getPageCopy,
+} from '../lib/content';
+
+const pageCopy = getPageCopy('atividades');
+const activities = getActivities();
+const faqs = getFaqs('atividades');
+const hasActivities = activities.length > 0;
+---
+
+<PageShell
+  title={pageTitles.atividades}
+  description={pageCopy?.metaDescription ??
+    'Conheça as atividades do Aquarela.'}
+>
+  <PageIntro
+    breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Atividades' }]}
+    title={h1.atividades}
+    intro={pageCopy?.intro ?? undefined}
+    variant="activities"
+  />
+
+  {
+    hasActivities ? (
+      <section class="section-activities">
+        <div class="container">
+          <div class="activity-grid">
+            {activities.map((act) => {
+              const media = act.imageId ? getMediaById(act.imageId) : null;
+              return (
+                <ActivityCard
+                  variant="detail"
+                  name={act.name}
+                  summary={act.summary}
+                  description={act.description}
+                  audience={act.audience}
+                  shifts={act.shifts}
+                  location={act.location}
+                  conditions={act.conditions}
+                  slug={act.slug}
+                  imageUrl={media?.src ?? null}
+                  imageAlt={media?.alt ?? act.name}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    ) : (
+      <section class="section-empty">
+        <div class="container">
+          <EmptyState
+            title={empty.activities[0]}
+            text={empty.activities[1]}
+            link={{ href: '/visite', label: 'Fale com a equipe' }}
+          />
+        </div>
+      </section>
+    )
+  }
+
+  {faqs.length > 0 && <FAQ items={faqs} />}
+
+  <VisitCTA />
+</PageShell>
+
+<style>
+  .section-activities,
+  .section-empty {
+    padding: var(--space-12) 0;
+    background: var(--surface-base);
+  }
+  .activity-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  @media (min-width: 768px) {
+    .section-activities,
+    .section-empty {
+      padding: var(--space-16) 0;
+    }
+    .activity-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1100px) {
+    .section-activities,
+    .section-empty {
+      padding: var(--space-20) 0;
+    }
+    .activity-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,119 @@
+---
+import { navigation } from '../lib/copy';
+import { BUILD_MODE } from '../lib/env';
+import { getPublicSchool } from '../lib/content/school';
+import { formatPhone, whatsappUrl } from '../lib/urls';
+
+const school = getPublicSchool();
+const isPreview = BUILD_MODE === 'editorial-preview';
+const hasApprovedContact = Boolean(
+  school.phoneE164 ||
+  school.whatsappE164 ||
+  school.mapUrl ||
+  school.officeHours,
+);
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <img
+        src="/brand/logo-aquarela-360.png"
+        alt="Aquarela"
+        width="180"
+        height="52"
+      />
+      {school.tagline && <p class="tagline">{school.tagline}</p>}
+    </div>
+    <nav aria-label="Navegação do rodapé">
+      <strong>Navegação</strong>
+      {navigation.map((item) => <a href={item.href}>{item.label}</a>)}
+      <a href="/privacidade">Privacidade</a>
+    </nav>
+    <div>
+      <strong>Contato</strong>
+      {
+        isPreview && !hasApprovedContact ? (
+          <p class="pending">Contato aguardando confirmação</p>
+        ) : (
+          <>
+            {school.locality && <p>{school.locality}</p>}
+            {school.phoneE164 && (
+              <a href={`tel:${school.phoneE164}`}>
+                {formatPhone(school.phoneE164)}
+              </a>
+            )}
+            {school.whatsappE164 && (
+              <a href={whatsappUrl(school.whatsappE164)}>WhatsApp</a>
+            )}
+            {school.instagramUrl && (
+              <a href={school.instagramUrl} target="_blank" rel="noopener">
+                Instagram
+              </a>
+            )}
+          </>
+        )
+      }
+    </div>
+  </div>
+  <p class="copyright">
+    © {new Date().getFullYear()} Aquarela Colégio e Curso
+  </p>
+</footer>
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border-subtle);
+    padding: var(--space-12) 0 var(--space-6);
+    background: white;
+  }
+  .footer-grid {
+    display: grid;
+    gap: var(--space-8);
+  }
+  .footer-grid img {
+    width: 180px;
+    height: auto;
+  }
+  .tagline {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-top: var(--space-2);
+  }
+  .footer-grid nav,
+  .footer-grid > div:last-child {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  .footer-grid a {
+    color: var(--text-ink);
+  }
+  .pending {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .copyright {
+    max-width: 1296px;
+    margin: var(--space-8) auto 0;
+    padding: 0 20px;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+  @media (min-width: 768px) {
+    .footer-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .copyright {
+      padding-inline: 32px;
+    }
+  }
+  @media (min-width: 1100px) {
+    .footer-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .copyright {
+      padding-inline: 48px;
+    }
+  }
+</style>

@@ -1,0 +1,100 @@
+---
+interface Props {
+  title: string;
+  paragraphs?: string[];
+  facts?: string[];
+  imageUrl?: string | null;
+  imageAlt?: string;
+  class?: string;
+}
+
+const {
+  title,
+  paragraphs = [],
+  facts = [],
+  imageUrl,
+  imageAlt,
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={['media-text', className]}>
+  <div class="media-text-content">
+    <h2>{title}</h2>
+    {paragraphs.map((p) => <p>{p}</p>)}
+    {
+      facts.length > 0 && (
+        <ul class="facts-list">
+          {facts.map((fact) => (
+            <li>{fact}</li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+  {
+    imageUrl && (
+      <div class="media-text-image">
+        <img
+          src={imageUrl}
+          alt={imageAlt || title}
+          width="600"
+          height="450"
+          loading="lazy"
+        />
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .media-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .media-text-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  h2 {
+    margin: 0;
+    font-size: 1.875rem;
+    line-height: 1.15;
+  }
+  p {
+    margin: 0;
+    color: var(--text-ink);
+  }
+  .facts-list {
+    margin: 0;
+    padding-left: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    color: var(--text-ink);
+  }
+  .media-text-image {
+    overflow: hidden;
+    border-radius: var(--radius-media);
+  }
+  .media-text-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+  }
+  @media (min-width: 1100px) {
+    .media-text {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12);
+      align-items: center;
+    }
+    h2 {
+      font-size: 2.5rem;
+    }
+  }
+</style>

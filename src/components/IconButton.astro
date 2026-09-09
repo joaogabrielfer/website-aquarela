@@ -1,0 +1,64 @@
+---
+interface Props {
+  icon: string;
+  accessibleLabel: string;
+  href?: string;
+  class?: string;
+  type?: 'button' | 'submit' | 'reset';
+}
+
+const {
+  icon,
+  accessibleLabel,
+  href,
+  class: className,
+  type = 'button',
+  ...rest
+} = Astro.props;
+
+const isLink = href !== undefined;
+const Tag = isLink ? 'a' : 'button';
+const tagProps = isLink ? { href } : { type };
+---
+
+<Tag
+  class:list={['icon-btn', className]}
+  {...tagProps}
+  aria-label={accessibleLabel}
+  {...rest}
+>
+  <span class="icon-btn-icon" aria-hidden="true">{icon}</span>
+</Tag>
+
+<style>
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-control);
+    background: white;
+    color: var(--text-ink);
+    font-size: 1.25rem;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .icon-btn:hover {
+    background: var(--surface-paper);
+  }
+  .icon-btn:focus-visible {
+    outline: 3px solid var(--brand-navy);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px white;
+  }
+  .icon-btn-icon {
+    display: inline-flex;
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+</style>

@@ -1,0 +1,249 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import HeroHome from '../components/HeroHome.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import SegmentCard from '../components/SegmentCard.astro';
+import MediaText from '../components/MediaText.astro';
+import GalleryPreview from '../components/GalleryPreview.astro';
+import ActivityCard from '../components/ActivityCard.astro';
+import ApprovalCard from '../components/ApprovalCard.astro';
+import AlbumCard from '../components/AlbumCard.astro';
+import VisitCTA from '../components/VisitCTA.astro';
+import { h1, pageTitles } from '../lib/copy';
+import {
+  getPageCopy,
+  getSegments,
+  getFeaturedActivities,
+  getFeaturedApprovals,
+  getEnvironmentPhotos,
+  getAlbums,
+} from '../lib/content';
+
+const pageCopy = getPageCopy('home');
+const segments = getSegments();
+const featuredActivities = getFeaturedActivities(3);
+const featuredApprovals = getFeaturedApprovals(3);
+const environmentPhotos = getEnvironmentPhotos().slice(0, 3);
+const albums = getAlbums().slice(0, 3);
+
+// Home photo: look for approved media referenced somewhere
+// In preview mode, we use AssetPlaceholder if no photo
+const support = pageCopy?.intro ?? '';
+
+// Check if proposal data exists (would come from a proposal content file)
+// getProposal() is not yet implemented; section omitted when null
+const getProposal = (): {
+  intro: string;
+  facts: [string, string, string];
+  imageId: string;
+} | null => null;
+const proposal = getProposal();
+---
+
+<PageShell
+  title={pageTitles.home}
+  description={pageCopy?.metaDescription ??
+    'Conheça o Aquarela Colégio e Curso em Paulista/PE.'}
+>
+  {/* 1. HeroHome — fundo paper */}
+  <HeroHome title={h1.home} support={support} />
+
+  {/* 2. Etapas — fundo branco */}
+  <section class="section-etas" id="etapas">
+    <div class="container">
+      <SectionHeading title="Ensino em cada fase" />
+      <div class="segment-grid">
+        {
+          segments.map((seg) => (
+            <SegmentCard
+              slug={seg.slug}
+              name={seg.name}
+              summary={seg.summary}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {/* 3. Proposta — fundo paper (omitida sem dados) */}
+  {
+    proposal !== null && proposal !== undefined && (
+      <section class="section-proposta" id="proposta">
+        <div class="container">
+          <MediaText
+            title="O jeito Aquarela de aprender"
+            facts={proposal.facts}
+          />
+        </div>
+      </section>
+    )
+  }
+
+  {/* 4. Espaços — fundo branco (omitida sem fotos de ambientes) */}
+  {
+    environmentPhotos.length > 0 && (
+      <section class="section-espacos" id="espacos">
+        <div class="container">
+          <SectionHeading title="Espaço para novas descobertas" />
+          <GalleryPreview
+            photos={environmentPhotos.map((p) => ({
+              src: p.src,
+              alt: p.alt,
+              caption: p.caption,
+            }))}
+          />
+          <a href="/nosso-espaco" class="section-link">
+            Conheça nosso espaço
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  {/* 5. Atividades — fundo paper (omitida sem featured) */}
+  {
+    featuredActivities.length > 0 && (
+      <section class="section-atividades" id="atividades">
+        <div class="container">
+          <SectionHeading title="Além da sala de aula" />
+          <div class="card-grid card-grid--3">
+            {featuredActivities.map((act) => (
+              <ActivityCard
+                variant="summary"
+                name={act.name}
+                summary={act.summary}
+              />
+            ))}
+          </div>
+          <a href="/atividades" class="section-link">
+            Ver atividades
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  {/* 6. Conquistas — fundo branco (omitida sem featured) */}
+  {
+    featuredApprovals.length > 0 && (
+      <section class="section-conquistas" id="conquistas">
+        <div class="container">
+          <SectionHeading title="Histórias e conquistas" />
+          <div class="card-grid card-grid--3">
+            {featuredApprovals.map((app) => (
+              <ApprovalCard
+                displayName={app.displayName}
+                course={app.course}
+                institution={app.institution}
+                selectionProcess={app.selectionProcess}
+                year={app.year}
+              />
+            ))}
+          </div>
+          <a href="/aprovacoes" class="section-link">
+            Conheça as aprovações
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  {/* 7. Vida Aquarela — fundo paper (omitida sem álbuns) */}
+  {
+    albums.length > 0 && (
+      <section class="section-vida" id="vida-aquarela">
+        <div class="container">
+          <SectionHeading title="A vida no Aquarela" />
+          <div class="card-grid card-grid--3">
+            {albums.map((album) => (
+              <AlbumCard
+                slug={album.slug}
+                title={album.title}
+                date={album.date}
+                category={album.category}
+              />
+            ))}
+          </div>
+          <a href="/galeria" class="section-link">
+            Ver galeria
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  {/* 8. Visita — fundo navy */}
+  <VisitCTA />
+</PageShell>
+
+<style>
+  .section-etas,
+  .section-espacos,
+  .section-conquistas {
+    background: var(--surface-base);
+    padding: var(--space-12) 0;
+  }
+  .section-proposta,
+  .section-atividades,
+  .section-vida {
+    background: var(--surface-paper);
+    padding: var(--space-12) 0;
+  }
+  .segment-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+  }
+  .section-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: var(--space-6);
+    color: var(--brand-navy);
+    font-weight: 500;
+    text-decoration: underline;
+  }
+  @media (min-width: 768px) {
+    .segment-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .card-grid--3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1100px) {
+    .segment-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .card-grid--3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (min-width: 768px) {
+    .section-etas,
+    .section-espacos,
+    .section-conquistas,
+    .section-proposta,
+    .section-atividades,
+    .section-vida {
+      padding: var(--space-16) 0;
+    }
+  }
+  @media (min-width: 1100px) {
+    .section-etas,
+    .section-espacos,
+    .section-conquistas,
+    .section-proposta,
+    .section-atividades,
+    .section-vida {
+      padding: var(--space-20) 0;
+    }
+  }
+</style>

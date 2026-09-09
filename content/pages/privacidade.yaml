@@ -1,0 +1,13 @@
+{
+  id: privacidade,
+  title: Privacidade,
+  intro: null,
+  metaDescription: 'Privacidade no Aquarela.',
+  review:
+    {
+      status: draft,
+      source: 'https://www.instagram.com/aquarelacolegioecurso/',
+      reviewedAt: null,
+      reviewedBy: null,
+    },
+}

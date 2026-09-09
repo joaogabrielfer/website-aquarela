@@ -34,16 +34,16 @@ O inventário do Figma vem das operações verificadas na etapa anterior, regist
 
 Fonte: [perfil público @aquarelacolegioecurso](https://www.instagram.com/aquarelacolegioecurso/), consultado no navegador em 08/09/2026. A leitura automática da página falhou; o navegador exibiu a bio, os títulos dos destaques e as miniaturas. Ao abrir uma publicação, o Instagram exigiu login. Não foram verificadas legendas completas, datas ou o conteúdo dos stories.
 
-| Informação observada | Uso possível | Limite da evidência |
-| --- | --- | --- |
-| Nome Aquarela Colégio e Curso | Identificação e assinatura | Não esclarece quais cursos independentes existem |
-| “Presente em todos os momentos da sua vida!” | Referência para tom de continuidade | Não substituir automaticamente por um novo slogan |
-| Telefone (81) 98217-7132 | Contato público, link de ligação | A bio não confirmou que o número atende por WhatsApp |
-| Rua Araxá, Loteamento Conceição — Paulista/PE | Contexto local no banner e contato | Número, CEP, ponto do mapa e acesso precisam ser confirmados |
-| Destaques de Educação Infantil, Anos Iniciais, Anos Finais e Ensino Médio | Base para organizar os quatro segmentos | Não confirma séries, faixas etárias, vagas ou turnos atuais |
-| Destaques de Ginástica, Natação e Balé | Candidatos prioritários para a página de atividades | Confirmar oferta atual, público, horários e condições |
-| Destaques de Aprovações e FECAQ 2025 | Indicam acervo potencial de resultados e eventos | Não deduzir números, significado da sigla ou edição atual |
-| Destaque EVERGLOW | Pauta para esclarecer com a escola | Não inferir que seja programa bilíngue, parceiro ou modalidade |
+| Informação observada                                                      | Uso possível                                        | Limite da evidência                                            |
+| ------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------- |
+| Nome Aquarela Colégio e Curso                                             | Identificação e assinatura                          | Não esclarece quais cursos independentes existem               |
+| “Presente em todos os momentos da sua vida!”                              | Referência para tom de continuidade                 | Não substituir automaticamente por um novo slogan              |
+| Telefone (81) 98217-7132                                                  | Contato público, link de ligação                    | A bio não confirmou que o número atende por WhatsApp           |
+| Rua Araxá, Loteamento Conceição — Paulista/PE                             | Contexto local no banner e contato                  | Número, CEP, ponto do mapa e acesso precisam ser confirmados   |
+| Destaques de Educação Infantil, Anos Iniciais, Anos Finais e Ensino Médio | Base para organizar os quatro segmentos             | Não confirma séries, faixas etárias, vagas ou turnos atuais    |
+| Destaques de Ginástica, Natação e Balé                                    | Candidatos prioritários para a página de atividades | Confirmar oferta atual, público, horários e condições          |
+| Destaques de Aprovações e FECAQ 2025                                      | Indicam acervo potencial de resultados e eventos    | Não deduzir números, significado da sigla ou edição atual      |
+| Destaque EVERGLOW                                                         | Pauta para esclarecer com a escola                  | Não inferir que seja programa bilíngue, parceiro ou modalidade |
 
 Não usar número de seguidores como prova de qualidade educacional. Não transferir serviços das escolas pesquisadas para o Aquarela. Fotos públicas não são automaticamente arquivos adequados ou autorizados para republicação no site: solicitar os originais selecionados pelo colégio.
 
@@ -51,12 +51,12 @@ Não usar número de seguidores como prova de qualidade educacional. Não transf
 
 Pesquisa qualitativa de páginas públicas, arquitetura de informação e capturas no navegador. Não houve acesso a métricas de conversão, testes de usuários ou auditoria completa de desempenho. “Adotar” e “evitar” abaixo são recomendações de design para este projeto, não resultados medidos das escolas.
 
-| Referência | Observação | Adaptação recomendada | O que não transportar |
-| --- | --- | --- | --- |
-| [CESAR School](https://www.cesar.school/) | Destaques de campanha, hierarquia de títulos, caminhos por oferta e acesso a visita/contato | Aproveitar o impacto editorial e atalhos por interesse; usar segmentos escolares em vez de catálogo universitário | Navegação extensa, linguagem de ensino superior e dependência de carrosséis. Sua escola é de outro segmento: é referência visual, não equivalente direto |
-| [Santa Emília — Olinda](https://colegiosantaemilia.com.br/olinda/) | Fotografia de estudante e ambientes na abertura; blocos por etapa; atividades complementares; estrutura e contato | Mostrar pessoas reais, conectar proposta à faixa escolar e explicar a função de cada ambiente | Colagem muito carregada no banner, texto sobre muitas imagens e galerias longas sem curadoria. Não copiar programas, resultados ou valores institucionais |
-| [Escola Concept — Ensino](https://www.escolaconcept.com.br/portuguese/ensino) e [inicial](https://www.escolaconcept.com.br/portuguese) | Segmentos explícitos, explicação da experiência de aprendizagem, visita, fotografias e depoimentos. A inicial exibiu convite em modal para tour | Organizar conteúdo pela pergunta da família: “como é esta etapa?”; manter visita acessível e depoimentos contextualizados | Pop-up de entrada, tour 360° no MVP e quantidade de interações da página. A organização de séries da Concept não deve ser aplicada ao Aquarela |
-| [Beit Yaacov](https://beityaacov.com.br/) | Abertura com imagem/vídeo do campus, história, linha do tempo, etapas e explicação de valores | Traduzir identidade institucional em fatos e histórias; aproveitar uma história breve com foto real | Longa cronologia na home, vídeo obrigatório e terminologia própria. Tradições e certificações são específicas da instituição |
+| Referência                                                                                                                             | Observação                                                                                                                                      | Adaptação recomendada                                                                                                     | O que não transportar                                                                                                                                     |
+| -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [CESAR School](https://www.cesar.school/)                                                                                              | Destaques de campanha, hierarquia de títulos, caminhos por oferta e acesso a visita/contato                                                     | Aproveitar o impacto editorial e atalhos por interesse; usar segmentos escolares em vez de catálogo universitário         | Navegação extensa, linguagem de ensino superior e dependência de carrosséis. Sua escola é de outro segmento: é referência visual, não equivalente direto  |
+| [Santa Emília — Olinda](https://colegiosantaemilia.com.br/olinda/)                                                                     | Fotografia de estudante e ambientes na abertura; blocos por etapa; atividades complementares; estrutura e contato                               | Mostrar pessoas reais, conectar proposta à faixa escolar e explicar a função de cada ambiente                             | Colagem muito carregada no banner, texto sobre muitas imagens e galerias longas sem curadoria. Não copiar programas, resultados ou valores institucionais |
+| [Escola Concept — Ensino](https://www.escolaconcept.com.br/portuguese/ensino) e [inicial](https://www.escolaconcept.com.br/portuguese) | Segmentos explícitos, explicação da experiência de aprendizagem, visita, fotografias e depoimentos. A inicial exibiu convite em modal para tour | Organizar conteúdo pela pergunta da família: “como é esta etapa?”; manter visita acessível e depoimentos contextualizados | Pop-up de entrada, tour 360° no MVP e quantidade de interações da página. A organização de séries da Concept não deve ser aplicada ao Aquarela            |
+| [Beit Yaacov](https://beityaacov.com.br/)                                                                                              | Abertura com imagem/vídeo do campus, história, linha do tempo, etapas e explicação de valores                                                   | Traduzir identidade institucional em fatos e histórias; aproveitar uma história breve com foto real                       | Longa cronologia na home, vídeo obrigatório e terminologia própria. Tradições e certificações são específicas da instituição                              |
 
 Síntese aplicada: fotografia para criar reconhecimento; segmentos para orientar a escolha; conteúdo institucional concreto para gerar confiança; contato simples para avançar. Para o Aquarela, essas quatro funções são mais importantes que multiplicar páginas ou efeitos.
 
@@ -64,15 +64,15 @@ Síntese aplicada: fotografia para criar reconhecimento; segmentos para orientar
 
 Recomendação: preservar as cinco páginas solicitadas e acrescentar duas páginas pequenas, Ensino e Visite. As páginas de cada segmento podem começar como seções com âncoras, evitando quatro páginas rasas adicionais.
 
-| Rota | Título | Pergunta respondida | Ação principal |
-| --- | --- | --- | --- |
-| `/` | Início | Esta escola combina com nossa família? | Conhecer a escola |
-| `/ensino` | Ensino | Como funciona a etapa que procuro? | Conversar sobre a etapa |
-| `/nosso-espaco` | Conheça nosso espaço | Onde meu filho vai aprender e conviver? | Solicitar uma visita |
-| `/aprovacoes` | Aprovações | Quais conquistas podem ser verificadas? | Conhecer o Ensino Médio |
-| `/atividades` | Atividades extracurriculares | O que pode complementar a formação? | Consultar atividades |
-| `/galeria` | Galeria | Como é a vida na escola? | Explorar um álbum |
-| `/visite` | Venha conhecer o Aquarela | Onde fica e como falar com a equipe? | Ligar / abrir WhatsApp confirmado |
+| Rota            | Título                       | Pergunta respondida                     | Ação principal                    |
+| --------------- | ---------------------------- | --------------------------------------- | --------------------------------- |
+| `/`             | Início                       | Esta escola combina com nossa família?  | Conhecer a escola                 |
+| `/ensino`       | Ensino                       | Como funciona a etapa que procuro?      | Conversar sobre a etapa           |
+| `/nosso-espaco` | Conheça nosso espaço         | Onde meu filho vai aprender e conviver? | Solicitar uma visita              |
+| `/aprovacoes`   | Aprovações                   | Quais conquistas podem ser verificadas? | Conhecer o Ensino Médio           |
+| `/atividades`   | Atividades extracurriculares | O que pode complementar a formação?     | Consultar atividades              |
+| `/galeria`      | Galeria                      | Como é a vida na escola?                | Explorar um álbum                 |
+| `/visite`       | Venha conhecer o Aquarela    | Onde fica e como falar com a equipe?    | Ligar / abrir WhatsApp confirmado |
 
 Rotas de apoio: `/galeria/[album]` apenas para álbuns publicados; `/privacidade` com conteúdo específico do funcionamento real do site. “Curso” não ganha rota própria até que a oferta seja esclarecida.
 
@@ -170,34 +170,34 @@ O MVP não precisa de formulário. Se adotado depois, deve ter destino real, est
 
 Os hexadecimais originais foram propostos visualmente a partir da logo; não são apresentados como manual oficial da marca. Preservar o arquivo da logo. Tons novos servem à interface, não à recoloração da marca.
 
-| Token sugerido | Cor | Função |
-| --- | --- | --- |
-| `brand.navy` | `#004C73` | Títulos, links e elementos institucionais |
-| `brand.red` | `#F51623` | Acentos, faixas e pequenos elementos gráficos |
-| `brand.orange` | `#FA5721` | Detalhes gráficos; evitar texto pequeno sobre branco |
-| `brand.yellow` | `#FFBF0C` | Destaques de conquistas e pequenas superfícies |
-| `brand.cyan` | `#00B5E2` | Destaques de espaços e identidade gráfica |
-| `brand.purple` | `#96248F` | Acentos de atividades e superfícies pontuais |
-| `surface.paper` | `#FFF9EF` | Superfície acolhedora do banner e alternância de seções |
-| `surface.base` | `#FFFFFF` | Base de leitura e fotografias |
-| `text.muted` | `#516574` | Texto secundário em fundos claros |
-| `text.ink` — novo | `#123747` | Texto corrido e texto sobre ciano |
-| `action.primary` — novo | `#D91424` | Botão principal com texto branco |
+| Token sugerido          | Cor       | Função                                                  |
+| ----------------------- | --------- | ------------------------------------------------------- |
+| `brand.navy`            | `#004C73` | Títulos, links e elementos institucionais               |
+| `brand.red`             | `#F51623` | Acentos, faixas e pequenos elementos gráficos           |
+| `brand.orange`          | `#FA5721` | Detalhes gráficos; evitar texto pequeno sobre branco    |
+| `brand.yellow`          | `#FFBF0C` | Destaques de conquistas e pequenas superfícies          |
+| `brand.cyan`            | `#00B5E2` | Destaques de espaços e identidade gráfica               |
+| `brand.purple`          | `#96248F` | Acentos de atividades e superfícies pontuais            |
+| `surface.paper`         | `#FFF9EF` | Superfície acolhedora do banner e alternância de seções |
+| `surface.base`          | `#FFFFFF` | Base de leitura e fotografias                           |
+| `text.muted`            | `#516574` | Texto secundário em fundos claros                       |
+| `text.ink` — novo       | `#123747` | Texto corrido e texto sobre ciano                       |
+| `action.primary` — novo | `#D91424` | Botão principal com texto branco                        |
 
 Orientação de composição, não contagem rígida de pixels: aproximadamente 70% de áreas neutras, 20% de fotografia/azul e 10% de acentos. No máximo duas cores saturadas dominantes por seção. Manter o mesmo tratamento dos botões entre páginas; a cor do CTA não muda com o tema da seção.
 
 **Contrastes calculados em sRGB, para pares sólidos, sem transparência:**
 
-| Par | Razão aproximada | Decisão |
-| --- | --- | --- |
-| Branco / vermelho original | 4,18:1 | Não usar em texto pequeno de botão |
-| Branco / vermelho de ação | 5,15:1 | Usar no CTA principal |
-| Azul original / ciano | 3,82:1 | Corrigir textos pequenos da abertura de Espaço |
-| Ink / ciano | 5,24:1 | Usar quando houver texto nesse fundo |
-| Branco / roxo | 7,13:1 | Combinação disponível para superfície roxa |
-| Azul / amarelo | 5,57:1 | Combinação para conquistas |
-| Azul / creme | 8,79:1 | Combinação principal para títulos |
-| Texto secundário / branco | 6,06:1 | Combinação para leitura secundária |
+| Par                        | Razão aproximada | Decisão                                        |
+| -------------------------- | ---------------- | ---------------------------------------------- |
+| Branco / vermelho original | 4,18:1           | Não usar em texto pequeno de botão             |
+| Branco / vermelho de ação  | 5,15:1           | Usar no CTA principal                          |
+| Azul original / ciano      | 3,82:1           | Corrigir textos pequenos da abertura de Espaço |
+| Ink / ciano                | 5,24:1           | Usar quando houver texto nesse fundo           |
+| Branco / roxo              | 7,13:1           | Combinação disponível para superfície roxa     |
+| Azul / amarelo             | 5,57:1           | Combinação para conquistas                     |
+| Azul / creme               | 8,79:1           | Combinação principal para títulos              |
+| Texto secundário / branco  | 6,06:1           | Combinação para leitura secundária             |
 
 Meta de projeto: pelo menos 4,5:1 em texto normal; testar também estados interativos e texto sobre fotografias. Esta tabela não certifica a acessibilidade do site completo. Preferir texto fora das fotos a depender de filtros escuros para fazê-lo aparecer.
 
@@ -205,15 +205,15 @@ Meta de projeto: pelo menos 4,5:1 em texto normal; testar também estados intera
 
 Manter **Outfit**, já usada no Figma, em pesos 400, 500 e 700. Uma única família é suficiente. Texto corrido em peso regular, sem centralizar parágrafos longos. Máximo aproximado de 65 caracteres por linha nas áreas de leitura.
 
-| Uso | Desktop | Mobile | Entrelinha |
-| --- | --- | --- | --- |
-| Título principal da home | 64–72 px | 38–44 px | 1,05–1,1 |
-| Título de página interna | 48–56 px | 34–40 px | 1,1 |
-| Título de seção | 36–42 px | 28–32 px | 1,15 |
-| Título de card | 22–26 px | 22–24 px | 1,2 |
-| Texto corrido | 18 px | 16–18 px | 1,5–1,65 |
-| Navegação / botão | 16 px | 16 px | 1,3 |
-| Legenda | 14 px | 14 px | 1,4 |
+| Uso                      | Desktop  | Mobile   | Entrelinha |
+| ------------------------ | -------- | -------- | ---------- |
+| Título principal da home | 64–72 px | 38–44 px | 1,05–1,1   |
+| Título de página interna | 48–56 px | 34–40 px | 1,1        |
+| Título de seção          | 36–42 px | 28–32 px | 1,15       |
+| Título de card           | 22–26 px | 22–24 px | 1,2        |
+| Texto corrido            | 18 px    | 16–18 px | 1,5–1,65   |
+| Navegação / botão        | 16 px    | 16 px    | 1,3        |
+| Legenda                  | 14 px    | 14 px    | 1,4        |
 
 O Figma usa entrelinha curta em vários parágrafos e títulos internos de 68 px. Aumentar a entrelinha de leitura e reduzir os títulos internos. Não replicar todas as quebras de linha manuais em telas menores.
 
@@ -235,20 +235,20 @@ Animações: feedback de botões e transições curtas de 150–250 ms. Respeita
 
 Estas são propostas para marketing institucional; não dependem de contas de famílias ou sistemas escolares.
 
-| Prioridade | Feature | Por que incluir | Regra de simplicidade |
-| --- | --- | --- | --- |
-| P0 | Atalhos de etapas | Levar rapidamente à informação relevante | Quatro links, sem quiz de recomendação |
-| P0 | Contato contextual | Ajudar a equipe a entender o interesse | Parâmetro opcional de etapa; sem envio automático |
-| P0 | Ligação e mapa | Reduzir esforço de contato e visita | Telefone observado; mapa com destino validado |
-| P0 | Menu mobile acessível | Tornar todas as páginas alcançáveis | Uma camada, fechar com Esc e ao navegar |
-| P0 | Galeria com ampliação | Permitir ver detalhes reais | Legendas, teclado e imagens sob demanda |
-| P0 | FAQ curto | Responder dúvidas antes do contato | Quatro a seis respostas oficiais |
-| P0 | Metadados por página | Fazer compartilhamentos parecerem institucionais | Título, descrição e imagem próprios |
-| P1 | Filtro de aprovações por ano | Encontrar resultados relevantes | Somente com acervo suficiente |
-| P1 | Categorias de álbuns | Organizar um acervo crescente | Ocultar categorias vazias |
-| P1 | Faixa de campanha | Divulgar visita aberta ou período de matrícula | Conteúdo com validade; sem urgência inventada |
-| P1 | Vídeo de apresentação por clique | Mostrar a escola em movimento | Capa leve e player carregado só quando solicitado |
-| P1 | Depoimentos selecionados | Dar contexto às experiências | Poucos relatos reais e aprovados |
+| Prioridade | Feature                          | Por que incluir                                  | Regra de simplicidade                             |
+| ---------- | -------------------------------- | ------------------------------------------------ | ------------------------------------------------- |
+| P0         | Atalhos de etapas                | Levar rapidamente à informação relevante         | Quatro links, sem quiz de recomendação            |
+| P0         | Contato contextual               | Ajudar a equipe a entender o interesse           | Parâmetro opcional de etapa; sem envio automático |
+| P0         | Ligação e mapa                   | Reduzir esforço de contato e visita              | Telefone observado; mapa com destino validado     |
+| P0         | Menu mobile acessível            | Tornar todas as páginas alcançáveis              | Uma camada, fechar com Esc e ao navegar           |
+| P0         | Galeria com ampliação            | Permitir ver detalhes reais                      | Legendas, teclado e imagens sob demanda           |
+| P0         | FAQ curto                        | Responder dúvidas antes do contato               | Quatro a seis respostas oficiais                  |
+| P0         | Metadados por página             | Fazer compartilhamentos parecerem institucionais | Título, descrição e imagem próprios               |
+| P1         | Filtro de aprovações por ano     | Encontrar resultados relevantes                  | Somente com acervo suficiente                     |
+| P1         | Categorias de álbuns             | Organizar um acervo crescente                    | Ocultar categorias vazias                         |
+| P1         | Faixa de campanha                | Divulgar visita aberta ou período de matrícula   | Conteúdo com validade; sem urgência inventada     |
+| P1         | Vídeo de apresentação por clique | Mostrar a escola em movimento                    | Capa leve e player carregado só quando solicitado |
+| P1         | Depoimentos selecionados         | Dar contexto às experiências                     | Poucos relatos reais e aprovados                  |
 
 Deixar fora desta versão: chatbot, tour 360°, busca global em um site pequeno, feed automático de rede social, notificações push e pop-up de matrícula ao entrar. São custos de manutenção ou interrupções que ainda não têm benefício demonstrado para este projeto.
 
@@ -271,14 +271,14 @@ Cabeçalho compacto: logo, botão de menu e acesso à visita dentro do menu. Uma
 
 ### Campos mínimos para conteúdo
 
-| Coleção | Campos |
-| --- | --- |
-| Escola | nome, telefone, canal de WhatsApp confirmado, endereço completo, URL do mapa, horário, Instagram |
-| Segmento | slug, nome, séries/idades confirmadas, texto, experiências, foto, texto alternativo, contato |
-| Ambiente | nome, finalidade, fotos, legendas, informação de acesso confirmada |
-| Atividade | nome, público, descrição, turnos, local, condições, data de revisão |
-| Aprovação | nome autorizado, curso, instituição, processo, ano, fonte interna, foto opcional |
-| Álbum | slug, título, categoria, data, descrição, capa, fotos e legendas |
+| Coleção   | Campos                                                                                           |
+| --------- | ------------------------------------------------------------------------------------------------ |
+| Escola    | nome, telefone, canal de WhatsApp confirmado, endereço completo, URL do mapa, horário, Instagram |
+| Segmento  | slug, nome, séries/idades confirmadas, texto, experiências, foto, texto alternativo, contato     |
+| Ambiente  | nome, finalidade, fotos, legendas, informação de acesso confirmada                               |
+| Atividade | nome, público, descrição, turnos, local, condições, data de revisão                              |
+| Aprovação | nome autorizado, curso, instituição, processo, ano, fonte interna, foto opcional                 |
+| Álbum     | slug, título, categoria, data, descrição, capa, fotos e legendas                                 |
 
 Controle interno de origem/aprovação de fotos e textos não deve aparecer como texto de interface. Demonstrações precisam ficar isoladas do conteúdo público. Campos desconhecidos devem ser omitidos ou impedir a publicação do registro; não preencher com dados plausíveis inventados.
 
@@ -286,24 +286,24 @@ Controle interno de origem/aprovação de fotos e textos não deve aparecer como
 
 Arquivo: `vj8pbFXTeMZiDMFQPRpwqA`. Página: `0:1`, “01 • Website / Desktop”. Links abaixo abrem nós existentes no arquivo inicial.
 
-| Elemento / destino | Referência Figma | Estado registrado | Manter / alterar na implementação |
-| --- | --- | --- | --- |
-| Home `/` | [Frame 2:2](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=2-2) | Cabeçalho, banner e introdução de conteúdo | Manter grid e personalidade; acrescentar segmentos, fotos, seções e rodapé |
-| Cabeçalho global | [3:8](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=3-8) | Logo, links e botão azul | Acrescentar Ensino; logo como retorno à home; CTA vermelho de ação e destino Visite; criar mobile |
-| Logo original | [3:10](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=3-10) | PNG original enquadrado dentro de frame | Preservar desenho e proporção; otimizar limites do asset para uso web |
-| Navegação | [3:11](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=3-11) | Destinos internos ligados no protótipo | Não copiar IDs como rotas; usar rotas semânticas; adicionar estado ativo além da cor |
-| Banner da home | [3:157](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=3-157) | Texto, CTA e arte lateral | Manter duas colunas e creme; trocar protagonismo da arte por foto; incluir localização; revisar copy |
-| Arte geométrica | [3:170](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=3-170) | Vetores editáveis | Usar como referência de formas secundárias; não reproduzir o bloco inteiro em toda página |
-| Conteúdo inicial | [4:92](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-92) | Título/introdução e cards vazios | Substituir “universo para explorar” pelo acesso prioritário aos segmentos; seção 6.1 |
-| Espaço `/nosso-espaco` | [Frame 2:3](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=2-3) | Cabeçalho, abertura e introdução de ambientes | Reduzir abertura; corrigir contraste; adicionar fotografias com legendas e visita |
-| Abertura de Espaço | [4:76](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-76) | Fundo ciano | Texto pequeno em ink; título menor; foto mais cedo |
-| Grade de ambientes | [4:100](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-100) | Contêiner vazio | Criar composição da seção 6.3; não tratar vazio como especificação pronta |
-| Aprovações `/aprovacoes` | [Frame 2:4](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=2-4) | Cabeçalho, abertura e introdução | Manter amarelo como acento; incluir ano, dados oficiais e contexto |
-| Abertura de Aprovações | [4:80](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-80) | Fundo amarelo e título grande | Reduzir altura; manter azul sobre amarelo |
-| Mural | [4:105](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-105) | Contêiner vazio | Implementar estados com/sem dados e filtro condicional |
-| Atividades `/atividades` | [Frame 2:5](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=2-5), [abertura 4:84](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-84) | Somente cabeçalho e abertura | Adicionar foto e conteúdo da seção 6.5; manter linguagem adequada a várias idades |
-| Galeria `/galeria` | [Frame 2:6](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=2-6), [abertura 4:88](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-88) | Somente cabeçalho e abertura | Encurtar abertura, acrescentar álbuns e lightbox |
-| Ensino, Visite, rodapé, mobile e estados de interação | Sem frame existente | Não desenhados | Criar conforme este documento; não atribuir ao Figma uma validação inexistente |
+| Elemento / destino                                    | Referência Figma                                                                                                                                                | Estado registrado                             | Manter / alterar na implementação                                                                    |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Home `/`                                              | [Frame 2:2](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=2-2)                                                                                    | Cabeçalho, banner e introdução de conteúdo    | Manter grid e personalidade; acrescentar segmentos, fotos, seções e rodapé                           |
+| Cabeçalho global                                      | [3:8](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=3-8)                                                                                          | Logo, links e botão azul                      | Acrescentar Ensino; logo como retorno à home; CTA vermelho de ação e destino Visite; criar mobile    |
+| Logo original                                         | [3:10](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=3-10)                                                                                        | PNG original enquadrado dentro de frame       | Preservar desenho e proporção; otimizar limites do asset para uso web                                |
+| Navegação                                             | [3:11](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=3-11)                                                                                        | Destinos internos ligados no protótipo        | Não copiar IDs como rotas; usar rotas semânticas; adicionar estado ativo além da cor                 |
+| Banner da home                                        | [3:157](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=3-157)                                                                                      | Texto, CTA e arte lateral                     | Manter duas colunas e creme; trocar protagonismo da arte por foto; incluir localização; revisar copy |
+| Arte geométrica                                       | [3:170](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=3-170)                                                                                      | Vetores editáveis                             | Usar como referência de formas secundárias; não reproduzir o bloco inteiro em toda página            |
+| Conteúdo inicial                                      | [4:92](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-92)                                                                                        | Título/introdução e cards vazios              | Substituir “universo para explorar” pelo acesso prioritário aos segmentos; seção 6.1                 |
+| Espaço `/nosso-espaco`                                | [Frame 2:3](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=2-3)                                                                                    | Cabeçalho, abertura e introdução de ambientes | Reduzir abertura; corrigir contraste; adicionar fotografias com legendas e visita                    |
+| Abertura de Espaço                                    | [4:76](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-76)                                                                                        | Fundo ciano                                   | Texto pequeno em ink; título menor; foto mais cedo                                                   |
+| Grade de ambientes                                    | [4:100](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-100)                                                                                      | Contêiner vazio                               | Criar composição da seção 6.3; não tratar vazio como especificação pronta                            |
+| Aprovações `/aprovacoes`                              | [Frame 2:4](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=2-4)                                                                                    | Cabeçalho, abertura e introdução              | Manter amarelo como acento; incluir ano, dados oficiais e contexto                                   |
+| Abertura de Aprovações                                | [4:80](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-80)                                                                                        | Fundo amarelo e título grande                 | Reduzir altura; manter azul sobre amarelo                                                            |
+| Mural                                                 | [4:105](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-105)                                                                                      | Contêiner vazio                               | Implementar estados com/sem dados e filtro condicional                                               |
+| Atividades `/atividades`                              | [Frame 2:5](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=2-5), [abertura 4:84](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-84) | Somente cabeçalho e abertura                  | Adicionar foto e conteúdo da seção 6.5; manter linguagem adequada a várias idades                    |
+| Galeria `/galeria`                                    | [Frame 2:6](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=2-6), [abertura 4:88](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=4-88) | Somente cabeçalho e abertura                  | Encurtar abertura, acrescentar álbuns e lightbox                                                     |
+| Ensino, Visite, rodapé, mobile e estados de interação | Sem frame existente                                                                                                                                             | Não desenhados                                | Criar conforme este documento; não atribuir ao Figma uma validação inexistente                       |
 
 As telas têm largura de 1440 px e layout vertical. O comportamento de navegação foi configurado, mas não houve teste manual integral em apresentação. O botão de visita em Nosso espaço estava sem destino; o destino definitivo deve ser `/visite`.
 

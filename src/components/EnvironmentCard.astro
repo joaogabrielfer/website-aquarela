@@ -1,0 +1,139 @@
+---
+interface Props {
+  name: string;
+  purpose: string;
+  imageUrl?: string | null;
+  imageAlt?: string;
+  caption?: string | null | undefined;
+  feature?: boolean;
+  photos?: { src: string; alt: string; caption?: string | null }[];
+  class?: string;
+}
+
+const {
+  name,
+  purpose,
+  imageUrl,
+  imageAlt,
+  caption,
+  feature = false,
+  photos = [],
+  class: className,
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'environment-card',
+    { 'environment-card--feature': feature },
+    className,
+  ]}
+>
+  {
+    imageUrl && (
+      <div class="card-media">
+        <img
+          src={imageUrl}
+          alt={imageAlt || name}
+          width={feature ? '800' : '400'}
+          height={feature ? '450' : '300'}
+          loading="lazy"
+        />
+        <button
+          class="lightbox-trigger"
+          type="button"
+          aria-label={`Ampliar foto: ${name}`}
+          data-photos={JSON.stringify(photos)}
+          onclick={`window.dispatchEvent(new CustomEvent('aquarela:lightbox', { detail: { photos: ${JSON.stringify(photos)}, index: 0 } }))`}
+        >
+          <span aria-hidden="true">⤢</span>
+        </button>
+        {caption && <p class="card-caption">{caption}</p>}
+      </div>
+    )
+  }
+  <div class="card-body">
+    <h3 class="card-title">{name}</h3>
+    <p class="card-purpose">{purpose}</p>
+  </div>
+</div>
+
+<style>
+  .environment-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-base);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .card-media {
+    position: relative;
+    overflow: hidden;
+  }
+  .card-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+  }
+  .environment-card--feature .card-media img {
+    aspect-ratio: 16/9;
+  }
+  .lightbox-trigger {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-control);
+    cursor: pointer;
+    font-size: 1.25rem;
+    color: var(--text-ink);
+  }
+  .lightbox-trigger:hover {
+    background: var(--surface-paper);
+  }
+  .lightbox-trigger:focus-visible {
+    outline: 3px solid var(--brand-navy);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px white;
+  }
+  .card-caption {
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  .card-body {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .card-title {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  .card-purpose {
+    margin: 0;
+    color: var(--text-ink);
+  }
+  @media (max-width: 767px) {
+    .card-body {
+      padding: var(--space-5);
+    }
+  }
+</style>

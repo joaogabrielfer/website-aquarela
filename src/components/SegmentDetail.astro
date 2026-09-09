@@ -1,0 +1,202 @@
+---
+import EmptyState from './EmptyState.astro';
+import AssetPlaceholder from './AssetPlaceholder.astro';
+import Button from './Button.astro';
+import { BUILD_MODE } from '../lib/env';
+import { empty } from '../lib/copy';
+
+interface Props {
+  slug: string;
+  name: string;
+  description?: string | null;
+  experiences?: string[];
+  grades?: string | null;
+  ages?: string | null;
+  shifts?: string[];
+  imageUrl?: string | null;
+  imageAlt?: string;
+  tone?: 'white' | 'paper';
+}
+
+const {
+  slug,
+  name,
+  description,
+  experiences = [],
+  grades,
+  ages,
+  shifts = [],
+  imageUrl,
+  imageAlt,
+  tone = 'white',
+} = Astro.props;
+
+const hasContent = description || experiences.length >= 2;
+const hasMeta = grades || ages || shifts.length > 0;
+const showImage = imageUrl !== null && imageUrl !== undefined;
+const showPlaceholder = BUILD_MODE === 'editorial-preview' && !showImage;
+const ctaHref = `/visite?interesse=${slug}`;
+---
+
+<section id={slug} class:list={['segment-detail', `segment-detail--${tone}`]}>
+  <div class="container segment-detail-inner">
+    {
+      hasContent ? (
+        <div class="segment-detail-layout">
+          <div class="segment-detail-content">
+            <h2 class="segment-detail-title">{name}</h2>
+            {description && <p class="segment-detail-desc">{description}</p>}
+            {experiences.length > 0 && (
+              <ul class="segment-detail-experiences">
+                {experiences.map((exp) => (
+                  <li>{exp}</li>
+                ))}
+              </ul>
+            )}
+            {hasMeta && (
+              <div class="segment-detail-meta">
+                {grades && (
+                  <p>
+                    <strong>Séries:</strong> {grades}
+                  </p>
+                )}
+                {ages && (
+                  <p>
+                    <strong>Idades:</strong> {ages}
+                  </p>
+                )}
+                {shifts.length > 0 && (
+                  <p>
+                    <strong>Turnos:</strong> {shifts.join(', ')}
+                  </p>
+                )}
+              </div>
+            )}
+            <Button href={ctaHref} variant="secondary">
+              Conversar sobre esta etapa
+            </Button>
+          </div>
+          <div class="segment-detail-media">
+            {showImage ? (
+              <img
+                class="segment-detail-photo"
+                src={imageUrl}
+                alt={imageAlt || name}
+                width="600"
+                height="450"
+                loading="lazy"
+              />
+            ) : showPlaceholder ? (
+              <AssetPlaceholder aspectRatio="4/3" />
+            ) : null}
+          </div>
+        </div>
+      ) : (
+        <div class="segment-detail-empty">
+          <h2 class="segment-detail-title">{name}</h2>
+          <EmptyState
+            title={empty.segment[0]}
+            link={{ href: '/visite', label: 'Fale com a equipe' }}
+            headingLevel="h3"
+          />
+          <Button href={ctaHref} variant="secondary">
+            Conversar sobre esta etapa
+          </Button>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .segment-detail {
+    padding: var(--space-12) 0;
+  }
+  .segment-detail--white {
+    background: var(--surface-base);
+  }
+  .segment-detail--paper {
+    background: var(--surface-paper);
+  }
+  .segment-detail-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .segment-detail-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .segment-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .segment-detail-title {
+    margin: 0;
+    font-size: 1.875rem;
+    line-height: 1.15;
+  }
+  .segment-detail-desc {
+    margin: 0;
+    color: var(--text-ink);
+  }
+  .segment-detail-experiences {
+    margin: 0;
+    padding-left: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    color: var(--text-ink);
+  }
+  .segment-detail-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .segment-detail-meta p {
+    margin: 0;
+    color: var(--text-ink);
+    font-size: 0.9375rem;
+  }
+  .segment-detail-media {
+    overflow: hidden;
+  }
+  .segment-detail-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+    border-radius: var(--radius-media);
+  }
+  .segment-detail-empty {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  /* Tablet */
+  @media (min-width: 768px) {
+    .segment-detail {
+      padding: var(--space-16) 0;
+    }
+    .segment-detail-title {
+      font-size: 2.25rem;
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 1100px) {
+    .segment-detail-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12);
+      align-items: center;
+    }
+    .segment-detail-title {
+      font-size: 2.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,174 @@
+---
+import { eyebrow } from '../lib/copy';
+import Button from './Button.astro';
+import AssetPlaceholder from './AssetPlaceholder.astro';
+import { BUILD_MODE } from '../lib/env';
+
+interface Props {
+  title: string;
+  support: string;
+  imageSrc?: string | null;
+  imageAlt?: string;
+}
+
+const { title, support, imageSrc, imageAlt } = Astro.props;
+const showImage = imageSrc !== null && imageSrc !== undefined;
+const showPlaceholder = BUILD_MODE === 'editorial-preview' && !showImage;
+---
+
+<section class="hero-home">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <p class="hero-eyebrow">{eyebrow}</p>
+      <h1 class="hero-title">{title}</h1>
+      <p class="hero-support">{support}</p>
+      <div class="hero-actions">
+        <Button href="/visite" variant="primary">Quero conhecer</Button>
+        <Button href="/ensino" variant="secondary">Explore nosso ensino</Button>
+      </div>
+    </div>
+    <div class="hero-media">
+      <!-- Decorative arc behind the media -->
+      <svg
+        class="hero-arc"
+        aria-hidden="true"
+        viewBox="0 0 200 200"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="100"
+          cy="100"
+          r="95"
+          stroke="var(--brand-red)"
+          stroke-width="2"
+          opacity="0.2"></circle>
+      </svg>
+      {
+        showImage ? (
+          <img
+            class="hero-photo"
+            src={imageSrc}
+            alt={imageAlt || 'Aquarela Colégio e Curso'}
+            width="600"
+            height="450"
+            fetchpriority="high"
+          />
+        ) : showPlaceholder ? (
+          <AssetPlaceholder aspectRatio="4/3" />
+        ) : null
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-home {
+    background: var(--surface-paper);
+    padding: var(--space-12) 0;
+  }
+  .hero-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .hero-eyebrow {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .hero-title {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.08;
+    color: var(--text-ink);
+    max-width: 22ch;
+  }
+  .hero-support {
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.5;
+    color: var(--text-ink);
+  }
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 100%;
+  }
+  .hero-media {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-arc {
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    top: -10%;
+    left: -10%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero-photo {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+    border-radius: var(--radius-media);
+  }
+
+  /* Tablet */
+  @media (min-width: 768px) {
+    .hero-home {
+      padding: var(--space-16) 0;
+    }
+    .hero-title {
+      font-size: 3.5rem;
+    }
+    .hero-support {
+      font-size: 1.25rem;
+    }
+    .hero-actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: auto;
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 1100px) {
+    .hero-home {
+      padding: var(--space-20) 0;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12);
+      align-items: center;
+    }
+    .hero-copy {
+      gap: var(--space-6);
+    }
+    .hero-title {
+      font-size: 4rem;
+    }
+    .hero-actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: auto;
+    }
+  }
+</style>

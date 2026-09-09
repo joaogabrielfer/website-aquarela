@@ -1,0 +1,80 @@
+- {
+    id: educacao-infantil,
+    slug: educacao-infantil,
+    name: Educação Infantil,
+    order: 1,
+    summary: null,
+    description: null,
+    grades: null,
+    ages: null,
+    shifts: [],
+    experiences: [],
+    imageId: null,
+    review:
+      {
+        status: observed,
+        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        reviewedAt: null,
+        reviewedBy: null,
+      },
+  }
+- {
+    id: fundamental-anos-iniciais,
+    slug: fundamental-anos-iniciais,
+    name: 'Ensino Fundamental — Anos Iniciais',
+    order: 2,
+    summary: null,
+    description: null,
+    grades: null,
+    ages: null,
+    shifts: [],
+    experiences: [],
+    imageId: null,
+    review:
+      {
+        status: observed,
+        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        reviewedAt: null,
+        reviewedBy: null,
+      },
+  }
+- {
+    id: fundamental-anos-finais,
+    slug: fundamental-anos-finais,
+    name: 'Ensino Fundamental — Anos Finais',
+    order: 3,
+    summary: null,
+    description: null,
+    grades: null,
+    ages: null,
+    shifts: [],
+    experiences: [],
+    imageId: null,
+    review:
+      {
+        status: observed,
+        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        reviewedAt: null,
+        reviewedBy: null,
+      },
+  }
+- {
+    id: ensino-medio,
+    slug: ensino-medio,
+    name: Ensino Médio,
+    order: 4,
+    summary: null,
+    description: null,
+    grades: null,
+    ages: null,
+    shifts: [],
+    experiences: [],
+    imageId: null,
+    review:
+      {
+        status: observed,
+        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        reviewedAt: null,
+        reviewedBy: null,
+      },
+  }

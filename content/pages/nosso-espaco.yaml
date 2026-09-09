@@ -1,0 +1,13 @@
+{
+  id: nosso-espaco,
+  title: 'Espaço para aprender. Liberdade para descobrir.',
+  intro: null,
+  metaDescription: 'Conheça o espaço do Aquarela.',
+  review:
+    {
+      status: draft,
+      source: 'https://www.instagram.com/aquarelacolegioecurso/',
+      reviewedAt: null,
+      reviewedBy: null,
+    },
+}

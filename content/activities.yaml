@@ -1,0 +1,63 @@
+- {
+    id: atividade-ginastica,
+    slug: ginastica,
+    name: Ginástica,
+    summary: '',
+    description: '',
+    audience: '',
+    shifts: [],
+    location: null,
+    conditions: null,
+    imageId: null,
+    order: 1,
+    featured: false,
+    review:
+      {
+        status: observed,
+        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        reviewedAt: null,
+        reviewedBy: null,
+      },
+  }
+- {
+    id: atividade-natacao,
+    slug: natacao,
+    name: Natação,
+    summary: '',
+    description: '',
+    audience: '',
+    shifts: [],
+    location: null,
+    conditions: null,
+    imageId: null,
+    order: 2,
+    featured: false,
+    review:
+      {
+        status: observed,
+        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        reviewedAt: null,
+        reviewedBy: null,
+      },
+  }
+- {
+    id: atividade-bale,
+    slug: bale,
+    name: Balé,
+    summary: '',
+    description: '',
+    audience: '',
+    shifts: [],
+    location: null,
+    conditions: null,
+    imageId: null,
+    order: 3,
+    featured: false,
+    review:
+      {
+        status: observed,
+        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        reviewedAt: null,
+        reviewedBy: null,
+      },
+  }

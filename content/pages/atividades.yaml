@@ -1,0 +1,13 @@
+{
+  id: atividades,
+  title: 'Novos interesses, novas descobertas',
+  intro: null,
+  metaDescription: 'Conheça as atividades do Aquarela.',
+  review:
+    {
+      status: draft,
+      source: 'https://www.instagram.com/aquarelacolegioecurso/',
+      reviewedAt: null,
+      reviewedBy: null,
+    },
+}

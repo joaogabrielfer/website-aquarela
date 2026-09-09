@@ -1,0 +1,125 @@
+---
+import PageShell from '../../layouts/PageShell.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import PhotoGridIsland from '../../islands/PhotoGridIsland.svelte';
+import Lightbox from '../../islands/Lightbox.svelte';
+import { getAlbums, getAlbum, getAlbumPhotos } from '../../lib/content';
+import { formatCivilDate } from '../../lib/dates';
+
+export const getStaticPaths = () => {
+  const albums = getAlbums();
+  return albums.map((album) => ({
+    params: { slug: album.slug },
+    props: { slug: album.slug },
+  }));
+};
+
+const { slug } = Astro.params;
+const album = getAlbum(slug!);
+
+// getStaticPaths only generates visible albums,
+// but if slug is somehow invalid, the host serves 404.html
+if (!album) {
+  return Astro.redirect('/404');
+}
+
+const photos = getAlbumPhotos(slug!);
+const title = album.title;
+const formattedDate = formatCivilDate(album.date);
+---
+
+<PageShell title={`${title} | Aquarela Colégio e Curso`}>
+  <section class="album-page">
+    <div class="container album-inner">
+      <Breadcrumb
+        items={[
+          { label: 'Início', href: '/' },
+          { label: 'Galeria', href: '/galeria' },
+          { label: title },
+        ]}
+      />
+
+      <h1 class="album-title">{title}</h1>
+
+      <div class="album-meta">
+        <span class="album-date">{formattedDate}</span>
+        <span class="album-category">{album.category}</span>
+      </div>
+
+      {album.intro && <p class="album-intro">{album.intro}</p>}
+
+      <PhotoGridIsland
+        client:load
+        photos={photos.map((p) => ({
+          src: p.src,
+          alt: p.alt,
+          caption: p.caption,
+        }))}
+      />
+
+      <a href="/galeria" class="back-link">Voltar à galeria</a>
+    </div>
+  </section>
+
+  <Lightbox client:only="svelte" />
+</PageShell>
+
+<style>
+  .album-page {
+    padding: var(--space-12) 0;
+    background: var(--surface-base);
+  }
+  .album-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .album-title {
+    margin: 0;
+    font-size: 2.25rem;
+    line-height: 1.1;
+  }
+  .album-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+  }
+  .album-date,
+  .album-category {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+  .album-category {
+    font-weight: 500;
+  }
+  .album-intro {
+    margin: 0;
+    max-width: 65ch;
+    color: var(--text-ink);
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: var(--space-4);
+    color: var(--brand-navy);
+    font-weight: 500;
+    text-decoration: underline;
+  }
+  @media (min-width: 768px) {
+    .album-page {
+      padding: var(--space-16) 0;
+    }
+    .album-title {
+      font-size: 2.75rem;
+    }
+  }
+  @media (min-width: 1100px) {
+    .album-page {
+      padding: var(--space-20) 0;
+    }
+    .album-title {
+      font-size: 3.25rem;
+    }
+  }
+</style>

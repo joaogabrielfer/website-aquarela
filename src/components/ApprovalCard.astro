@@ -1,0 +1,87 @@
+---
+interface Props {
+  displayName: string;
+  course: string;
+  institution: string;
+  selectionProcess: string;
+  year: number;
+  portraitUrl?: string | null;
+  portraitAlt?: string;
+  class?: string;
+}
+
+const {
+  displayName,
+  course,
+  institution,
+  selectionProcess,
+  year,
+  portraitUrl,
+  portraitAlt,
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={['approval-card', className]}>
+  {
+    portraitUrl && (
+      <div class="card-media">
+        <img
+          src={portraitUrl}
+          alt={portraitAlt || displayName}
+          width="320"
+          height="400"
+          loading="lazy"
+        />
+      </div>
+    )
+  }
+  <div class="card-body">
+    <h3 class="card-title">{displayName}</h3>
+    <p class="card-detail"><strong>Curso:</strong> {course}</p>
+    <p class="card-detail"><strong>Instituição:</strong> {institution}</p>
+    <p class="card-detail"><strong>Processo:</strong> {selectionProcess}</p>
+    <p class="card-detail"><strong>Ano:</strong> {year}</p>
+  </div>
+</div>
+
+<style>
+  .approval-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-base);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .card-media {
+    overflow: hidden;
+  }
+  .card-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/5;
+  }
+  .card-body {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .card-title {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  .card-detail {
+    margin: 0;
+    color: var(--text-ink);
+  }
+  @media (max-width: 767px) {
+    .card-body {
+      padding: var(--space-5);
+    }
+  }
+</style>

@@ -1,0 +1,99 @@
+---
+import { formatCivilDate } from '../lib/dates';
+
+interface Props {
+  slug: string;
+  title: string;
+  date: string;
+  category: string;
+  coverUrl?: string | null | undefined;
+  coverAlt?: string | undefined;
+  class?: string;
+}
+
+const {
+  slug,
+  title,
+  date,
+  category,
+  coverUrl,
+  coverAlt,
+  class: className,
+} = Astro.props;
+const href = `/galeria/${slug}`;
+const formattedDate = formatCivilDate(date);
+---
+
+<a {href} class:list={['album-card', className]}>
+  {
+    coverUrl && (
+      <div class="card-media">
+        <img
+          src={coverUrl}
+          alt={coverAlt || title}
+          width="400"
+          height="300"
+          loading="lazy"
+        />
+      </div>
+    )
+  }
+  <div class="card-body">
+    <h3 class="card-title">{title}</h3>
+    <p class="card-meta">{formattedDate} · {category}</p>
+  </div>
+</a>
+
+<style>
+  .album-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-base);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+  }
+  .album-card:hover,
+  .album-card:focus-within {
+    box-shadow: var(--shadow);
+    border-color: var(--brand-navy);
+  }
+  .album-card:focus-visible {
+    outline: 3px solid var(--brand-navy);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px white;
+  }
+  .card-media {
+    overflow: hidden;
+  }
+  .card-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+  }
+  .card-body {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .card-title {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  .card-meta {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+  @media (max-width: 767px) {
+    .card-body {
+      padding: var(--space-5);
+    }
+  }
+</style>

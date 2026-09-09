@@ -1,0 +1,152 @@
+---
+interface Props {
+  variant?: 'primary' | 'secondary' | 'inverse' | 'text';
+  size?: 'md' | 'sm';
+  href?: string;
+  disabled?: boolean;
+  icon?: string;
+  accessibleLabel?: string;
+  class?: string;
+  type?: 'button' | 'submit' | 'reset';
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  disabled = false,
+  icon,
+  accessibleLabel,
+  class: className,
+  type = 'button',
+  ...rest
+} = Astro.props;
+
+const isLink = href !== undefined && !disabled;
+const Tag = isLink ? 'a' : 'button';
+const tagProps = isLink
+  ? {
+      href,
+      'aria-disabled': disabled || undefined,
+      tabindex: disabled ? -1 : undefined,
+    }
+  : { type, disabled };
+---
+
+<Tag
+  class:list={['btn', `btn--${variant}`, `btn--${size}`, className]}
+  {...tagProps}
+  {...rest}
+  aria-label={accessibleLabel}
+>
+  {
+    icon && (
+      <span class="btn-icon" aria-hidden="true">
+        {icon}
+      </span>
+    )
+  }
+  <span class="btn-label"><slot /></span>
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.3;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    white-space: normal;
+    text-align: center;
+    box-shadow: none;
+  }
+  .btn:focus-visible {
+    outline: 3px solid var(--brand-navy);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px white;
+  }
+  .btn--md {
+    min-height: 48px;
+    padding: 12px 24px;
+    border-radius: var(--radius-pill);
+  }
+  .btn--sm {
+    min-height: 44px;
+    padding: 10px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 0.875rem;
+  }
+  .btn--primary {
+    background: var(--action-primary);
+    color: white;
+    border: none;
+  }
+  .btn--primary:hover {
+    background: var(--action-hover);
+  }
+  .btn--primary:active {
+    background: var(--action-pressed);
+  }
+  .btn--secondary {
+    background: white;
+    color: var(--brand-navy);
+    border: 1px solid var(--brand-navy);
+  }
+  .btn--secondary:hover {
+    background: var(--surface-paper);
+  }
+  .btn--secondary:active {
+    background: var(--surface-disabled);
+  }
+  .btn--inverse {
+    background: white;
+    color: var(--brand-navy);
+    border: 1px solid white;
+  }
+  .btn--inverse:hover {
+    background: var(--surface-paper);
+  }
+  .btn--inverse:active {
+    background: var(--surface-disabled);
+  }
+  .btn--text {
+    background: transparent;
+    color: var(--brand-navy);
+    border: none;
+    text-decoration: underline;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .btn--text:hover {
+    color: var(--text-ink);
+  }
+  .btn--text:active {
+    color: var(--text-ink);
+  }
+  .btn:disabled,
+  .btn[aria-disabled='true'] {
+    background: var(--surface-disabled);
+    color: var(--text-disabled);
+    border-color: var(--surface-disabled);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .btn:disabled:hover,
+  .btn[aria-disabled='true']:hover {
+    background: var(--surface-disabled);
+  }
+  .btn-icon {
+    display: inline-flex;
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+  .btn-label {
+    line-height: inherit;
+  }
+</style>

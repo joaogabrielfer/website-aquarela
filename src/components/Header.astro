@@ -1,0 +1,124 @@
+---
+import MobileMenu from '../islands/MobileMenu.svelte';
+import { navigation, cta } from '../lib/copy';
+const current = Astro.url.pathname;
+const active = (href: string) =>
+  href === '/galeria' ? current.startsWith('/galeria') : current === href;
+---
+
+<header class="site-header" id="site-header">
+  <div class="container header-inner">
+    <a class="logo-link" href="/" aria-label="Aquarela — início">
+      <img
+        src="/brand/logo-aquarela-440.png"
+        srcset="/brand/logo-aquarela-360.png 360w, /brand/logo-aquarela-440.png 440w, /brand/logo-aquarela-660.png 660w"
+        sizes="(min-width: 1100px) 220px, (min-width: 768px) 200px, 180px"
+        alt="Aquarela"
+        width="220"
+        height="64"
+      />
+    </a>
+    <nav class="desktop-nav" aria-label="Navegação principal">
+      {
+        navigation.map((item) => (
+          <a
+            class:list={{ active: active(item.href) }}
+            href={item.href}
+            aria-current={active(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <a class="cta" href="/visite">{cta}</a>
+    </nav>
+    <MobileMenu client:load items={navigation} />
+  </div>
+</header>
+<script is:inline>
+  const header = document.querySelector('#site-header');
+  const update = () =>
+    header?.classList.toggle('scrolled', window.scrollY > 16);
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+</script>
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    height: 80px;
+    background: var(--surface-base);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .header-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .site-header.scrolled {
+    box-shadow: var(--shadow);
+  }
+  .logo-link {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    text-decoration: none;
+  }
+  .logo-link img {
+    display: block;
+    width: 180px;
+    height: auto;
+  }
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+  }
+  .desktop-nav a {
+    display: flex;
+    align-items: center;
+    padding: var(--space-2) 0;
+    color: var(--text-ink);
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .desktop-nav a.active {
+    color: var(--brand-navy);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+  }
+  .desktop-nav .cta,
+  .cta {
+    padding: 12px 24px;
+    border-radius: var(--radius-pill);
+    background: var(--action-primary);
+    color: white;
+    font-weight: 500;
+  }
+  .desktop-nav .cta:hover,
+  .cta:hover {
+    background: var(--action-hover);
+  }
+  @media (min-width: 768px) {
+    .logo-link img {
+      width: 200px;
+    }
+  }
+  @media (min-width: 1100px) {
+    .site-header {
+      height: 96px;
+    }
+    .logo-link img {
+      width: 220px;
+    }
+  }
+  @media (max-width: 1099px) {
+    .desktop-nav {
+      display: none;
+    }
+  }
+</style>

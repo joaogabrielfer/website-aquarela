@@ -1,0 +1,114 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import PageIntro from '../components/PageIntro.astro';
+import EmptyState from '../components/EmptyState.astro';
+import VisitCTA from '../components/VisitCTA.astro';
+import ApprovalGroupIsland from '../islands/ApprovalGroupIsland.svelte';
+import { h1, pageTitles, empty } from '../lib/copy';
+import { getApprovalsGrouped, getMediaById, getPageCopy } from '../lib/content';
+
+const pageCopy = getPageCopy('aprovacoes');
+const groups = getApprovalsGrouped();
+const hasApprovals = groups.length > 0;
+---
+
+<PageShell
+  title={pageTitles.aprovacoes}
+  description={pageCopy?.metaDescription ??
+    'Conheça as aprovações do Aquarela.'}
+>
+  <PageIntro
+    breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Aprovações' }]}
+    title={h1.aprovacoes}
+    intro={pageCopy?.intro ?? undefined}
+    variant="achievements"
+  />
+
+  {
+    hasApprovals ? (
+      <section class="section-approvals">
+        <div class="container">
+          {groups.map((group) => (
+            <div class="approval-group">
+              <h2 class="approval-year">{group.year}</h2>
+              <ApprovalGroupIsland
+                client:load
+                approvals={group.items.map((a) => ({
+                  id: a.id,
+                  displayName: a.displayName,
+                  course: a.course,
+                  institution: a.institution,
+                  selectionProcess: a.selectionProcess,
+                  year: a.year,
+                  portraitUrl: a.portraitId
+                    ? (getMediaById(a.portraitId)?.src ?? null)
+                    : null,
+                  portraitAlt: a.portraitId
+                    ? (getMediaById(a.portraitId)?.alt ?? a.displayName)
+                    : a.displayName,
+                }))}
+              />
+            </div>
+          ))}
+          <a href="/ensino#ensino-medio" class="section-link">
+            Conheça o Ensino Médio
+          </a>
+        </div>
+      </section>
+    ) : (
+      <section class="section-empty">
+        <div class="container">
+          <EmptyState
+            title={empty.approvals[0]}
+            text={empty.approvals[1]}
+            link={{ href: '/visite', label: 'Fale com a equipe' }}
+          />
+          <a href="/ensino#ensino-medio" class="section-link">
+            Conheça o Ensino Médio
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  <VisitCTA />
+</PageShell>
+
+<style>
+  .section-approvals,
+  .section-empty {
+    padding: var(--space-12) 0;
+    background: var(--surface-base);
+  }
+  .approval-group {
+    margin-bottom: var(--space-12);
+  }
+  .approval-year {
+    margin: 0 0 var(--space-6);
+    font-size: 1.875rem;
+    line-height: 1.15;
+  }
+  .section-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: var(--space-6);
+    color: var(--brand-navy);
+    font-weight: 500;
+    text-decoration: underline;
+  }
+  @media (min-width: 768px) {
+    .section-approvals,
+    .section-empty {
+      padding: var(--space-16) 0;
+    }
+    .approval-year {
+      font-size: 2.25rem;
+    }
+  }
+  @media (min-width: 1100px) {
+    .section-approvals,
+    .section-empty {
+      padding: var(--space-20) 0;
+    }
+  }
+</style>
