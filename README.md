@@ -31,7 +31,7 @@ Os hashes da baseline estão em [design-contract.sha256](./design-contract.sha25
 
 ## Arquitetura de agentes
 
-O projeto usa GPT-5.6 Sol no Codex como lead de arquitetura, integração e revisão final. Implementações delegadas usam perfis Luna e Spark via OpenCode Go, com nesting restrito e posse exclusiva de arquivos. O protocolo, os limites de dados do Spark Contributor e os comandos `opencode run`/`serve` estão em [docs/agent-architecture.md](./docs/agent-architecture.md).
+O projeto usa GPT-5.6 Sol no Codex como lead de arquitetura, integração e revisão final. Implementações delegadas usam perfis Luna e Spark via Codex/OpenCode Go, com escolha de franquia para cada Luna, gestão de limites, nesting restrito e posse exclusiva de arquivos. Leads mantêm commits locais incrementais por fatia de feature, em inglês e no padrão Conventional Commit usado pelo T3 Code; `push` continua manual. O protocolo completo e os comandos `opencode run`/`serve` estão em [docs/agent-architecture.md](./docs/agent-architecture.md).
 
 ## Referências históricas e assets
 

@@ -31,7 +31,7 @@ sha256sum -c design-contract.sha256
 5. **Tokens exatos** de `design-spec.md` §3–4 (cores, espaços, raios, tipografia). Não usar paleta padrão de biblioteca. Fonte Outfit em WOFF2 local (baixar do repositório oficial google/fonts, OFL) com licença preservada em `public/fonts/`; sem requisição de fonte a terceiros em runtime.
 6. **Idioma: pt-BR** em toda a interface, copy funcional e documentação do projeto. Copy funcional (navegação, CTAs, EmptyStates, controles) está congelada em `routes.md`/`components.md`; não reescrever.
 7. **Acessibilidade é critério de aceitação**: contraste ≥4,5:1 em texto normal, alvos ≥44×44 px, anel de foco global, um H1 por rota, `lang="pt-BR"`, skip link, teclado completo (menu, lightbox, paginação).
-8. **Não publicar automaticamente.** Não executar `git commit`/`push` ou outras mutações de git sem pedido explícito do usuário.
+8. **Não publicar automaticamente.** Existe autorização permanente apenas para commits locais incrementais feitos por agentes lead durante fases de implementação, conforme §5.4. `push`, publicação, troca de branch, `reset`, `rebase`, `merge`, `cherry-pick` e demais mutações de histórico continuam exigindo pedido explícito do usuário.
 9. **Relatórios separam**: (1) implementação verificada, (2) conteúdo pendente, (3) validações não executadas. Não marcar item como aprovado sem evidência.
 10. **Repositório público no GitHub.** Nunca commitar segredos, tokens ou dados privados; o modelo de conteúdo já veda dados de revisão no output público — manter essa disciplina também em config e CI.
 
@@ -148,13 +148,50 @@ Formato mínimo: **“Para este lote Luna (`<escopo>`), você prefere Codex ou O
 - Se o pedido atual do usuário já nomear explicitamente o provider daquele Luna, Sol registra a escolha e não pergunta de novo.
 - Spark permanece no OpenCode Go, salvo instrução explícita posterior do usuário.
 
-### 5.3 Protocolo de delegação
+### 5.3 Gestão de limites e recomendação de provider
+
+Sol é responsável por observar as duas franquias e considerar o menor saldo relevante entre as janelas ativas. Antes do portão de provider de cada Luna, no início de uma fase longa e depois de qualquer erro de rate limit, deve consultar os dados atuais quando a integração estiver disponível:
+
+- **Codex/ChatGPT Plus:** usar a leitura nativa de usage/rate limits exposta pelo host; em integrações via Codex app-server, usar `account/rateLimits/read`.
+- **OpenCode Go:** usar o endpoint autenticado de usage da conta (`GET https://opencode.ai/zen/go/v1/usage`) ou o status oficial equivalente exposto pela CLI/serviço.
+
+Credenciais nunca entram em prompts, logs, arquivos do repositório ou contexto de subagentes. Sol lê os dados diretamente e repassa somente um resumo sanitizado: provider, janela, percentual restante e horário de reset. Campo ausente ou falha de consulta significa **desconhecido**, nunca saldo zero nem saldo saudável.
+
+| Menor saldo restante nas janelas aplicáveis | Estado       | Conduta padrão                                                                              |
+| ------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------- |
+| `> 25%`                                     | saudável     | provider elegível normalmente                                                               |
+| `> 10%` e `≤ 25%`                           | baixo        | preservar para tarefas de maior valor; recomendar a outra franquia se estiver mais saudável |
+| `> 0%` e `≤ 10%`                            | crítico      | não iniciar lote volumoso; recomendar troca ou espera                                       |
+| `0%`, bloqueado ou rate limit ativo         | esgotado     | não iniciar novas chamadas; informar o reset e oferecer provider alternativo                |
+| consulta indisponível                       | desconhecido | declarar a falta de telemetria e decidir pelo escopo/custo, sem alegar disponibilidade      |
+
+- Percentual restante = `100 - usedPercent` quando a API fornece consumo. Se houver janelas de 5h, semanal e mensal, prevalece a mais restritiva.
+- Se Codex ficar com `≤ 25%` e OpenCode estiver saudável, Sol recomenda OpenCode no portão da §5.2. Se OpenCode estiver baixo/esgotado e Codex estiver saudável, recomenda Codex.
+- A troca é **semiautomática**: Sol calcula e recomenda, mas não muda a franquia de Luna silenciosamente; a resposta do usuário no portão autoriza o lote. Uma escolha anterior não autoriza lotes futuros.
+- Spark continua exclusivo do OpenCode. Se Go estiver esgotado, Sol pausa o Spark e pode propor executar o trabalho como Luna no Codex, sempre passando pelo portão.
+- Se um limite acabar no meio da execução, o agente para novas chamadas, preserva e audita o estado parcial, informa o que está verificável e pede escolha antes de retomar em outro provider.
+- Se ambas as franquias estiverem baixas ou esgotadas, Sol propõe reduzir o lote, aguardar o reset ou continuar localmente apenas com trabalho que não consuma agentes externos.
+
+### 5.4 Commits incrementais durante implementação
+
+**Agentes lead** significam Sol e um perfil `luna-lead` explicitamente ativado. Eles têm autorização permanente para criar commits **locais** durante fases de implementação; Luna builder e todos os Spark continuam proibidos de commitar. Essa autorização não inclui `push` nem reescrita de histórico.
+
+1. Criar um commit após cada fatia coesa e verificável de feature — por exemplo foundation, projeção de conteúdo, componente compartilhado, ilha, rota ou conjunto de testes correspondente.
+2. Usar **aproximadamente 30 minutos como limite de trabalho ainda não salvo em commit**, não como motivo para quebrar atomicidade. Ao atingir esse ponto, terminar a menor fatia coerente, executar os checks relevantes e commitar. Nunca criar commit sabidamente quebrado, parcial ou apenas `WIP` para obedecer ao relógio.
+3. Antes de commitar: conferir `git status --short` e o diff; adicionar somente caminhos próprios e revisados; conferir `git diff --cached`; executar validação proporcional ao escopo. Em worktree sujo, nunca usar `git add .` ou `git add -A`.
+4. Se outro agente estiver escrevendo no mesmo worktree, o lead só commita numa janela coordenada e com staging explícito. Alteração alheia, sobreposição ou autoria incerta bloqueia o commit e volta ao Sol para integração.
+5. O título segue o estilo de títulos gerados pelo T3 Code: Conventional Commit em inglês, linguagem simples, `type(scope): concise description`, tudo em minúsculas salvo nomes próprios, sem ponto final. Tipos usuais: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `build`, `ci`, `perf` e `style`.
+6. Exemplos: `feat(content): add public editorial projection`, `feat(header): implement responsive navigation`, `test(gallery): cover lightbox keyboard behavior`, `fix(content): reject incomplete approved records`.
+7. Cada commit cobre uma única preocupação e deixa o checkout em estado compreensível e recuperável. Corpo opcional também em inglês; registrar checks relevantes quando isso ajudar. Não usar `--amend` sem pedido explícito.
+8. O relatório da fase lista hashes e títulos dos commits, checks executados e qualquer intervalo que ainda não tenha checkpoint seguro. Commit não equivale a aprovação editorial nem a conclusão da fase.
+
+### 5.5 Protocolo de delegação
 
 1. Sol verifica `sha256sum -c design-contract.sha256` e inspeciona o estado atual antes de delegar.
 2. Se a tarefa pede Luna, Sol cumpre o portão da seção 5.2 antes de iniciar o agente.
 3. Cada prompt informa objetivo, arquivos de posse exclusiva, arquivos proibidos, trechos normativos relevantes, critérios de aceite e comandos de verificação. Subagentes começam com contexto novo.
 4. Paralelização só ocorre entre tarefas com arquivos exclusivos. Nunca dois agentes editam o mesmo arquivo; arquivos compartilhados são integrados sequencialmente pelo Sol ou por um único Luna.
-5. O trabalhador não faz `commit`, `push`, `reset`, troca de branch nem outra mutação git. Entrega alterações no worktree e um resumo curto com verificações e pendências.
+5. O trabalhador não faz `commit`, `push`, `reset`, troca de branch nem outra mutação git. A única exceção é `luna-lead`, que pode criar commits locais seguindo integralmente a §5.4. Todos entregam um resumo curto com alterações, verificações e pendências.
 6. Sol lê o diff real, executa os portões adequados e decide aceitar, corrigir, escalar ou reverter. Relato de subagente não é evidência suficiente.
 7. Para trabalhadores OpenCode, `opencode run` é a interface padrão. `opencode serve` é somente uma otimização opcional para uma leva de chamadas via `run --attach`; indisponibilidade do servidor não bloqueia execução direta.
 8. Não usar `--auto`. Sessão só é continuada para a mesma tarefa; trabalhos distintos recebem sessões novas.

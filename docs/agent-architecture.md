@@ -31,6 +31,32 @@ Antes de iniciar, Sol informa o escopo do lote, recomenda um provider com um mot
 
 Nenhum Luna deve ser criado enquanto essa escolha estiver pendente. Spark continua no OpenCode Go salvo nova instrução explícita do usuário.
 
+## Gestão das franquias
+
+Antes de recomendar o provider de um Luna, no início de fases longas e após rate limits, Sol consulta os limites atuais quando a integração permitir. Para Codex, usa a leitura nativa de usage/rate limits do host (ou `account/rateLimits/read` via app-server). Para OpenCode Go, usa `GET https://opencode.ai/zen/go/v1/usage` ou o status oficial equivalente. Segredos ficam somente no processo que consulta o provider; subagentes recebem no máximo um resumo sanitizado.
+
+Sol calcula saldo como `100 - usedPercent` e considera a janela ativa mais restritiva. Acima de 25% o provider está saudável; entre 10% e 25%, baixo; até 10%, crítico; em 0% ou com rate limit ativo, esgotado. Resposta incompleta ou indisponível é estado desconhecido, não zero.
+
+- Codex com até 25% e Go saudável → recomendar OpenCode.
+- Go baixo/esgotado e Codex saudável → recomendar Codex.
+- Ambos baixos/esgotados → propor lote menor, trabalho local sem subagente ou espera pelo reset.
+- Rate limit no meio do lote → interromper novas chamadas, auditar o estado parcial e pedir escolha antes de mudar de provider.
+
+A gestão é semiautomática: a telemetria determina a recomendação, mas a escolha do usuário no portão continua obrigatória. Spark permanece no OpenCode; sem saldo Go, Sol pode propor reclassificar o trabalho para Luna no Codex.
+
+## Commits incrementais dos leads
+
+Sol e `luna-lead` podem criar commits locais durante uma fase de implementação. Builders e Spark não podem. O objetivo é manter pontos de recuperação frequentes sem degradar a atomicidade:
+
+1. commitar cada fatia coesa e verificada de feature;
+2. buscar um checkpoint seguro antes de acumular cerca de 30 minutos sem commit;
+3. se os 30 minutos chegarem no meio de uma alteração acoplada, terminar a menor fatia funcional e validar antes de commitar — nunca usar commit quebrado ou `WIP` apenas pelo relógio;
+4. inspecionar status/diff, fazer staging somente de caminhos próprios, revisar o staged diff e executar os checks relevantes;
+5. nunca usar `git add .`/`git add -A` em worktree sujo nem incluir mudanças de outro agente;
+6. não fazer `push`, `amend` ou reescrita de histórico sem pedido explícito.
+
+Os títulos seguem o padrão do T3 Code: Conventional Commits em inglês e linguagem simples, no formato `type(scope): concise description`, sem ponto final. Exemplos: `feat(header): implement responsive navigation`, `test(gallery): cover lightbox keyboard behavior` e `fix(content): reject incomplete approved records`. Ao concluir a fase, o lead relata hashes, títulos e checks de cada checkpoint.
+
 ## Prompt de delegação
 
 Cada prompt deve conter:
@@ -77,7 +103,7 @@ O servidor fica restrito a `127.0.0.1`; a senha nunca entra no repositório. Se 
 
 ## Segurança e privacidade
 
-As permissões globais negam acesso externo ao worktree e mutações git destrutivas ou publicadoras. Auditores também não têm edição. Isso complementa, não substitui, a revisão do Sol.
+As permissões globais negam acesso externo ao worktree e mutações git destrutivas ou publicadoras. Apenas `luna-lead` sobrescreve a negação global de `git commit` para checkpoints locais; auditores também não têm edição. Isso complementa, não substitui, a revisão do Sol.
 
 Muse Spark 1.3 Contributor permite uso de prompts e respostas para treinamento e não é ZDR. Enviar a Spark somente código destinado ao repositório público, contrato público e fixtures sintéticas. Segredos, credenciais, dados de alunos, conteúdo editorial privado e referências internas de aprovação ficam fora de qualquer prompt Spark.
 
@@ -90,7 +116,8 @@ Depois de cada entrega, Sol deve:
 3. rejeitar alterações fora da posse;
 4. validar decisões contra o contrato;
 5. executar os portões proporcionais ao risco;
-6. registrar implementação verificada, conteúdo pendente e validações não realizadas.
+6. criar ou conferir o commit incremental correspondente conforme a política acima;
+7. registrar implementação verificada, conteúdo pendente e validações não realizadas.
 
 ## Referências operacionais
 
@@ -100,3 +127,4 @@ Consultadas em 09/09/2026; capacidades, modelos e limites podem mudar:
 - [Agentes OpenCode: modos e `permission.task`](https://opencode.ai/docs/agents)
 - [OpenCode Go: modelos, limites e privacidade](https://dev.opencode.ai/docs/go/)
 - [Codex: disponibilidade e estimativas por plano](https://chatgpt.com/pt-BR/codex/pricing/)
+- [T3 Code: padrão de títulos Conventional Commit](https://github.com/pingdotgg/t3code/blob/main/AGENTS.md)
