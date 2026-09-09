@@ -6,6 +6,8 @@
   let panel: HTMLElement | undefined;
   let mql: MediaQueryList | undefined;
   let lightboxOpen = false;
+  let panelTop = 80;
+  let panelTopFrame = 0;
 
   // The island is rendered inside the header, so inert only its background
   // siblings; inerting #site-header would also inert this open panel.
@@ -95,6 +97,24 @@
     );
   };
 
+  const updatePanelTop = () => {
+    if (!open) return;
+    const header = document.querySelector<HTMLElement>('#site-header');
+    const bottom = header?.getBoundingClientRect().bottom;
+    panelTop =
+      bottom !== undefined && Number.isFinite(bottom)
+        ? Math.max(0, bottom)
+        : 80;
+  };
+
+  const schedulePanelTopUpdate = () => {
+    if (!open || panelTopFrame) return;
+    panelTopFrame = requestAnimationFrame(() => {
+      panelTopFrame = 0;
+      updatePanelTop();
+    });
+  };
+
   const close = (restore = true, navigate = false) => {
     if (!open) return;
     open = false;
@@ -147,6 +167,7 @@
     open = true;
     lockBody();
     setBackgroundInert(true);
+    updatePanelTop();
     window.dispatchEvent(
       new CustomEvent('aquarela:overlay-change', {
         detail: { type: 'menu', open: true },
@@ -165,10 +186,17 @@
     window.addEventListener('aquarela:overlay-change', overlayChange);
     mql = window.matchMedia('(min-width: 1100px)');
     mql.addEventListener('change', handleDesktopCrossover);
+    window.addEventListener('resize', schedulePanelTopUpdate);
+    window.addEventListener('scroll', schedulePanelTopUpdate, {
+      passive: true,
+    });
     return () => {
       document.removeEventListener('keydown', keydown);
       window.removeEventListener('aquarela:overlay-change', overlayChange);
       mql?.removeEventListener('change', handleDesktopCrossover);
+      window.removeEventListener('resize', schedulePanelTopUpdate);
+      window.removeEventListener('scroll', schedulePanelTopUpdate);
+      if (panelTopFrame) cancelAnimationFrame(panelTopFrame);
     };
   });
 
@@ -194,6 +222,7 @@
   <aside
     id="mobile-menu"
     class="menu-panel"
+    style={`top: ${panelTop}px`}
     bind:this={panel}
     role="dialog"
     aria-modal="true"
