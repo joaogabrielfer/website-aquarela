@@ -5,7 +5,7 @@ cliente. Não significa aprovação editorial nem autorização de publicação.
 
 ## Decisões tomadas
 
-- Contrato vigente: AQ-WEB-1.1.0, congelado em 09/09/2026.
+- Contrato vigente: AQ-WEB-1.1.1, congelado em 09/09/2026.
 - Sem `PageCopy` approved, o público usa H1 funcional neutro e omite meta
   description; o preview editorial pode mostrar a copy pendente.
 - A Home usa `heroImageId` nullable e exige foto elegível quando aprovada.
