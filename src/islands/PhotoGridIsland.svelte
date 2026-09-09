@@ -10,6 +10,8 @@
     src: string;
     alt: string;
     caption?: string | null;
+    width?: number;
+    height?: number;
   }
 
   let {
@@ -50,8 +52,8 @@
         <img
           src={photo.src}
           alt={photo.alt}
-          width="400"
-          height="300"
+          width={photo.width ?? 400}
+          height={photo.height ?? 300}
           loading="lazy"
         />
       </button>
@@ -80,9 +82,6 @@
     object-fit: cover;
     aspect-ratio: 4/3;
   }
-  .photo-thumb:hover img {
-    opacity: 0.9;
-  }
   .photo-thumb:focus-visible {
     outline: 3px solid var(--brand-navy);
     outline-offset: 2px;
@@ -91,11 +90,18 @@
   @media (min-width: 768px) {
     .photo-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-5);
     }
   }
   @media (min-width: 1100px) {
     .photo-grid {
       grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+    }
+  }
+  @media (hover: hover) {
+    .photo-thumb:hover img {
+      opacity: 0.9;
     }
   }
 </style>

@@ -1,11 +1,9 @@
 <!--
   Lightbox (C08) — modal de visualização de fotos.
 
-  Sobreposição com menu: o menu mobile é controlado por MobileMenu.svelte,
-  que bloqueia body/inert ao abrir. Enquanto o menu está aberto, o fundo
-  fica inerte e coberto pelo backdrop, impedindo que qualquer botão de
-  foto dispare o evento aquarela:lightbox. Portanto, não existe cenário
-  de menu + lightbox simultâneos e não precisamos de store compartilhado.
+  Sobreposição com menu: MobileMenu.svelte e esta ilha publicam o estado
+  aquarela:overlay-change. Cada ilha recusa abertura enquanto a outra camada
+  está ativa, mantendo no máximo um dialog sobreposto.
 -->
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
@@ -23,13 +21,26 @@
   let open = $state(false);
   let triggerEl: HTMLElement | null = $state(null);
   let scrollY = 0;
-  let scrollbarWidth = 0;
+  let bodyStyles: {
+    overflow: string;
+    paddingRight: string;
+    position: string;
+    top: string;
+    width: string;
+  } | null = null;
+  let inertElements: Array<{
+    element: HTMLElement;
+    inert: boolean;
+    attribute: boolean;
+  }> = [];
 
   let dialogEl: HTMLDivElement | null = $state(null);
+  let hostEl: HTMLDivElement | null = $state(null);
   let closeButtonEl: HTMLButtonElement | null = $state(null);
   let imgEl: HTMLImageElement | null = $state(null);
   let imgError = $state(false);
-  let statusEl: HTMLDivElement | null = $state(null);
+  let retryToken = $state(0);
+  let menuOpen = $state(false);
 
   const currentPhoto = $derived(photos[currentIndex] ?? null);
   const total = $derived(photos.length);
@@ -52,50 +63,116 @@
     }
   });
 
-  // Announce navigation via role=status (polite)
-  $effect(() => {
-    if (open && statusEl && currentPhoto) {
-      // Trigger re-announcement by updating text content
-      const text = `${currentIndex + 1} de ${total}`;
-      statusEl.textContent = '';
-      requestAnimationFrame(() => {
-        if (statusEl) statusEl.textContent = text;
+  const setBackgroundInert = (value: boolean) => {
+    if (value) {
+      // The island is wrapped by Astro in a direct <astro-island> child of
+      // main. Keep that host (and this always-mounted inner host) active.
+      const main = document.querySelector<HTMLElement>('#main-content');
+      const islandHost = hostEl?.closest<HTMLElement>('#main-content > *');
+      const candidates = [
+        document.querySelector<HTMLElement>('#site-header'),
+        ...(main ? Array.from(main.children) : []),
+        document.querySelector<HTMLElement>('.site-footer'),
+      ].filter(
+        (element, index, all): element is HTMLElement =>
+          element !== null &&
+          element !== islandHost &&
+          all.indexOf(element) === index,
+      );
+      inertElements = candidates.map((element) => {
+        const previous = Boolean(
+          (element as HTMLElement & { inert?: boolean }).inert,
+        );
+        const attribute = element.hasAttribute('inert');
+        element.setAttribute('inert', '');
+        (element as HTMLElement & { inert?: boolean }).inert = true;
+        return { element, inert: previous, attribute };
       });
+      return;
     }
-  });
+    for (const { element, inert, attribute } of inertElements) {
+      if (attribute) element.setAttribute('inert', '');
+      else element.removeAttribute('inert');
+      (element as HTMLElement & { inert?: boolean }).inert = inert;
+    }
+    inertElements = [];
+  };
+
+  const lockBody = () => {
+    scrollY = window.scrollY;
+    bodyStyles = {
+      overflow: document.body.style.overflow,
+      paddingRight: document.body.style.paddingRight,
+      position: document.body.style.position,
+      top: document.body.style.top,
+      width: document.body.style.width,
+    };
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    if (scrollbarWidth > 0)
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+  };
+
+  const unlockBody = () => {
+    const saved = bodyStyles;
+    document.body.style.overflow = saved?.overflow ?? '';
+    document.body.style.paddingRight = saved?.paddingRight ?? '';
+    document.body.style.position = saved?.position ?? '';
+    document.body.style.top = saved?.top ?? '';
+    document.body.style.width = saved?.width ?? '';
+    bodyStyles = null;
+    window.scrollTo(0, scrollY);
+  };
 
   const openLightbox = (newPhotos: Photo[], index: number) => {
+    if (menuOpen || document.querySelector('#mobile-menu')) return;
+    if (open) {
+      photos = newPhotos;
+      currentIndex = Math.max(0, Math.min(index, newPhotos.length - 1));
+      imgError = false;
+      retryToken += 1;
+      return;
+    }
     photos = newPhotos;
-    currentIndex = index;
+    currentIndex = Math.max(0, Math.min(index, newPhotos.length - 1));
     imgError = false;
+    retryToken = 0;
     triggerEl = document.activeElement as HTMLElement | null;
-    scrollY = window.scrollY;
-    scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    document.body.style.overflow = 'hidden';
-    document.body.style.paddingRight = `${scrollbarWidth}px`;
-    // Make header/main/footer inert
-    document.querySelector('#site-header')?.setAttribute('inert', '');
-    document.querySelector('#main-content')?.setAttribute('inert', '');
-    document.querySelector('.site-footer')?.setAttribute('inert', '');
+    lockBody();
+    setBackgroundInert(true);
     open = true;
+    window.dispatchEvent(
+      new CustomEvent('aquarela:overlay-change', {
+        detail: { type: 'lightbox', open: true },
+      }),
+    );
     // Focus close button after DOM update
     requestAnimationFrame(() => {
       closeButtonEl?.focus();
     });
   };
 
+  const releaseOverlay = () => {
+    setBackgroundInert(false);
+    unlockBody();
+    window.dispatchEvent(
+      new CustomEvent('aquarela:overlay-change', {
+        detail: { type: 'lightbox', open: false },
+      }),
+    );
+  };
+
   const closeLightbox = () => {
+    if (!open) return;
     open = false;
-    // Restore body
-    document.body.style.overflow = '';
-    document.body.style.paddingRight = '';
-    document.querySelector('#site-header')?.removeAttribute('inert');
-    document.querySelector('#main-content')?.removeAttribute('inert');
-    document.querySelector('.site-footer')?.removeAttribute('inert');
-    // Restore focus to trigger
-    if (triggerEl && typeof triggerEl.focus === 'function') {
-      triggerEl.focus();
-    }
+    releaseOverlay();
+    setTimeout(() => {
+      if (triggerEl && typeof triggerEl.focus === 'function') triggerEl.focus();
+    }, 0);
   };
 
   const prev = () => {
@@ -115,6 +192,7 @@
   const handleKeydown = (e: KeyboardEvent) => {
     if (!open) return;
     if (e.key === 'Escape') {
+      e.preventDefault();
       closeLightbox();
       return;
     }
@@ -130,14 +208,11 @@
       // Focus trap within dialog
       const dialog = dialogEl;
       if (!dialog) return;
-      const focusable = [
-        closeButtonEl,
-        ...Array.from(
-          dialog.querySelectorAll<HTMLElement>(
-            'button:not([disabled]), [href]',
-          ),
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
         ),
-      ].filter(Boolean) as HTMLElement[];
+      );
       if (focusable.length === 0) return;
       const first = focusable[0]!;
       const last = focusable[focusable.length - 1]!;
@@ -151,136 +226,138 @@
     }
   };
 
-  const handleBackdropClick = (e: MouseEvent) => {
-    // Close only if clicking the backdrop itself, not the image or controls
-    if ((e.target as HTMLElement).classList.contains('lightbox-backdrop')) {
-      closeLightbox();
-    }
-  };
-
   const handleImgError = () => {
     imgError = true;
   };
 
   const handleRetry = () => {
     imgError = false;
-    // Force re-render of the image by updating the key
-    if (imgEl && currentPhoto) {
-      imgEl.src = currentPhoto.src;
-    }
+    retryToken += 1;
   };
 
   onMount(() => {
     const handler = ((e: CustomEvent) => {
-      const { photos: newPhotos, index = 0 } = e.detail;
-      if (newPhotos && newPhotos.length > 0) {
-        openLightbox(newPhotos, index);
+      const detail = e.detail;
+      const newPhotos = detail?.photos;
+      if (Array.isArray(newPhotos) && newPhotos.length > 0) {
+        const index = Number.isInteger(detail?.index) ? detail.index : 0;
+        openLightbox(newPhotos as Photo[], index);
       }
     }) as EventListener;
     window.addEventListener('aquarela:lightbox', handler);
+    const overlayChange = ((
+      event: CustomEvent<{ type: string; open: boolean }>,
+    ) => {
+      if (event.detail?.type === 'menu') menuOpen = event.detail.open;
+    }) as EventListener;
+    window.addEventListener('aquarela:overlay-change', overlayChange);
     document.addEventListener('keydown', handleKeydown);
 
     return () => {
       window.removeEventListener('aquarela:lightbox', handler);
+      window.removeEventListener('aquarela:overlay-change', overlayChange);
       document.removeEventListener('keydown', handleKeydown);
     };
   });
 
   onDestroy(() => {
+    if (open) {
+      open = false;
+      releaseOverlay();
+    }
     document.removeEventListener('keydown', handleKeydown);
   });
 </script>
 
-{#if open}
-  <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div
-    class="lightbox-backdrop"
-    on:click={handleBackdropClick}
-    role="presentation"
-  >
+<div class="lightbox-host" bind:this={hostEl}>
+  {#if open}
     <div
-      class="lightbox-dialog"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Visualização de fotos"
-      bind:this={dialogEl}
+      class="lightbox-backdrop"
+      on:click|self={closeLightbox}
+      role="presentation"
     >
-      <!-- Top bar -->
-      <div class="lightbox-topbar">
-        <div
-          class="lightbox-counter"
-          role="status"
-          aria-live="polite"
-          bind:this={statusEl}
-        >
-          {currentIndex + 1} de {total}
+      <div
+        class="lightbox-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Visualização de fotos"
+        bind:this={dialogEl}
+      >
+        <!-- Top bar -->
+        <div class="lightbox-topbar">
+          <div class="lightbox-counter" role="status" aria-live="polite">
+            {currentIndex + 1} de {total}
+          </div>
+          <button
+            class="lightbox-close btn focus-on-navy"
+            type="button"
+            on:click={closeLightbox}
+            bind:this={closeButtonEl}
+          >
+            Fechar
+          </button>
         </div>
-        <button
-          class="lightbox-close btn focus-on-navy"
-          type="button"
-          on:click={closeLightbox}
-          bind:this={closeButtonEl}
-        >
-          Fechar
-        </button>
-      </div>
 
-      <!-- Media area -->
-      <div class="lightbox-media">
-        {#if !imgError}
-          <img
-            class="lightbox-img"
-            src={currentPhoto?.src}
-            alt={currentPhoto?.alt || ''}
-            bind:this={imgEl}
-            on:error={handleImgError}
-          />
-        {:else}
-          <div class="lightbox-error">
-            <p class="lightbox-error-text">
-              Não foi possível carregar esta foto
-            </p>
-            <button
-              class="lightbox-retry btn--secondary"
-              type="button"
-              on:click={handleRetry}
-            >
-              Tentar novamente
-            </button>
+        <!-- Media area -->
+        <div class="lightbox-media">
+          {#if !imgError}
+            {#key `${currentIndex}-${retryToken}`}
+              <img
+                class="lightbox-img"
+                src={currentPhoto?.src}
+                alt={currentPhoto?.alt || ''}
+                width={currentPhoto?.width}
+                height={currentPhoto?.height}
+                bind:this={imgEl}
+                on:error={handleImgError}
+              />
+            {/key}
+          {:else}
+            <div class="lightbox-error">
+              <p class="lightbox-error-text">
+                Não foi possível carregar esta foto
+              </p>
+              <button
+                class="lightbox-retry btn--secondary"
+                type="button"
+                on:click={handleRetry}
+              >
+                Tentar novamente
+              </button>
+            </div>
+          {/if}
+
+          <!-- Navigation buttons -->
+          <button
+            class="lightbox-nav lightbox-prev focus-on-navy"
+            type="button"
+            aria-label="Foto anterior"
+            disabled={!canPrev}
+            on:click={prev}
+          >
+            <span aria-hidden="true">‹</span>
+          </button>
+          <button
+            class="lightbox-nav lightbox-next focus-on-navy"
+            type="button"
+            aria-label="Próxima foto"
+            disabled={!canNext}
+            on:click={next}
+          >
+            <span aria-hidden="true">›</span>
+          </button>
+        </div>
+
+        <!-- Caption -->
+        {#if currentPhoto?.caption || currentPhoto?.alt}
+          <div class="lightbox-caption">
+            <p>{currentPhoto?.caption || currentPhoto?.alt}</p>
           </div>
         {/if}
-
-        <!-- Navigation buttons -->
-        <button
-          class="lightbox-nav lightbox-prev focus-on-navy"
-          type="button"
-          aria-label="Foto anterior"
-          disabled={!canPrev}
-          on:click={prev}
-        >
-          <span aria-hidden="true">‹</span>
-        </button>
-        <button
-          class="lightbox-nav lightbox-next focus-on-navy"
-          type="button"
-          aria-label="Próxima foto"
-          disabled={!canNext}
-          on:click={next}
-        >
-          <span aria-hidden="true">›</span>
-        </button>
       </div>
-
-      <!-- Caption -->
-      {#if currentPhoto?.caption || currentPhoto?.alt}
-        <div class="lightbox-caption">
-          <p>{currentPhoto?.caption || currentPhoto?.alt}</p>
-        </div>
-      {/if}
     </div>
-  </div>
-{/if}
+  {/if}
+</div>
 
 <style>
   .lightbox-backdrop {
@@ -291,22 +368,27 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 16px;
+    padding: max(16px, env(safe-area-inset-top))
+      max(16px, env(safe-area-inset-right))
+      max(16px, env(safe-area-inset-bottom))
+      max(16px, env(safe-area-inset-left));
     animation: lightbox-in var(--duration-overlay) var(--ease);
   }
   @media (min-width: 768px) {
     .lightbox-backdrop {
-      padding: 24px;
+      padding: max(24px, env(safe-area-inset-top))
+        max(24px, env(safe-area-inset-right))
+        max(24px, env(safe-area-inset-bottom))
+        max(24px, env(safe-area-inset-left));
     }
   }
   .lightbox-dialog {
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 100vh;
     height: 100dvh;
-    height: 100vh; /* fallback */
-    max-height: 100dvh;
-    max-height: 100vh;
+    max-height: 100%;
   }
   .lightbox-topbar {
     display: flex;
@@ -325,14 +407,11 @@
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: var(--radius-pill);
     color: white;
-    padding: 8px 16px;
+    padding: 10px 16px;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
     min-height: 44px;
-  }
-  .lightbox-close:hover {
-    background: rgba(255, 255, 255, 0.1);
   }
   .lightbox-close:focus-visible {
     outline: 3px solid white;
@@ -373,9 +452,6 @@
     color: var(--text-ink);
     z-index: 1;
   }
-  .lightbox-nav:hover:not(:disabled) {
-    background: var(--surface-paper);
-  }
   .lightbox-nav:disabled {
     opacity: 0.3;
     cursor: not-allowed;
@@ -393,9 +469,9 @@
   }
   .lightbox-caption {
     flex-shrink: 0;
-    max-height: 80px;
+    max-height: min(20vh, 160px);
     overflow-y: auto;
-    padding: 8px 0;
+    padding: var(--space-2) 0;
   }
   .lightbox-caption p {
     margin: 0;
@@ -428,13 +504,20 @@
     cursor: pointer;
     min-height: 44px;
   }
-  .lightbox-retry:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
   .lightbox-retry:focus-visible {
     outline: 3px solid white;
     outline-offset: 2px;
     box-shadow: 0 0 0 2px var(--text-ink);
+  }
+
+  @media (hover: hover) {
+    .lightbox-close:hover,
+    .lightbox-retry:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .lightbox-nav:hover:not(:disabled) {
+      background: var(--surface-paper);
+    }
   }
 
   /* Reduced motion */
@@ -458,8 +541,8 @@
     .lightbox-caption {
       max-height: 50px;
     }
-    .lightbox-img {
-      max-height: 60vh;
+    .lightbox-media {
+      flex: 0 1 60vh;
     }
   }
 </style>

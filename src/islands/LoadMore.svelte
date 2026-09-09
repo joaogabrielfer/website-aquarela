@@ -18,9 +18,11 @@
     buttonLabel?: string;
   } = $props();
 
-  let visibleCount = $state(initialCount);
+  let visibleCount = $state(Math.max(0, initialCount));
+  let hasLoadedMore = $state(false);
   let buttonEl: HTMLButtonElement | null = $state(null);
   let statusEl: HTMLDivElement | null = $state(null);
+  let announcement = $state('');
 
   const visibleItems = $derived(items.slice(0, visibleCount));
   const remaining = $derived(items.length - visibleCount);
@@ -28,15 +30,14 @@
 
   const loadMore = () => {
     const prevCount = visibleCount;
-    visibleCount = Math.min(visibleCount + batchSize, items.length);
+    const increment = Math.max(1, batchSize);
+    visibleCount = Math.min(visibleCount + increment, items.length);
     const added = visibleCount - prevCount;
 
-    // Announce
-    requestAnimationFrame(() => {
-      if (statusEl) {
-        statusEl.textContent = `${added} itens adicionados`;
-      }
-    });
+    if (added <= 0) return;
+
+    hasLoadedMore = true;
+    announcement = `${added} itens adicionados`;
 
     // If no more items, move focus to status
     if (visibleCount >= items.length) {
@@ -56,6 +57,10 @@
   <slot items={visibleItems} />
 </div>
 
+<div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+  {announcement}
+</div>
+
 {#if hasMore}
   <button
     class="load-more-btn btn focus-on-navy"
@@ -65,7 +70,7 @@
   >
     {buttonLabel}
   </button>
-{:else}
+{:else if hasLoadedMore}
   <div
     class="load-more-status"
     role="status"
@@ -95,8 +100,10 @@
     cursor: pointer;
     margin-top: var(--space-8);
   }
-  .load-more-btn:hover {
-    background: var(--surface-paper);
+  @media (hover: hover) {
+    .load-more-btn:hover {
+      background: var(--surface-paper);
+    }
   }
   .load-more-btn:active {
     background: var(--surface-disabled);
@@ -112,11 +119,23 @@
     font-size: 0.875rem;
     text-align: center;
     padding: var(--space-4);
+    min-height: 44px;
   }
   .load-more-status:focus-visible {
     outline: 3px solid var(--brand-navy);
     outline-offset: 2px;
     box-shadow: 0 0 0 2px white;
     border-radius: var(--radius-control);
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 </style>
