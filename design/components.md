@@ -1,6 +1,6 @@
 # Contrato de componentes
 
-**AQ-WEB-1.1.3** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
+**AQ-WEB-1.1.4** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
 
 Os nomes abaixo identificam responsabilidades; podem ser adaptados ao padrão de nomes da stack, mantendo uma correspondência no relatório de entrega. Reusar componentes entre rotas. Não criar variantes por página quando a diferença for apenas conteúdo.
 
@@ -107,3 +107,29 @@ pode mostrar draft/observed. `tone` é escolha editorial obrigatória entre
 `paper`, `red`, `navy` e `purple`; cada opção usa somente tokens e pares de
 contraste autorizados. A fixture sintética não é conteúdo real e usa `red` na
 prévia desta revisão.
+
+## C12 — Revisão 1.1.4: aberturas e detalhes de Ensino
+
+Estas regras substituem as variantes conflitantes de C04 e o layout de
+SegmentDetail em C06; a implementação permanece pendente.
+
+PageIntro mantém breadcrumb → H1 → introdução opcional, gap 16 px e altura
+natural. Adicionar teaching (navy/branco) e gallery (ciano/ink); activities usa
+roxo/branco e deixa de renderizar a pequena linha roxa isolada. Texto de apoio,
+links de breadcrumb, separadores e foco precisam acompanhar a superfície;
+não basta trocar o fundo mantendo cores escuras herdadas. Manter sublinhado
+nos links e os critérios globais de contraste, incluindo foco no roxo.
+
+SegmentDetail: um bloco editorial por etapa, com largura limitada conforme B06.
+No desktop, foto à esquerda; à direita, título e descrição/metadados, com o
+botão “Conversar sobre esta etapa” em coluna própria à direita do texto,
+alinhado ao início da descrição. Não esticar o botão para ocupar a coluna.
+O CTA permanece depois do conteúdo na ordem de leitura e de teclado.
+No mobile/tablet, empilhar título, texto/metadados, CTA e mídia, sem sobreposição.
+Manter a mesma composição nas quatro etapas; dinamismo vem da relação entre
+mídia, texto e ação, sem animações ou alternância arbitrária de cores.
+
+A prévia incompleta usa o parágrafo sintético identificado e AssetPlaceholder
+4:3 de D10. Metadados observados disponíveis podem aparecer na prévia mesmo
+sem descrição ou experiências completas. Não inventar experiências para
+habilitar o layout. O público preserva o EmptyState prescrito quando incompleto.

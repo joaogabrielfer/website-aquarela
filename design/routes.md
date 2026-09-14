@@ -1,6 +1,6 @@
 # Rotas e composição
 
-**AQ-WEB-1.1.3** · Normativo. Complementa [design-spec.md](./design-spec.md).
+**AQ-WEB-1.1.4** · Normativo. Complementa [design-spec.md](./design-spec.md).
 
 ## R01 — Regras globais
 
@@ -88,3 +88,24 @@ Privacidade: shell, breadcrumb e texto editorial aprovado sobre funcionamento ef
 ## R03 — Validação de rotas
 
 Testar acesso direto e refresh de todas as rotas, âncoras com header sticky, retorno pelo histórico, query inválida, slug desconhecido, álbum não publicado e links externos reais. Não criar links com destinos supostos para conteúdo ausente.
+
+## R04 — Revisão visual 1.1.4: aplicação por rota
+
+Revisão de design, ainda não implementada. Substitui em R02 somente as
+variantes de abertura de Ensino e Galeria e a composição dos detalhes de Ensino:
+
+| Rota | PageIntro / fundo | Texto e breadcrumb |
+| --- | --- | --- |
+| Ensino | teaching / navy | branco |
+| Nosso espaço | space / ciano, preservado | ink |
+| Aprovações | achievements / amarelo, preservado | navy; breadcrumb ink |
+| Atividades | activities / roxo sólido | branco |
+| Galeria | gallery / ciano | ink |
+| Visite | paper / creme, preservado | ink; breadcrumb conforme C04 |
+
+Ensino mantém quatro seções em sequência vertical e suas âncoras, sem carrossel
+ou abas que escondam conteúdo. A anotação annotation_2 refere-se a SegmentDetail,
+não aos quatro cards de navegação da Home. O CTA contextual fica à direita no
+desktop conforme C06/B06. Na prévia incompleta, aplicar a amostra de texto e
+reserva de imagem de D10, evitando repetir o EmptyState dentro da composição
+representativa. O estado público incompleto continua seguindo D06.

@@ -1,6 +1,6 @@
 # Modelo de conteúdo e publicação
 
-**AQ-WEB-1.1.3** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
+**AQ-WEB-1.1.4** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
 
 ## D01 — Evidência e estados
 
@@ -232,3 +232,23 @@ direta do número nesta revisão é registrada como `observed`, sem preencher
 O tom do `SeasonalBanner` passa a ser dado editorial projetado para a interface.
 A fixture sintética de demonstração usa `red`. A validação recusa valores fora
 da enumeração para impedir contraste desconhecido ou paleta arbitrária.
+
+## D10 — Revisão 1.1.4: composição editorial demonstrativa de Ensino
+
+O usuário autorizou lorem ipsum e reserva de imagens na prévia de Ensino para
+avaliar a composição antes da entrega do conteúdo. Esta é uma exceção explícita
+à interface exclusivamente pt-BR apenas para o corpo sintético em latim;
+navegação, rótulos e controles permanecem em pt-BR.
+
+Quando faltar descrição no modo editorial-preview, mostrar um parágrafo de
+40–60 palavras de lorem ipsum com rótulo visível “Texto demonstrativo — conteúdo
+em preparação”. Renderizar AssetPlaceholder 4:3 com “Foto oficial pendente”
+quando faltar mídia elegível. Não gerar fotografia. Aplicar apenas aos quatro
+SegmentDetail, sem criar resultados, ambientes, ofertas ou álbuns fictícios.
+
+Amostra é fixture de apresentação isolada: não gravar lorem ipsum na descrição
+editorial real, não preencher review, não promover registros e não contar a
+amostra como experiência pedagógica. Dados observados existentes podem aparecer
+na prévia, identificada pela faixa global. No público/release, excluir a fixture
+e a reserva artificial de mídia e manter D06. A ausência de descrição não deve
+ocultar metadados disponíveis na composição demonstrativa do preview.
