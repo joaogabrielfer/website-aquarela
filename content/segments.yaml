@@ -7,13 +7,13 @@
     description: null,
     grades: null,
     ages: null,
-    shifts: [],
+    shifts: ['Manhã: 07:00 às 11:00', 'Tarde: 13:00 às 17:00'],
     experiences: [],
     imageId: null,
     review:
       {
         status: observed,
-        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        source: 'Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026',
         reviewedAt: null,
         reviewedBy: null,
       },
@@ -27,13 +27,13 @@
     description: null,
     grades: null,
     ages: null,
-    shifts: [],
+    shifts: ['Manhã: 07:00 às 11:00', 'Tarde: 13:00 às 17:00'],
     experiences: [],
     imageId: null,
     review:
       {
         status: observed,
-        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        source: 'Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026',
         reviewedAt: null,
         reviewedBy: null,
       },
@@ -47,13 +47,13 @@
     description: null,
     grades: null,
     ages: null,
-    shifts: [],
+    shifts: ['Manhã: 07:00 às 11:45', 'Tarde: 13:00 às 17:45'],
     experiences: [],
     imageId: null,
     review:
       {
         status: observed,
-        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        source: 'Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026',
         reviewedAt: null,
         reviewedBy: null,
       },
@@ -67,13 +67,13 @@
     description: null,
     grades: null,
     ages: null,
-    shifts: [],
+    shifts: ['Manhã: 07:00 às 12:45', 'Tarde: 13:00 às 17:45'],
     experiences: [],
     imageId: null,
     review:
       {
         status: observed,
-        source: 'https://www.instagram.com/aquarelacolegioecurso/',
+        source: 'Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026',
         reviewedAt: null,
         reviewedBy: null,
       },
