@@ -40,7 +40,7 @@ address:
 mapUrl: null
 officeHours:
   {
-    value: 'Segunda a sexta, das 07:30 às 11:30 e das 13:00 às 17:30',
+    value: 'Das 07:30 às 11:30 e das 13:00 às 17:30',
     review:
       {
         status: observed,
