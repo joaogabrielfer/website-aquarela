@@ -61,6 +61,7 @@ const hasApprovals = groups.length > 0;
             title={empty.approvals[0]}
             text={empty.approvals[1]}
             link={{ href: '/visite', label: 'Fale com a equipe' }}
+            variant="compact"
           />
           <a href="/ensino#ensino-medio" class="section-link">
             Conheça o Ensino Médio
@@ -74,9 +75,12 @@ const hasApprovals = groups.length > 0;
 </PageShell>
 
 <style>
-  .section-approvals,
-  .section-empty {
+  .section-approvals {
     padding: var(--space-12) 0;
+    background: var(--surface-base);
+  }
+  .section-empty {
+    padding: var(--space-10) 0;
     background: var(--surface-base);
   }
   .approval-group {
@@ -96,18 +100,22 @@ const hasApprovals = groups.length > 0;
     text-decoration: underline;
   }
   @media (min-width: 768px) {
-    .section-approvals,
-    .section-empty {
+    .section-approvals {
       padding: var(--space-16) 0;
+    }
+    .section-empty {
+      padding: var(--space-12) 0;
     }
     .approval-year {
       font-size: 2.25rem;
     }
   }
   @media (min-width: 1100px) {
-    .section-approvals,
-    .section-empty {
+    .section-approvals {
       padding: var(--space-20) 0;
+    }
+    .section-empty {
+      padding: var(--space-12) 0;
     }
   }
 </style>

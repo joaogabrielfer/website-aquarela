@@ -6,6 +6,7 @@ interface Props {
   text?: string;
   link?: { href: string; label: string } | undefined;
   headingLevel?: 'h2' | 'h3';
+  variant?: 'default' | 'compact';
   class?: string;
 }
 
@@ -14,12 +15,19 @@ const {
   text,
   link,
   headingLevel = 'h2',
+  variant = 'default',
   class: className,
 } = Astro.props;
 const Tag = headingLevel;
 ---
 
-<div class:list={['empty-state', className]}>
+<div
+  class:list={[
+    'empty-state',
+    variant === 'compact' && 'empty-state--compact',
+    className,
+  ]}
+>
   <Tag class="empty-state-title">{title}</Tag>
   {text && <p class="empty-state-text">{text}</p>}
   {link && <TextLink href={link.href}>{link.label}</TextLink>}
@@ -44,9 +52,19 @@ const Tag = headingLevel;
     margin: 0;
     color: var(--text-ink);
   }
+  .empty-state--compact {
+    gap: var(--space-3);
+    padding: var(--space-6) var(--space-5);
+    max-width: 65ch;
+    align-items: flex-start;
+    text-align: left;
+  }
   @media (min-width: 768px) {
     .empty-state {
       padding: var(--space-8);
+    }
+    .empty-state--compact {
+      padding: var(--space-6);
     }
   }
 </style>

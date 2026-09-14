@@ -70,6 +70,7 @@ const envData = environments.map((env, i) => {
             title={empty.space[0]}
             text={empty.space[1]}
             link={{ href: '/visite', label: 'Fale com a equipe' }}
+            variant="compact"
           />
         </div>
       </section>
@@ -86,7 +87,7 @@ const envData = environments.map((env, i) => {
     background: var(--surface-base);
   }
   .section-empty {
-    padding: var(--space-12) 0;
+    padding: var(--space-10) 0;
     background: var(--surface-base);
   }
   .env-grid {
@@ -95,9 +96,11 @@ const envData = environments.map((env, i) => {
     gap: var(--space-4);
   }
   @media (min-width: 768px) {
-    .section-environments,
-    .section-empty {
+    .section-environments {
       padding: var(--space-16) 0;
+    }
+    .section-empty {
+      padding: var(--space-12) 0;
     }
     .env-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -105,9 +108,11 @@ const envData = environments.map((env, i) => {
     }
   }
   @media (min-width: 1100px) {
-    .section-environments,
-    .section-empty {
+    .section-environments {
       padding: var(--space-20) 0;
+    }
+    .section-empty {
+      padding: var(--space-12) 0;
     }
   }
 </style>
