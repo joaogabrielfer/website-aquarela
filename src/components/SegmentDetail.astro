@@ -14,7 +14,7 @@ interface Props {
   ages?: string | null;
   shifts?: string[];
   imageUrl?: string | null;
-  imageAlt?: string;
+  imageAlt?: string | undefined;
   tone?: 'white' | 'paper';
 }
 
@@ -31,21 +31,39 @@ const {
   tone = 'white',
 } = Astro.props;
 
-const hasContent = description || experiences.length >= 2;
+// Conteúdo publicado exige descrição aprovada e ao menos duas experiências.
+// Segmento incompleto mantém âncora/título com estado neutro (D06).
+const hasContent = Boolean(description && experiences.length >= 2);
+const isPreview = BUILD_MODE === 'editorial-preview';
+// Prévia demonstrativa (D10/C12): mesma composição, sem EmptyState.
+// Usa descrição real quando existir e exibe experiências reais quando
+// existirem; o texto sintético nunca conta como experiência.
+const showDemo = !hasContent && isPreview;
 const hasMeta = grades || ages || shifts.length > 0;
 const showImage = imageUrl !== null && imageUrl !== undefined;
-const showPlaceholder = BUILD_MODE === 'editorial-preview' && !showImage;
+const showPlaceholder = isPreview && !showImage;
 const ctaHref = `/visite?interesse=${slug}`;
+const demoText =
+  'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure dolor reprehenderit voluptate velit esse cillum fugiat nulla pariatur excepteur sint occaecat cupidatat non proident';
+const displayDescription = description ?? (showDemo ? demoText : null);
+const isDemoText = showDemo && !description;
 ---
 
 <section id={slug} class:list={['segment-detail', `segment-detail--${tone}`]}>
   <div class="container segment-detail-inner">
     {
-      hasContent ? (
+      hasContent || showDemo ? (
         <div class="segment-detail-layout">
+          <h2 class="segment-detail-title">{name}</h2>
           <div class="segment-detail-content">
-            <h2 class="segment-detail-title">{name}</h2>
-            {description && <p class="segment-detail-desc">{description}</p>}
+            {isDemoText && (
+              <p class="segment-detail-demo-label">
+                Texto demonstrativo — conteúdo em preparação
+              </p>
+            )}
+            {displayDescription && (
+              <p class="segment-detail-desc">{displayDescription}</p>
+            )}
             {experiences.length > 0 && (
               <ul class="segment-detail-experiences">
                 {experiences.map((exp) => (
@@ -72,6 +90,8 @@ const ctaHref = `/visite?interesse=${slug}`;
                 )}
               </div>
             )}
+          </div>
+          <div class="segment-detail-action">
             <Button href={ctaHref} variant="secondary">
               Conversar sobre esta etapa
             </Button>
@@ -94,11 +114,7 @@ const ctaHref = `/visite?interesse=${slug}`;
       ) : (
         <div class="segment-detail-empty">
           <h2 class="segment-detail-title">{name}</h2>
-          <EmptyState
-            title={empty.segment[0]}
-            link={{ href: '/visite', label: 'Fale com a equipe' }}
-            headingLevel="h3"
-          />
+          <EmptyState title={empty.segment[0]} headingLevel="h3" />
           <Button href={ctaHref} variant="secondary">
             Conversar sobre esta etapa
           </Button>
@@ -119,27 +135,45 @@ const ctaHref = `/visite?interesse=${slug}`;
     background: var(--surface-paper);
   }
   .segment-detail-inner {
+    max-width: 1104px;
+    margin-inline: auto;
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
   }
   .segment-detail-layout {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-8);
-  }
-  .segment-detail-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'title'
+      'content'
+      'action'
+      'media';
+    gap: var(--space-6);
+    align-items: start;
   }
   .segment-detail-title {
+    grid-area: title;
     margin: 0;
     font-size: 1.875rem;
     line-height: 1.15;
   }
+  .segment-detail-content {
+    grid-area: content;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+  .segment-detail-demo-label {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
   .segment-detail-desc {
     margin: 0;
+    max-width: 65ch;
     color: var(--text-ink);
   }
   .segment-detail-experiences {
@@ -148,19 +182,28 @@ const ctaHref = `/visite?interesse=${slug}`;
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+    max-width: 65ch;
     color: var(--text-ink);
   }
   .segment-detail-meta {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+    max-width: 65ch;
   }
   .segment-detail-meta p {
     margin: 0;
     color: var(--text-ink);
     font-size: 0.9375rem;
   }
+  .segment-detail-action {
+    grid-area: action;
+    align-self: start;
+    justify-self: start;
+  }
   .segment-detail-media {
+    grid-area: media;
+    align-self: start;
     overflow: hidden;
   }
   .segment-detail-photo {
@@ -175,6 +218,7 @@ const ctaHref = `/visite?interesse=${slug}`;
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
+    align-items: flex-start;
   }
 
   /* Tablet */
@@ -190,10 +234,11 @@ const ctaHref = `/visite?interesse=${slug}`;
   /* Desktop */
   @media (min-width: 1100px) {
     .segment-detail-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-12);
-      align-items: center;
+      grid-template-columns: 320px minmax(0, 1fr) 240px;
+      grid-template-areas:
+        'media title title'
+        'media content action';
+      gap: var(--space-6);
     }
     .segment-detail-title {
       font-size: 2.5rem;

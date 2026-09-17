@@ -1,6 +1,6 @@
 # Contrato responsivo e validação visual
 
-**AQ-WEB-1.1.1** · Autoridade para medidas. Layout fluido entre os intervalos abaixo; não escalar uma captura Figma como imagem.
+**AQ-WEB-1.1.4** · Autoridade para medidas. Layout fluido entre os intervalos abaixo; não escalar uma captura Figma como imagem.
 
 ## B01 — Breakpoints
 
@@ -77,5 +77,29 @@ Fixtures de QA podem ter conteúdo sintético claramente marcado e isolado do bu
 
 SeasonalBanner usa os mesmos gutters e tokens de superfície do container; em
 mobile empilha copy e CTA, permitindo altura natural e wrap sem overflow.
+SegmentAnchorNav usa esse mesmo container em todas as larguras. No Footer, a
+navegação interna usa duas subcolunas de largura pelo conteúdo e gap de 24 px,
+inclusive quando os três blocos principais se reorganizam segundo a tabela; os
+alvos permanecem com no mínimo 44 px.
 
 Comparação com Figma: avaliar grid, linguagem, proporções e marca; aplicar diferenças de design-spec em vez de copiar pixels contraditórios. Guardar resultados no diretório de QA escolhido pelo implementador e referenciá-los no relatório. Captura não substitui teste manual de foco, menu e links. Informar se faltou ambiente para alguma verificação, sem marcar o item como aprovado.
+
+## B06 — Revisão 1.1.4: composição compacta de Ensino
+
+Substitui apenas SegmentDetail na linha compartilhada com MediaText em B02.
+MediaText permanece com a geometria anterior. Implementação pendente.
+
+Desktop (≥1100 px): bloco de SegmentDetail com max-width 1104 px, centralizado
+dentro do container global, sem reduzir os gutters globais. Grade interna:
+mídia 320 px, texto minmax(0, 1fr), ação 240 px, gaps 24 px. A mídia tem
+proporção 4:3 e raio 24 px. O título ocupa as colunas de texto e ação; o CTA
+fica à direita da descrição, sem posicionamento absoluto. Títulos e botão
+aceitam quebra; sem alturas fixas. Âncora continua revelando o H2 completo.
+
+Abaixo de 1100 px: coluna única, largura do container, gap 24 px; CTA abaixo
+do texto, mídia 4:3 após a ação. Nenhuma coluna lateral é forçada em telas
+estreitas. Texto máximo 65ch, alvos ≥44 px e tipografia de B03 preservados.
+
+Validar a proposta em 390, 768, 1099, 1100 e 1440 px, além de zoom 200%, com
+títulos longos e amostra de texto. Novos PageIntro mantêm paddings e escala
+existentes; as cores não autorizam aumentar artificialmente sua altura.

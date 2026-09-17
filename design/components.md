@@ -1,6 +1,6 @@
 # Contrato de componentes
 
-**AQ-WEB-1.1.1** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
+**AQ-WEB-1.1.4** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
 
 Os nomes abaixo identificam responsabilidades; podem ser adaptados ao padrão de nomes da stack, mantendo uma correspondência no relatório de entrega. Reusar componentes entre rotas. Não criar variantes por página quando a diferença for apenas conteúdo.
 
@@ -49,7 +49,7 @@ SectionHeading: H2 + introdução opcional de até 65ch + link de seção opcion
 
 MediaText: foto 4:3 + coluna de título, até dois parágrafos e lista de três fatos aprovados. Em desktop, mídia à esquerda; mobile, texto antes da mídia. Não alternar arbitrariamente em cada render. Sem três fatos e foto aprovados, ocultar bloco de proposta da home conforme modelo.
 
-SegmentAnchorNav: quatro links em área branca, wrap entre linhas; sem scroll horizontal oculto. São links simples, não tabs ARIA. Não acompanhar seção visível com JavaScript em V1. Ativar link usa hash e posiciona destino abaixo do header. Todos os quatro SegmentDetail permanecem no DOM.
+SegmentAnchorNav: quatro links em área branca e dentro do container global, alinhados ao PageIntro e aos SegmentDetail; wrap entre linhas; sem scroll horizontal oculto. São links simples, não tabs ARIA. Não acompanhar seção visível com JavaScript em V1. Ativar link usa hash e posiciona destino abaixo do header. Todos os quatro SegmentDetail permanecem no DOM.
 
 ## C06 — Cards: variantes e anatomia
 
@@ -88,7 +88,7 @@ FAQ usa details/summary nativo, todos fechados inicialmente e múltiplos podem f
 
 ContactPanel: introdução, interesse validado se houver, telefone/endereço/horário aprovados, grupo de links condicionais. Em `/visite`, telefone é primary; se WhatsApp estiver confirmado, passa a primary e telefone vira secondary; mapa é text. Não oferecer um controle de escolha de etapa: o contexto vem do link anterior, e texto “Ver todas as etapas” permite voltar a `/ensino`.
 
-VisitCTA: fundo navy, H2 e apoio brancos, botão inverse “Quero conhecer”; sem inputs. Fundo escuro não muda a versão da marca. Footer branco, borda superior subtle, logo original, assinatura aprovada, links de navegação, contatos e privacidade. Ano de copyright pode ser ano corrente; ano de aprovação/evento nunca deve ser inferido disso.
+VisitCTA: fundo navy, H2 e apoio brancos, botão inverse “Quero conhecer”; sem inputs. Fundo escuro não muda a versão da marca. Footer branco, borda superior subtle, logo original, assinatura aprovada, links de navegação, contatos e privacidade. Sua composição é compacta: padding vertical 32/20 px, gap principal 24 px, logo visível com 160 px e navegação distribuída em duas subcolunas de largura pelo conteúdo, separadas por 24 px e preservando alvos de 44 px. Ano de copyright pode ser ano corrente; ano de aprovação/evento nunca deve ser inferido disso.
 
 ## C10 — EmptyState / AssetPlaceholder
 
@@ -103,4 +103,33 @@ o Hero e antes das etapas. Exibe conteúdo textual e CTA/destino opcional em par
 destinos são rotas internas seguras. Não possui carrossel, autoplay, dismiss,
 agendamento automático, imagem obrigatória, formulário, backend ou tracking.
 O público só recebe registros `active` e `approved`; preview explícito também
-pode mostrar draft/observed. A fixture sintética não é conteúdo real.
+pode mostrar draft/observed. `tone` é escolha editorial obrigatória entre
+`paper`, `red`, `navy` e `purple`; cada opção usa somente tokens e pares de
+contraste autorizados. A fixture sintética não é conteúdo real e usa `red` na
+prévia desta revisão.
+
+## C12 — Revisão 1.1.4: aberturas e detalhes de Ensino
+
+Estas regras substituem as variantes conflitantes de C04 e o layout de
+SegmentDetail em C06; a implementação permanece pendente.
+
+PageIntro mantém breadcrumb → H1 → introdução opcional, gap 16 px e altura
+natural. Adicionar teaching (navy/branco) e gallery (ciano/ink); activities usa
+roxo/branco e deixa de renderizar a pequena linha roxa isolada. Texto de apoio,
+links de breadcrumb, separadores e foco precisam acompanhar a superfície;
+não basta trocar o fundo mantendo cores escuras herdadas. Manter sublinhado
+nos links e os critérios globais de contraste, incluindo foco no roxo.
+
+SegmentDetail: um bloco editorial por etapa, com largura limitada conforme B06.
+No desktop, foto à esquerda; à direita, título e descrição/metadados, com o
+botão “Conversar sobre esta etapa” em coluna própria à direita do texto,
+alinhado ao início da descrição. Não esticar o botão para ocupar a coluna.
+O CTA permanece depois do conteúdo na ordem de leitura e de teclado.
+No mobile/tablet, empilhar título, texto/metadados, CTA e mídia, sem sobreposição.
+Manter a mesma composição nas quatro etapas; dinamismo vem da relação entre
+mídia, texto e ação, sem animações ou alternância arbitrária de cores.
+
+A prévia incompleta usa o parágrafo sintético identificado e AssetPlaceholder
+4:3 de D10. Metadados observados disponíveis podem aparecer na prévia mesmo
+sem descrição ou experiências completas. Não inventar experiências para
+habilitar o layout. O público preserva o EmptyState prescrito quando incompleto.

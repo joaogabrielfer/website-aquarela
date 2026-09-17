@@ -3,11 +3,13 @@ import PageShell from '../layouts/PageShell.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import { getPageCopy, getPrivacyDoc } from '../lib/content';
 import { renderPrivacyMarkdown } from '../lib/privacy';
+import { BUILD_MODE } from '../lib/env';
 import { pageTitles } from '../lib/copy';
 
 const privacy = getPrivacyDoc();
 const pageCopy = getPageCopy('privacidade');
 const renderedBody = renderPrivacyMarkdown(privacy.body);
+const showPending = BUILD_MODE === 'editorial-preview';
 ---
 
 <PageShell
@@ -25,9 +27,9 @@ const renderedBody = renderPrivacyMarkdown(privacy.body);
       {
         renderedBody ? (
           <div class="privacy-content reading" set:html={renderedBody} />
-        ) : (
+        ) : showPending ? (
           <p class="privacy-pending">Documento de privacidade em elaboração.</p>
-        )
+        ) : null
       }
     </div>
   </section>

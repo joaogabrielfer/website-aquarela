@@ -6,7 +6,7 @@ interface BreadcrumbItem {
 
 interface Props {
   items: BreadcrumbItem[];
-  tone?: 'light' | 'dark';
+  tone?: 'light' | 'dark' | 'inverse';
 }
 
 const { items, tone = 'light' } = Astro.props;
@@ -58,9 +58,14 @@ const { items, tone = 'light' } = Astro.props;
   .breadcrumb a {
     color: var(--text-muted);
     text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
-  .breadcrumb a:hover {
-    text-decoration: underline;
+  @media (hover: hover) {
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
   }
   .breadcrumb span[aria-current='page'] {
     color: var(--text-ink);
@@ -75,10 +80,27 @@ const { items, tone = 'light' } = Astro.props;
   .breadcrumb--dark span[aria-current='page'] {
     color: var(--text-ink);
   }
+  .breadcrumb--dark .separator {
+    color: var(--text-ink);
+  }
+  .breadcrumb--inverse a {
+    color: var(--surface-base);
+  }
+  .breadcrumb--inverse span[aria-current='page'] {
+    color: var(--surface-base);
+  }
+  .breadcrumb--inverse .separator {
+    color: var(--surface-base);
+  }
   :global(.focus-on-navy) .breadcrumb a:focus-visible,
   .breadcrumb a:focus-visible {
     outline: 3px solid var(--brand-navy);
     outline-offset: 2px;
     box-shadow: 0 0 0 2px white;
+  }
+  .breadcrumb--inverse a:focus-visible {
+    outline: 3px solid var(--surface-base);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--text-ink);
   }
 </style>

@@ -31,7 +31,12 @@ const isPreview = BUILD_MODE === 'editorial-preview';
 const hasPhone = school.phoneE164 !== null;
 const hasWhatsapp = school.whatsappE164 !== null;
 const hasMap = school.mapUrl !== null;
-const hasAnyContact = hasPhone || hasWhatsapp || hasMap;
+const hasHours = school.officeHours !== null && school.officeHours !== '';
+const hasAddress = school.address !== null;
+const hasActions = hasPhone || hasWhatsapp;
+const hasInfo = hasMap || hasHours || hasAddress;
+const hasAnyContact = hasActions || hasInfo;
+const hasBothGroups = hasActions && hasInfo;
 ---
 
 <div class="contact-panel">
@@ -54,51 +59,65 @@ const hasAnyContact = hasPhone || hasWhatsapp || hasMap;
         <div class="contact-panel-pending">
           <p>Contato aguardando confirmação</p>
         </div>
-      ) : (
-        <div class="contact-panel-contacts">
-          {/* WhatsApp primary when confirmed, phone secondary */}
-          {hasWhatsapp && school.whatsappE164 && (
-            <Button
-              href={whatsappUrl(
-                school.whatsappE164,
-                resolvedInterest?.humanName,
+      ) : hasAnyContact ? (
+        <div
+          class:list={[
+            'contact-panel-contacts',
+            hasBothGroups && 'contact-panel-contacts--split',
+          ]}
+        >
+          {hasActions && (
+            <div class="contact-panel-group">
+              {/* WhatsApp primary when confirmed, phone secondary */}
+              {hasWhatsapp && school.whatsappE164 && (
+                <Button
+                  href={whatsappUrl(
+                    school.whatsappE164,
+                    resolvedInterest?.humanName,
+                  )}
+                  variant="primary"
+                >
+                  Conversar no WhatsApp
+                </Button>
               )}
-              variant="primary"
-            >
-              Conversar no WhatsApp
-            </Button>
-          )}
 
-          {hasPhone && school.phoneE164 && (
-            <Button
-              href={telUrl(school.phoneE164)}
-              variant={hasWhatsapp ? 'secondary' : 'primary'}
-            >
-              Ligar para o colégio
-            </Button>
-          )}
-
-          {hasMap && school.mapUrl && (
-            <TextLink href={school.mapUrl}>Como chegar</TextLink>
-          )}
-
-          {school.officeHours && (
-            <div class="contact-panel-detail">
-              <strong>Horário:</strong> {school.officeHours}
+              {hasPhone && school.phoneE164 && (
+                <Button
+                  href={telUrl(school.phoneE164)}
+                  variant={hasWhatsapp ? 'secondary' : 'primary'}
+                >
+                  Ligar para o colégio
+                </Button>
+              )}
             </div>
           )}
 
-          {school.address && (
-            <div class="contact-panel-detail">
-              <strong>Endereço:</strong> {school.address.street}
-              {school.address.number && `, ${school.address.number}`} —{' '}
-              {school.address.neighborhood}, {school.address.city}/
-              {school.address.state}
-              {school.address.postalCode && ` — ${school.address.postalCode}`}
+          {hasInfo && (
+            <div class="contact-panel-group">
+              {hasMap && school.mapUrl && (
+                <TextLink href={school.mapUrl}>Como chegar</TextLink>
+              )}
+
+              {school.officeHours && (
+                <div class="contact-panel-detail">
+                  <strong>Horário:</strong> {school.officeHours}
+                </div>
+              )}
+
+              {school.address && (
+                <div class="contact-panel-detail">
+                  <strong>Endereço:</strong> {school.address.street}
+                  {school.address.number && `, ${school.address.number}`} —{' '}
+                  {school.address.neighborhood}, {school.address.city}/
+                  {school.address.state}
+                  {school.address.postalCode &&
+                    ` — ${school.address.postalCode}`}
+                </div>
+              )}
             </div>
           )}
         </div>
-      )
+      ) : null
     }
   </div>
 </div>
@@ -113,6 +132,11 @@ const hasAnyContact = hasPhone || hasWhatsapp || hasMap;
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
+    /* Pages provide the global container; avoid compounding its gutters when
+       the panel is placed inside a section container. */
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
   }
   .contact-panel-intro {
     margin: 0;
@@ -136,6 +160,13 @@ const hasAnyContact = hasPhone || hasWhatsapp || hasMap;
     gap: var(--space-4);
     align-items: flex-start;
   }
+  .contact-panel-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: flex-start;
+    min-width: 0;
+  }
   .contact-panel-pending {
     color: var(--text-muted);
     font-style: italic;
@@ -152,6 +183,16 @@ const hasAnyContact = hasPhone || hasWhatsapp || hasMap;
   @media (min-width: 768px) {
     .contact-panel {
       padding: var(--space-10);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .contact-panel-contacts--split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      align-items: start;
+      width: 100%;
     }
   }
 </style>

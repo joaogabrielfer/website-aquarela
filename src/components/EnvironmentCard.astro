@@ -3,7 +3,7 @@ interface Props {
   name: string;
   purpose: string;
   imageUrl?: string | null;
-  imageAlt?: string;
+  imageAlt?: string | undefined;
   caption?: string | null | undefined;
   feature?: boolean;
   photos?: { src: string; alt: string; caption?: string | null }[];
@@ -20,6 +20,17 @@ const {
   photos = [],
   class: className,
 } = Astro.props;
+
+const photosForLightbox =
+  photos.length > 0
+    ? photos
+    : imageUrl
+      ? [{ src: imageUrl, alt: imageAlt || name, caption }]
+      : [];
+const lightboxPhotos = photosForLightbox.map((photo) => ({
+  ...photo,
+  caption: [name, purpose, photo.caption].filter(Boolean).join(' — '),
+}));
 ---
 
 <div
@@ -43,8 +54,8 @@ const {
           class="lightbox-trigger"
           type="button"
           aria-label={`Ampliar foto: ${name}`}
-          data-photos={JSON.stringify(photos)}
-          onclick={`window.dispatchEvent(new CustomEvent('aquarela:lightbox', { detail: { photos: ${JSON.stringify(photos)}, index: 0 } }))`}
+          data-photos={JSON.stringify(lightboxPhotos)}
+          onclick={`window.dispatchEvent(new CustomEvent('aquarela:lightbox', { detail: { photos: ${JSON.stringify(lightboxPhotos)}, index: 0 } }))`}
         >
           <span aria-hidden="true">⤢</span>
         </button>
@@ -66,6 +77,12 @@ const {
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     overflow: hidden;
+  }
+  @media (min-width: 768px) {
+    /* The editorially first environment is the wide lead card. */
+    .environment-card--feature {
+      grid-column: 1 / -1;
+    }
   }
   .card-media {
     position: relative;
@@ -97,13 +114,15 @@ const {
     font-size: 1.25rem;
     color: var(--text-ink);
   }
-  .lightbox-trigger:hover {
-    background: var(--surface-paper);
-  }
   .lightbox-trigger:focus-visible {
     outline: 3px solid var(--brand-navy);
     outline-offset: 2px;
     box-shadow: 0 0 0 2px white;
+  }
+  @media (hover: hover) {
+    .lightbox-trigger:hover {
+      background: var(--surface-paper);
+    }
   }
   .card-caption {
     margin: 0;

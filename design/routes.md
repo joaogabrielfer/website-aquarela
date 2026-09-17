@@ -1,6 +1,6 @@
 # Rotas e composição
 
-**AQ-WEB-1.1.1** · Normativo. Complementa [design-spec.md](./design-spec.md).
+**AQ-WEB-1.1.4** · Normativo. Complementa [design-spec.md](./design-spec.md).
 
 ## R01 — Regras globais
 
@@ -19,7 +19,7 @@ As condições de dados são as de `content-model.md`. Se uma seção opcional n
 | Ordem / ID | Composição | Dados / ação |
 | --- | --- | --- |
 | 1 `inicio` | HeroHome, fundo paper | Rótulo “Aquarela Colégio e Curso · Paulista/PE”; H1 “Presente em cada fase. Pronto para novas descobertas.”; apoio “Conheça as etapas de ensino, os espaços e as experiências do Aquarela.” |
-| 2 `banner-sazonal` | SeasonalBanner opcional, após o Hero | No máximo um banner `active`; público somente approved, preview pode mostrar draft/observed; CTA/destino opcionais em par |
+| 2 `banner-sazonal` | SeasonalBanner opcional, após o Hero | No máximo um banner `active`; público somente approved, preview pode mostrar draft/observed; CTA/destino opcionais em par; tom editorial da paleta autorizada |
 | 3 `etapas` | SectionHeading + 4 SegmentCard, fundo branco | H2 “Ensino em cada fase”; ordem Infantil, Anos Iniciais, Anos Finais, Médio; destinos na tabela de Ensino abaixo |
 | 4 `proposta` | MediaText, fundo paper | H2 “O jeito Aquarela de aprender”; foto + 3 fatos pedagógicos aprovados; ocultar bloco se conteúdo incompleto |
 | 5 `espacos` | GalleryPreview de ambientes, fundo branco | H2 “Espaço para novas descobertas”; até 3 fotos de ambientes distintos; link “Conheça nosso espaço” → `/nosso-espaco`; ocultar sem fotos |
@@ -88,3 +88,24 @@ Privacidade: shell, breadcrumb e texto editorial aprovado sobre funcionamento ef
 ## R03 — Validação de rotas
 
 Testar acesso direto e refresh de todas as rotas, âncoras com header sticky, retorno pelo histórico, query inválida, slug desconhecido, álbum não publicado e links externos reais. Não criar links com destinos supostos para conteúdo ausente.
+
+## R04 — Revisão visual 1.1.4: aplicação por rota
+
+Revisão de design, ainda não implementada. Substitui em R02 somente as
+variantes de abertura de Ensino e Galeria e a composição dos detalhes de Ensino:
+
+| Rota | PageIntro / fundo | Texto e breadcrumb |
+| --- | --- | --- |
+| Ensino | teaching / navy | branco |
+| Nosso espaço | space / ciano, preservado | ink |
+| Aprovações | achievements / amarelo, preservado | navy; breadcrumb ink |
+| Atividades | activities / roxo sólido | branco |
+| Galeria | gallery / ciano | ink |
+| Visite | paper / creme, preservado | ink; breadcrumb conforme C04 |
+
+Ensino mantém quatro seções em sequência vertical e suas âncoras, sem carrossel
+ou abas que escondam conteúdo. A anotação annotation_2 refere-se a SegmentDetail,
+não aos quatro cards de navegação da Home. O CTA contextual fica à direita no
+desktop conforme C06/B06. Na prévia incompleta, aplicar a amostra de texto e
+reserva de imagem de D10, evitando repetir o EmptyState dentro da composição
+representativa. O estado público incompleto continua seguindo D06.

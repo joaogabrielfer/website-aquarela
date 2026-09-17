@@ -38,6 +38,16 @@ address:
     review: *review,
   }
 mapUrl: null
-officeHours: null
+officeHours:
+  {
+    value: 'Das 07:30 às 11:30 e das 13:00 às 17:30',
+    review:
+      {
+        status: observed,
+        source: 'Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026',
+        reviewedAt: null,
+        reviewedBy: null,
+      },
+  }
 instagramUrl:
   { value: 'https://www.instagram.com/aquarelacolegioecurso/', review: *review }

@@ -20,7 +20,7 @@ const hasInstagram = school.instagramUrl !== null;
     breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Galeria' }]}
     title={pageCopy?.title ?? h1.galeria}
     intro={pageCopy?.intro ?? undefined}
-    variant="default"
+    variant="gallery"
   />
 
   {
@@ -42,12 +42,7 @@ const hasInstagram = school.instagramUrl !== null;
             })}
           />
           {hasInstagram && (
-            <a
-              href={school.instagramUrl!}
-              class="section-link"
-              target="_blank"
-              rel="noopener"
-            >
+            <a href={school.instagramUrl!} class="section-link">
               Acompanhe no Instagram
             </a>
           )}
@@ -67,6 +62,7 @@ const hasInstagram = school.instagramUrl !== null;
                   }
                 : undefined
             }
+            variant="compact"
           />
         </div>
       </section>
@@ -77,9 +73,12 @@ const hasInstagram = school.instagramUrl !== null;
 </PageShell>
 
 <style>
-  .section-gallery,
-  .section-empty {
+  .section-gallery {
     padding: var(--space-12) 0;
+    background: var(--surface-base);
+  }
+  .section-empty {
+    padding: var(--space-10) 0;
     background: var(--surface-base);
   }
   .section-link {
@@ -91,15 +90,19 @@ const hasInstagram = school.instagramUrl !== null;
     text-decoration: underline;
   }
   @media (min-width: 768px) {
-    .section-gallery,
-    .section-empty {
+    .section-gallery {
       padding: var(--space-16) 0;
+    }
+    .section-empty {
+      padding: var(--space-12) 0;
     }
   }
   @media (min-width: 1100px) {
-    .section-gallery,
-    .section-empty {
+    .section-gallery {
       padding: var(--space-20) 0;
+    }
+    .section-empty {
+      padding: var(--space-12) 0;
     }
   }
 </style>

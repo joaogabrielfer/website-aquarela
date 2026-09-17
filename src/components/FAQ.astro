@@ -70,8 +70,10 @@ const hasItems = items.length > 0;
   .faq-summary::marker {
     content: '';
   }
-  .faq-summary:hover {
-    background: var(--surface-paper);
+  @media (hover: hover) {
+    .faq-summary:hover {
+      background: var(--surface-paper);
+    }
   }
   .faq-summary:focus-visible {
     outline: 3px solid var(--brand-navy);

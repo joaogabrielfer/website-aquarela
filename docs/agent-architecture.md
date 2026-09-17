@@ -1,6 +1,6 @@
 # Arquitetura operacional de agentes
 
-Esta documentação descreve como GPT-5.6 Sol no Codex delega implementação e auditoria para Luna no Codex ou OpenCode Go e para Spark no OpenCode Go. Ela não altera o contrato visual AQ-WEB-1.1.1.
+Esta documentação descreve como GPT-5.6 Sol no Codex delega implementação e auditoria para Luna no Codex ou OpenCode Go e para Spark no OpenCode Go. Ela não altera o contrato visual AQ-WEB-1.1.3.
 
 ## Responsabilidades
 
@@ -30,6 +30,22 @@ Cada novo lote classificado para Luna exige uma escolha do usuário entre duas f
 Antes de iniciar, Sol informa o escopo do lote, recomenda um provider com um motivo curto e pergunta: **“Para este lote Luna (`<escopo>`), você prefere Codex ou OpenCode Go? Recomendo `<provider>` porque `<motivo curto>`.”** A escolha vale apenas para o lote atual. Se o usuário já tiver nomeado explicitamente o provider no próprio pedido, Sol registra essa escolha sem repetir a pergunta.
 
 Nenhum Luna deve ser criado enquanto essa escolha estiver pendente. Spark continua no OpenCode Go salvo nova instrução explícita do usuário.
+
+## Preflight de implementação
+
+Antes de qualquer edição de código, Sol resolve duas decisões com o usuário: o
+modo de preview que determina o prefixo da branch e o trabalhador que escreverá
+o lote. A decisão não pode ser corrigida apenas depois do primeiro commit.
+
+- Trabalho fora de fase: perguntar se deve usar preview editorial, salvo quando
+  o próprio pedido já responder; em ambos os casos, conferir o prefixo antes de
+  editar.
+- Luna: informar o escopo, consultar limites, recomendar e aguardar a escolha
+  Codex ou OpenCode Go.
+- Spark: informar que usa OpenCode Go, recomendar conforme complexidade e limites
+  e aguardar autorização ou a escolha de elevar o lote a Luna.
+- Sol pode ler contrato, inspecionar o checkout e consultar telemetria enquanto
+  aguarda, mas não editar a implementação nem iniciar o trabalhador.
 
 ## Gestão das franquias
 

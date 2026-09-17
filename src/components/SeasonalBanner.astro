@@ -8,7 +8,10 @@ interface Props {
 const { banner } = Astro.props;
 ---
 
-<aside class="seasonal-banner" aria-label="Aviso sazonal">
+<aside
+  class:list={['seasonal-banner', `seasonal-banner--${banner.tone}`]}
+  aria-label="Aviso sazonal"
+>
   <div class="container seasonal-banner__inner">
     <div class="seasonal-banner__copy">
       {
@@ -31,10 +34,38 @@ const { banner } = Astro.props;
 
 <style>
   .seasonal-banner {
-    background: var(--surface-paper);
-    border-top: 1px solid var(--border-subtle);
-    border-bottom: 1px solid var(--border-subtle);
+    --banner-background: var(--surface-paper);
+    --banner-border: var(--border-subtle);
+    --banner-text: var(--text-ink);
+    --banner-secondary-text: var(--text-muted);
+    --banner-cta-background: var(--action-primary);
+    --banner-cta-text: var(--surface-base);
+    --banner-cta-hover: var(--action-hover);
+    background: var(--banner-background);
+    border-top: 1px solid var(--banner-border);
+    border-bottom: 1px solid var(--banner-border);
     padding: var(--space-8) 0;
+  }
+  .seasonal-banner--red,
+  .seasonal-banner--navy,
+  .seasonal-banner--purple {
+    --banner-text: var(--surface-base);
+    --banner-secondary-text: var(--surface-base);
+    --banner-cta-background: var(--surface-base);
+    --banner-cta-text: var(--brand-navy);
+    --banner-cta-hover: var(--surface-paper);
+  }
+  .seasonal-banner--red {
+    --banner-background: var(--action-primary);
+    --banner-border: var(--action-hover);
+  }
+  .seasonal-banner--navy {
+    --banner-background: var(--brand-navy);
+    --banner-border: var(--text-ink);
+  }
+  .seasonal-banner--purple {
+    --banner-background: var(--brand-purple);
+    --banner-border: var(--brand-purple);
   }
   .seasonal-banner__inner {
     display: flex;
@@ -47,19 +78,19 @@ const { banner } = Astro.props;
   }
   .seasonal-banner__eyebrow {
     margin: 0 0 var(--space-2);
-    color: var(--text-muted);
+    color: var(--banner-secondary-text);
     font-size: 0.875rem;
     font-weight: 500;
   }
   h2 {
     margin: 0;
-    color: var(--text-ink);
+    color: var(--banner-text);
     font-size: 1.875rem;
     line-height: 1.15;
   }
   .seasonal-banner__copy > p:last-child {
     margin: var(--space-3) 0 0;
-    color: var(--text-ink);
+    color: var(--banner-text);
     font-size: 1rem;
     line-height: 1.6;
   }
@@ -68,8 +99,8 @@ const { banner } = Astro.props;
     min-height: 44px;
     align-items: center;
     border-radius: var(--radius-pill);
-    background: var(--action-primary);
-    color: white;
+    background: var(--banner-cta-background);
+    color: var(--banner-cta-text);
     padding: 10px 16px;
     font-weight: 500;
     text-decoration: none;
@@ -77,7 +108,7 @@ const { banner } = Astro.props;
   }
   @media (hover: hover) {
     .seasonal-banner__cta:hover {
-      background: var(--action-hover);
+      background: var(--banner-cta-hover);
     }
   }
   @media (max-width: 767px) {

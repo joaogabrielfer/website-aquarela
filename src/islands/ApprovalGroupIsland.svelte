@@ -25,13 +25,17 @@
     initialCount?: number;
     batchSize?: number;
   } = $props();
+
+  const year = approvals[0]?.year;
 </script>
 
 <LoadMore
   items={approvals}
   {initialCount}
   {batchSize}
-  buttonLabel="Carregar mais aprovações"
+  buttonLabel={year
+    ? `Carregar mais aprovações de ${year}`
+    : 'Carregar mais aprovações'}
   let:items
 >
   <div class="approval-grid">
@@ -70,7 +74,7 @@
   .approval-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: var(--space-4);
   }
   .approval-card {
     display: flex;
@@ -108,11 +112,13 @@
   @media (min-width: 768px) {
     .approval-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-5);
     }
   }
   @media (min-width: 1100px) {
     .approval-grid {
       grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
     }
   }
   @media (max-width: 767px) {

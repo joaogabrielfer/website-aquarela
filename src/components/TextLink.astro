@@ -16,8 +16,10 @@ const { href, class: className } = Astro.props;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
-  .text-link:hover {
-    color: var(--text-ink);
+  @media (hover: hover) {
+    .text-link:hover {
+      color: var(--text-ink);
+    }
   }
   :global(.focus-on-navy) .text-link:focus-visible,
   .text-link:focus-visible {

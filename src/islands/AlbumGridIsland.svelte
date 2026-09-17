@@ -23,6 +23,15 @@
     initialCount?: number;
     batchSize?: number;
   } = $props();
+
+  const formatDate = (value: string) => {
+    const date = new Date(`${value}T00:00:00Z`);
+    if (Number.isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat('pt-BR', {
+      dateStyle: 'long',
+      timeZone: 'UTC',
+    }).format(date);
+  };
 </script>
 
 <LoadMore
@@ -34,7 +43,11 @@
 >
   <div class="album-grid">
     {#each items as album (album.slug)}
-      <a href={`/galeria/${album.slug}`} class="album-card">
+      <a
+        href={`/galeria/${album.slug}`}
+        class="album-card"
+        aria-label={`Abrir álbum ${album.title}`}
+      >
         {#if album.coverUrl}
           <div class="card-media">
             <img
@@ -48,7 +61,7 @@
         {/if}
         <div class="card-body">
           <h3 class="card-title">{album.title}</h3>
-          <p class="card-meta">{album.date} · {album.category}</p>
+          <p class="card-meta">{formatDate(album.date)} · {album.category}</p>
         </div>
       </a>
     {/each}
@@ -59,7 +72,7 @@
   .album-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: var(--space-4);
   }
   .album-card {
     display: flex;
@@ -71,7 +84,6 @@
     text-decoration: none;
     color: inherit;
   }
-  .album-card:hover,
   .album-card:focus-within {
     box-shadow: var(--shadow);
     border-color: var(--brand-navy);
@@ -96,6 +108,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
+    flex: 1;
   }
   .card-title {
     margin: 0;
@@ -107,14 +120,22 @@
     color: var(--text-muted);
     font-size: 0.875rem;
   }
+  @media (hover: hover) {
+    .album-card:hover {
+      box-shadow: var(--shadow);
+      border-color: var(--brand-navy);
+    }
+  }
   @media (min-width: 768px) {
     .album-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-5);
     }
   }
   @media (min-width: 1100px) {
     .album-grid {
       grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
     }
   }
   @media (max-width: 767px) {

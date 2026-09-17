@@ -80,15 +80,17 @@ const tagProps = isLink
     min-height: 44px;
     padding: 10px 16px;
     border-radius: var(--radius-pill);
-    font-size: 0.875rem;
+    font-size: 1rem;
   }
   .btn--primary {
     background: var(--action-primary);
     color: white;
     border: none;
   }
-  .btn--primary:hover {
-    background: var(--action-hover);
+  @media (hover: hover) {
+    .btn--primary:hover {
+      background: var(--action-hover);
+    }
   }
   .btn--primary:active {
     background: var(--action-pressed);
@@ -98,8 +100,10 @@ const tagProps = isLink
     color: var(--brand-navy);
     border: 1px solid var(--brand-navy);
   }
-  .btn--secondary:hover {
-    background: var(--surface-paper);
+  @media (hover: hover) {
+    .btn--secondary:hover {
+      background: var(--surface-paper);
+    }
   }
   .btn--secondary:active {
     background: var(--surface-disabled);
@@ -109,11 +113,17 @@ const tagProps = isLink
     color: var(--brand-navy);
     border: 1px solid white;
   }
-  .btn--inverse:hover {
-    background: var(--surface-paper);
+  @media (hover: hover) {
+    .btn--inverse:hover {
+      background: var(--surface-paper);
+    }
   }
   .btn--inverse:active {
     background: var(--surface-disabled);
+  }
+  .btn--inverse:focus-visible {
+    outline-color: white;
+    box-shadow: 0 0 0 2px var(--text-ink);
   }
   .btn--text {
     background: transparent;
@@ -123,8 +133,10 @@ const tagProps = isLink
     padding-left: 0;
     padding-right: 0;
   }
-  .btn--text:hover {
-    color: var(--text-ink);
+  @media (hover: hover) {
+    .btn--text:hover {
+      color: var(--text-ink);
+    }
   }
   .btn--text:active {
     color: var(--text-ink);
@@ -137,9 +149,15 @@ const tagProps = isLink
     cursor: not-allowed;
     box-shadow: none;
   }
-  .btn:disabled:hover,
-  .btn[aria-disabled='true']:hover {
-    background: var(--surface-disabled);
+  @media (hover: hover) {
+    .btn:disabled:hover,
+    .btn[aria-disabled='true']:hover {
+      background: var(--surface-disabled);
+    }
+  }
+  .btn:disabled,
+  .btn[aria-disabled='true'] {
+    text-decoration: none;
   }
   .btn-icon {
     display: inline-flex;

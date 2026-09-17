@@ -54,6 +54,7 @@ const showMedia = showImage || showPlaceholder;
               alt={imageAlt || 'Aquarela Colégio e Curso'}
               width="600"
               height="450"
+              loading="eager"
               fetchpriority="high"
             />
           ) : (
@@ -139,6 +140,9 @@ const showMedia = showImage || showPlaceholder;
     }
     .hero-title {
       font-size: 3.5rem;
+    }
+    .hero-inner {
+      gap: var(--space-10);
     }
     .hero-support {
       font-size: 1.25rem;
