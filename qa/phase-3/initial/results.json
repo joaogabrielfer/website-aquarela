@@ -1,0 +1,225 @@
+{
+  "mode": "editorial-preview",
+  "fixture": "conteudo atual incompleto; nenhuma foto escolar final",
+  "results": [
+    {
+      "route": "/",
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "home-390x844.png"
+    },
+    {
+      "route": "/ensino",
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "ensino-390x844.png"
+    },
+    {
+      "route": "/nosso-espaco",
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "nosso-espaco-390x844.png"
+    },
+    {
+      "route": "/aprovacoes",
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "aprovacoes-390x844.png"
+    },
+    {
+      "route": "/atividades",
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "atividades-390x844.png"
+    },
+    {
+      "route": "/galeria",
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "galeria-390x844.png"
+    },
+    {
+      "route": "/visite",
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "visite-390x844.png"
+    },
+    {
+      "route": "/",
+      "width": 1440,
+      "height": 900,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "home-1440x900.png"
+    },
+    {
+      "route": "/ensino",
+      "width": 1440,
+      "height": 900,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "ensino-1440x900.png"
+    },
+    {
+      "route": "/nosso-espaco",
+      "width": 1440,
+      "height": 900,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "nosso-espaco-1440x900.png"
+    },
+    {
+      "route": "/aprovacoes",
+      "width": 1440,
+      "height": 900,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "aprovacoes-1440x900.png"
+    },
+    {
+      "route": "/atividades",
+      "width": 1440,
+      "height": 900,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "atividades-1440x900.png"
+    },
+    {
+      "route": "/galeria",
+      "width": 1440,
+      "height": 900,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "galeria-1440x900.png"
+    },
+    {
+      "route": "/visite",
+      "width": 1440,
+      "height": 900,
+      "status": 200,
+      "h1": 1,
+      "overflow": false,
+      "lang": "pt-BR",
+      "noindex": "noindex",
+      "file": "visite-1440x900.png"
+    },
+    {
+      "test": "menu-open",
+      "focus": "Fechar menu",
+      "inert": ""
+    },
+    {
+      "test": "menu-escape",
+      "focus": "Abrir menu"
+    },
+    {
+      "test": "menu-resize-ensino",
+      "dialogs": 0,
+      "focus": "BODY (texto integral omitido; repeticao controlada em followup.json)",
+      "bodyPosition": ""
+    },
+    {
+      "test": "menu-resize-home",
+      "focus": {
+        "tag": "BODY",
+        "text": "PréviaPular para o conteúdo       Ensino  Nosso espaço  Aprovações  At"
+      }
+    },
+    {
+      "test": "home-width",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "test": "home-width",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "test": "home-width",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "test": "home-width",
+      "width": 1024,
+      "overflow": false
+    },
+    {
+      "test": "home-width",
+      "width": 1920,
+      "overflow": false
+    },
+    {
+      "test": "interest",
+      "labels": 0,
+      "contextualWhatsapp": false
+    },
+    {
+      "test": "404",
+      "route": "/rota-inexistente",
+      "status": 404,
+      "h1": "Página não encontrada"
+    },
+    {
+      "test": "404",
+      "route": "/galeria/album-inexistente",
+      "status": 404,
+      "h1": "Página não encontrada"
+    }
+  ],
+  "errors": []
+}
