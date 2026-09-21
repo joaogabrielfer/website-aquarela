@@ -1,0 +1,17 @@
+---
+import PageShell from '../../layouts/PageShell.astro';
+import LoadMoreHarness from '../../../tests/fixtures/load-more/LoadMoreHarness.svelte';
+---
+
+<PageShell title="Fixture sintética de paginação">
+  <section class="qa-fixture container" aria-labelledby="fixture-title">
+    <h1 id="fixture-title">Fixture sintética de paginação</h1>
+    <LoadMoreHarness client:load />
+  </section>
+</PageShell>
+
+<style>
+  .qa-fixture {
+    padding-block: var(--space-12);
+  }
+</style>
