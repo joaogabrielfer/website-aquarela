@@ -17,6 +17,7 @@
     "check": "astro check",
     "check-content": "tsx scripts/check-content.ts",
     "check-release": "tsx scripts/check-release.ts",
+    "media:generate": "node scripts/generate-responsive-media.mjs",
     "test": "vitest run tests/unit",
     "test:e2e": "pnpm qa:build:e2e && playwright test",
     "test:e2e:public": "pnpm qa:build:e2e && playwright test --project=public",

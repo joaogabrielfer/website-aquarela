@@ -53,6 +53,9 @@ const envData = environments.map((env, i) => {
               imageUrl={coverMedia?.src ?? null}
               imageAlt={coverMedia?.alt ?? env.name}
               caption={coverMedia?.caption}
+              imageWidth={coverMedia?.width}
+              imageHeight={coverMedia?.height}
+              imageFocalPoint={coverMedia?.focalPoint}
               feature={index === 0}
               photos={allPhotos.map((p) => ({
                 src: p.src,

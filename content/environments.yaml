@@ -1,1 +1,70 @@
-[]
+- id: sala-google-for-education
+  name: Sala Google for Education
+  purpose: Ambiente com computadores, livros e mesas para atividades de estudo.
+  images: [sala-google-for-education]
+  accessInfo: null
+  order: 1
+  review:
+    &environment_review {
+      status: observed,
+      source: 'Ambiente identificado em fotografia fornecida pelo responsável em 21/09/2026',
+      reviewedAt: null,
+      reviewedBy: null,
+    }
+- id: laboratorio-ciencias
+  name: Laboratório de Ciências
+  purpose: Ambiente com bancadas para atividades práticas de Ciências.
+  images: [laboratorio-ciencias]
+  accessInfo: null
+  order: 2
+  review: *environment_review
+- id: cantina
+  name: Cantina
+  purpose: Espaço com balcão, mesas e cadeiras para alimentação.
+  images: [cantina]
+  accessInfo: null
+  order: 3
+  review: *environment_review
+- id: patio
+  name: Pátio
+  purpose: Área coberta de circulação e convivência.
+  images: [patio]
+  accessInfo: null
+  order: 4
+  review: *environment_review
+- id: studio-danca
+  name: Estúdio de dança
+  purpose: Sala ampla com espelhos e piso livre para atividades de dança.
+  images: [studio-danca]
+  accessInfo: null
+  order: 5
+  review: *environment_review
+- id: sala-infantil
+  name: Sala infantil
+  purpose: Sala com mobiliário dimensionado para crianças.
+  images: [sala-infantil]
+  accessInfo: null
+  order: 6
+  review: *environment_review
+- id: sala-bancas-azuis
+  name: Sala de aula — bancas azuis
+  purpose: Sala de aula com bancas individuais e quadro branco.
+  images: [sala-bancas-azuis]
+  accessInfo: null
+  order: 7
+  review: *environment_review
+- id: sala-bancas-vermelhas
+  name: Sala de aula — bancas vermelhas
+  purpose: Sala de aula com bancas individuais e quadro branco.
+  images: [sala-bancas-vermelhas]
+  accessInfo: null
+  order: 8
+  review: *environment_review
+- id: brinquedoteca
+  name: Brinquedoteca
+  purpose: Área externa com brinquedos infantis.
+  images:
+    [brinquedoteca-01, brinquedoteca-02, brinquedoteca-03, brinquedoteca-04]
+  accessInfo: null
+  order: 9
+  review: *environment_review

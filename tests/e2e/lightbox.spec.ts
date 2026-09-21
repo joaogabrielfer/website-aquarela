@@ -32,7 +32,13 @@ const photos = [
 
 const openLightbox = async (page: Page, index = 0) => {
   await page.goto('/nosso-espaco');
-  const trigger = page.getByRole('link', { name: 'Fale com a equipe' });
+  const photoTrigger = page
+    .getByRole('button', { name: /Ampliar foto:/ })
+    .first();
+  const trigger =
+    (await photoTrigger.count()) > 0
+      ? photoTrigger
+      : page.getByRole('link', { name: 'Fale com a equipe' });
   await trigger.focus();
   await page.evaluate(
     ({ items, initialIndex }) => {

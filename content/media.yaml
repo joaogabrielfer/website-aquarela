@@ -1,1 +1,123 @@
-[]
+- id: hero-colegio
+  src: /media/hero-colegio-1600.webp
+  width: 1600
+  height: 900
+  alt: Vista aérea do prédio do Aquarela Colégio e Curso
+  caption: null
+  focalPoint: { x: 0.5, y: 0.52 }
+  review:
+    &photo_review {
+      status: observed,
+      source: 'Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador editorial pendente',
+      reviewedAt: null,
+      reviewedBy: null,
+    }
+  usageApproved: true
+- id: brinquedoteca-01
+  src: /media/brinquedoteca-01-1600.webp
+  width: 1600
+  height: 2133
+  alt: Vista superior da brinquedoteca externa com brinquedos coloridos
+  caption: null
+  focalPoint: { x: 0.55, y: 0.55 }
+  review: *photo_review
+  usageApproved: true
+- id: brinquedoteca-02
+  src: /media/brinquedoteca-02-1600.webp
+  width: 1600
+  height: 2133
+  alt: Brinquedoteca externa com escorregadores e estruturas coloridas
+  caption: null
+  focalPoint: { x: 0.5, y: 0.55 }
+  review: *photo_review
+  usageApproved: true
+- id: brinquedoteca-03
+  src: /media/brinquedoteca-03-1600.webp
+  width: 1600
+  height: 2133
+  alt: Escorregadores e brinquedos sobre piso verde na brinquedoteca
+  caption: null
+  focalPoint: { x: 0.5, y: 0.5 }
+  review: *photo_review
+  usageApproved: true
+- id: brinquedoteca-04
+  src: /media/brinquedoteca-04-1600.webp
+  width: 1600
+  height: 2133
+  alt: Área da brinquedoteca com brinquedos infantis ao ar livre
+  caption: null
+  focalPoint: { x: 0.5, y: 0.5 }
+  review: *photo_review
+  usageApproved: true
+- id: cantina
+  src: /media/cantina-1600.webp
+  width: 1600
+  height: 1131
+  alt: Cantina com balcão, mesas e cadeiras vermelhas
+  caption: null
+  focalPoint: { x: 0.5, y: 0.5 }
+  review: *photo_review
+  usageApproved: true
+- id: sala-google-for-education
+  src: /media/sala-google-for-education-1600.webp
+  width: 1600
+  height: 1131
+  alt: Sala Google for Education com computadores, livros e mesas de estudo
+  caption: null
+  focalPoint: { x: 0.55, y: 0.5 }
+  review: *photo_review
+  usageApproved: true
+- id: laboratorio-ciencias
+  src: /media/laboratorio-ciencias-1600.webp
+  width: 1600
+  height: 1131
+  alt: Laboratório de Ciências com bancadas e bancos
+  caption: null
+  focalPoint: { x: 0.5, y: 0.5 }
+  review: *photo_review
+  usageApproved: true
+- id: patio
+  src: /media/patio-1600.webp
+  width: 1600
+  height: 1131
+  alt: Pátio coberto entre os prédios do colégio
+  caption: null
+  focalPoint: { x: 0.55, y: 0.5 }
+  review: *photo_review
+  usageApproved: true
+- id: sala-bancas-azuis
+  src: /media/sala-bancas-azuis-1600.webp
+  width: 1600
+  height: 1131
+  alt: Sala de aula com bancas azuis e quadro branco
+  caption: null
+  focalPoint: { x: 0.5, y: 0.5 }
+  review: *photo_review
+  usageApproved: true
+- id: sala-bancas-vermelhas
+  src: /media/sala-bancas-vermelhas-1600.webp
+  width: 1600
+  height: 1131
+  alt: Sala de aula com bancas vermelhas e quadro branco
+  caption: null
+  focalPoint: { x: 0.5, y: 0.5 }
+  review: *photo_review
+  usageApproved: true
+- id: studio-danca
+  src: /media/studio-danca-1600.webp
+  width: 1600
+  height: 1131
+  alt: Estúdio de dança com espelhos e piso livre
+  caption: null
+  focalPoint: { x: 0.55, y: 0.5 }
+  review: *photo_review
+  usageApproved: true
+- id: sala-infantil
+  src: /media/sala-infantil-1600.webp
+  width: 1600
+  height: 1131
+  alt: Sala infantil com mesas e cadeiras coloridas
+  caption: null
+  focalPoint: { x: 0.5, y: 0.55 }
+  review: *photo_review
+  usageApproved: true
