@@ -13,6 +13,28 @@ const routes = [
 
 const waitForStablePage = async (page: Page) => {
   await page.evaluate(() => document.fonts.ready);
+  await page.evaluate(async () => {
+    document.documentElement.style.scrollBehavior = 'auto';
+    const step = Math.max(400, window.innerHeight * 0.75);
+    for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+      window.scrollTo(0, y);
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => resolve()),
+      );
+    }
+    await Promise.all(
+      [...document.images].map(
+        (image) =>
+          image.complete ||
+          new Promise<void>((resolve) => {
+            image.addEventListener('load', () => resolve(), { once: true });
+            image.addEventListener('error', () => resolve(), { once: true });
+          }),
+      ),
+    );
+    window.scrollTo(0, 0);
+  });
+  await page.waitForFunction(() => window.scrollY === 0);
   await page.waitForTimeout(50);
 };
 
@@ -113,6 +135,7 @@ test('evidência do lightbox sintético em retrato, paisagem e erro', async ({
   test.skip(test.info().project.name !== 'preview', 'matriz editorial');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/nosso-espaco');
+  await expect(page.locator('.lightbox-host')).toBeAttached();
   await page.evaluate(
     ({ portrait, landscape }) => {
       window.dispatchEvent(

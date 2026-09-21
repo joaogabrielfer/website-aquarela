@@ -30,13 +30,20 @@ AQ-WEB-1.1.4, com os cinco hashes verificados antes da implementação.
 - O servidor estático de QA reproduz rotas `format: file`, 404 reais e rejeita
   URL malformada com 400. Builds público e editorial são separados por portas e
   diretórios próprios.
+- As fotografias fornecidas em 21/09 foram integradas ao preview editorial. A
+  opção 6 foi aplicada ao Hero, e nove ambientes usam as imagens reais recebidas.
+  O pipeline gera quatro variantes WebP (480, 768, 1200 e 1600 px), preserva as
+  dimensões intrínsecas, emite `srcset`/`sizes` e aplica o ponto focal editorial.
+  Foram processados 13 originais em 52 arquivos derivados. Um guard no final do
+  build remove do pacote público qualquer mídia que ainda não esteja `approved`
+  e `usageApproved`; o teste e2e confirma também o 404 do arquivo direto.
 
 ## Checks finais
 
-- `pnpm check`: 69 arquivos, zero erros, avisos ou hints.
+- `pnpm check`: 73 arquivos, zero erros, avisos ou hints.
 - `pnpm lint`: passou.
-- `pnpm test`: 66 testes unitários passaram.
-- `pnpm test:e2e`: 139 testes passaram e 33 foram ignorados de propósito no
+- `pnpm test`: 72 testes unitários passaram.
+- `pnpm test:e2e`: 142 testes passaram e 36 foram ignorados de propósito no
   projeto oposto (matriz visual somente editorial e asserts de modo específicos).
 - `pnpm check-content`: passou.
 - `pnpm build` e `pnpm build:preview`: passam; a fixture de QA não é emitida.
@@ -53,19 +60,21 @@ As 33 capturas finais estão em [final](./final/):
 - menu em 1099 e cabeçalho desktop em 1100;
 - lightbox sintético em retrato 390×844, paisagem 844×390 e erro 844×390.
 
-A inspeção direta cobriu Home mobile, Ensino desktop, Visite mobile, menu nos
-breakpoints e os três estados do lightbox. Uma folha de contato adicional foi
-usada localmente para revisar as doze capturas intermediárias. Não apareceu
-overflow, clipping de controle ou quebra de hierarquia nessa amostra.
+A inspeção direta cobriu Home com a opção 6 do Hero, Espaço com os nove ambientes,
+Ensino desktop, Visite mobile, menu nos breakpoints e os três estados do
+lightbox. Uma folha de contato adicional foi usada localmente para revisar as
+doze capturas intermediárias. Não apareceu overflow, clipping de controle ou
+quebra de hierarquia nessa amostra.
 
 ## Recomendações anteriores
 
 - Atendidas: composição compacta de Ensino, aberturas por cor, H1 limitado,
   estados vazios compactos, contato em duas colunas, remoção de CTA duplicado,
   horário sem dias presumidos e densidade revisada do rodapé.
-- Continuam dependentes de conteúdo: equilíbrio final da Home com foto real,
-  enquadramento das fotografias, descrição/público das atividades e densidade
-  do rodapé com contatos finais.
+- Atendidas com os novos assets: equilíbrio da Home com fotografia real,
+  enquadramento responsivo e validação do Espaço com conteúdo representativo.
+- Continuam dependentes de conteúdo: descrição/público das atividades e
+  densidade do rodapé com contatos finais.
 - Lenis continua apenas proposta e não foi instalada. O scroll nativo atende o
   contrato atual e evita risco desnecessário antes do conteúdo definitivo.
 - `AGENTS.md` e alguns perfis ainda citam AQ-WEB-1.1.3, embora os cinco arquivos
@@ -74,25 +83,28 @@ overflow, clipping de controle ou quebra de hierarquia nessa amostra.
 
 ## Bloqueios antes do release
 
-`pnpm check-release` identifica seis grupos editoriais: identidade/localidade;
-telefone ou WhatsApp aprovado; copy principal da Home; foto principal aprovada;
-quatro segmentos completos com mídia; privacidade. Nenhum registro foi promovido
-a `approved` por agentes. Aprovações, Espaço e Galeria continuam sem conteúdo
-representativo.
+`pnpm check-release` ainda identifica bloqueios editoriais D06. As fotografias
+têm autorização explícita de uso (`usageApproved: true`), mas permanecem
+`observed` porque D01 exige `reviewedAt` e um `reviewedBy` fornecido pelo
+responsável para todo registro `approved`. O agente não pode inventar esse
+identificador. A copy da Home também continua `draft`; por isso o build público
+mantém o estado seguro mesmo após a escolha da imagem do Hero.
 
-Há também uma pendência técnica para a Fase 4: fotos de conteúdo ainda usam o
-arquivo original em `<img>`, sem variantes responsivas, e `focalPoint` ainda não
-é aplicado ao enquadramento. Como `content/media.yaml` está vazio, não seria
-honesto marcar esse requisito como validado. Implementar e testar o pipeline com
-assets autorizados é condição de release.
+Os nomes e propósitos dos nove ambientes foram descritos somente a partir das
+fotografias e nomes de arquivos. Eles permanecem `observed` até uma aprovação
+editorial explícita do texto. Aprovações e Galeria ainda não têm conteúdo
+representativo; os demais bloqueios de identidade, contato, segmentos e
+privacidade continuam separados da conclusão técnica desta fase.
 
 ## Limites da validação
 
-Lightbox e paginação foram validados com dados sintéticos claramente isolados,
-pois não há álbum aprovado ou observado representativo. Não houve teste manual
-em Safari ou Firefox nem validação em produção. O Chromium headless cobriu o
-teclado e as interações descritas, mas não substitui a última revisão manual com
-as fotografias finais e tecnologia assistiva real.
+O lightbox de Espaço foi revalidado com as fotografias reais; estados de várias
+fotos, legenda longa e erro continuam cobertos por dados sintéticos isolados.
+A paginação também usa fixture sintética porque não há álbum aprovado ou
+observado representativo. Não houve teste manual em Safari ou Firefox nem
+validação em produção. O Chromium headless cobriu o teclado e as interações
+descritas, mas não substitui a última revisão manual com tecnologia assistiva
+real.
 
 A comparação entre Muse Spark 1.3 e Union Alpha Free está em
 [model-comparison.md](./model-comparison.md).
