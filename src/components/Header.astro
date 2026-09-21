@@ -1,7 +1,14 @@
 ---
 import MobileMenu from '../islands/MobileMenu.svelte';
 import { navigation, cta } from '../lib/copy';
-const current = Astro.url.pathname;
+// Static `build.format: 'file'` exposes `/route.html` while rendering even
+// though visitors navigate to `/route`. Normalize both forms so active
+// navigation and its focus target are present in the emitted HTML.
+const current =
+  Astro.url.pathname
+    .replace(/\/index\.html$/, '/')
+    .replace(/\.html$/, '')
+    .replace(/\/$/, '') || '/';
 const active = (href: string) =>
   href === '/galeria' ? current.startsWith('/galeria') : current === href;
 ---
@@ -22,7 +29,7 @@ const active = (href: string) =>
       {
         navigation.map((item) => (
           <a
-            class:list={{ active: active(item.href) }}
+            class={active(item.href) ? 'active' : undefined}
             href={item.href}
             aria-current={active(item.href) ? 'page' : undefined}
           >
@@ -99,9 +106,11 @@ const active = (href: string) =>
     color: white;
     font-weight: 500;
   }
-  .desktop-nav .cta:hover,
-  .cta:hover {
-    background: var(--action-hover);
+  @media (hover: hover) {
+    .desktop-nav .cta:hover,
+    .cta:hover {
+      background: var(--action-hover);
+    }
   }
   @media (min-width: 768px) {
     .logo-link img {

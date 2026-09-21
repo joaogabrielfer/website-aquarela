@@ -37,7 +37,8 @@
     if (added <= 0) return;
 
     hasLoadedMore = true;
-    announcement = `${added} itens adicionados`;
+    announcement =
+      added === 1 ? '1 item adicionado' : `${added} itens adicionados`;
 
     // If no more items, move focus to status
     if (visibleCount >= items.length) {

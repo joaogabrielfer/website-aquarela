@@ -1,10 +1,5 @@
-/**
- * Resolve a query parameter `interesse` against known segments and activities.
- * Returns a human-readable interest or null for unknown/duplicate/empty values.
- */
-
-type Segment = { slug: string; name: string };
-type Activity = { slug: string; name: string };
+/** Resolve somente interesses presentes no catálogo projetado para a página. */
+export type InterestOption = { slug: string; name: string };
 
 const SEGMENT_SLUGS = [
   'educacao-infantil',
@@ -19,13 +14,19 @@ type ResolvedInterest = {
 };
 
 export const resolveInterest = (
-  query: string | null | undefined,
-  segments: Segment[],
-  activities: Activity[],
+  query: URLSearchParams | string | null | undefined,
+  segments: readonly InterestOption[],
+  activities: readonly InterestOption[],
 ): ResolvedInterest | null => {
-  if (!query || query.trim() === '') return null;
+  // A URL completa preserva duplicados, inclusive valores iguais ou vazios.
+  // Strings continuam aceitas para consumidores que já tenham um valor isolado.
+  const values =
+    query instanceof URLSearchParams ? query.getAll('interesse') : [query];
+  if (values.length !== 1) return null;
+  const value = values[0];
+  if (!value || value.trim() === '') return null;
 
-  const raw = query.trim();
+  const raw = value.trim();
 
   // Check segment slugs (exact match)
   if ((SEGMENT_SLUGS as readonly string[]).includes(raw)) {

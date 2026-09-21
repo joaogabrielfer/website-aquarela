@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, tick } from 'svelte';
   export let items: readonly { label: string; href: string }[] = [];
   let open = false;
   let trigger: HTMLButtonElement | undefined;
   let panel: HTMLElement | undefined;
   let mql: MediaQueryList | undefined;
   let lightboxOpen = false;
+  let focusWasInPanel = false;
   let panelTop = 80;
   let panelTopFrame = 0;
 
@@ -118,21 +119,34 @@
   const close = (restore = true, navigate = false) => {
     if (!open) return;
     open = false;
+    focusWasInPanel = false;
     releaseOverlay();
     if (restore && !navigate) setTimeout(() => trigger?.focus(), 0);
   };
 
-  const handleDesktopCrossover = () => {
+  const handleDesktopCrossover = async () => {
     if (open) {
-      const focusInPanel = panel?.contains(document.activeElement);
+      // The media-query change can hide the panel before this handler runs,
+      // which makes the browser move focus to body. Preserve the last known
+      // focus state while the panel is still visible.
+      const focusInPanel =
+        focusWasInPanel || Boolean(panel?.contains(document.activeElement));
       close(false, true);
       if (focusInPanel) {
-        setTimeout(() => {
-          const activeLink = document.querySelector<HTMLElement>(
-            '.desktop-nav a.active',
-          );
-          activeLink?.focus();
-        }, 0);
+        // Wait until Svelte has removed the hidden mobile dialog before moving
+        // focus. Otherwise its removal can move focus back to <body>.
+        await tick();
+        await new Promise<void>((resolve) =>
+          requestAnimationFrame(() => resolve()),
+        );
+        const activeLink = document.querySelector<HTMLElement>(
+          '.desktop-nav a[aria-current="page"]',
+        );
+        const fallback =
+          window.location.pathname === '/visite'
+            ? document.querySelector<HTMLElement>('.desktop-nav .cta')
+            : document.querySelector<HTMLElement>('.logo-link');
+        (activeLink ?? fallback)?.focus({ preventScroll: true });
       }
     }
   };
@@ -164,6 +178,7 @@
   const show = () => {
     if (open || lightboxOpen || document.querySelector('.lightbox-root'))
       return;
+    focusWasInPanel = false;
     open = true;
     lockBody();
     setBackgroundInert(true);
@@ -178,6 +193,17 @@
 
   onMount(() => {
     document.addEventListener('keydown', keydown);
+    const trackPanelFocus = (event: FocusEvent) => {
+      if (!open) return;
+      if (
+        panel &&
+        event.target instanceof Node &&
+        panel.contains(event.target)
+      ) {
+        focusWasInPanel = true;
+      }
+    };
+    document.addEventListener('focusin', trackPanelFocus);
     const overlayChange = ((
       event: CustomEvent<{ type: string; open: boolean }>,
     ) => {
@@ -192,6 +218,7 @@
     });
     return () => {
       document.removeEventListener('keydown', keydown);
+      document.removeEventListener('focusin', trackPanelFocus);
       window.removeEventListener('aquarela:overlay-change', overlayChange);
       mql?.removeEventListener('change', handleDesktopCrossover);
       window.removeEventListener('resize', schedulePanelTopUpdate);
@@ -219,7 +246,7 @@
 >
 {#if open}
   <div class="backdrop" role="presentation" on:click={() => close()}></div>
-  <aside
+  <div
     id="mobile-menu"
     class="menu-panel"
     style={`top: ${panelTop}px`}
@@ -239,7 +266,7 @@
         >Quero conhecer</a
       >
     </nav>
-  </aside>
+  </div>
 {/if}
 
 <style>
@@ -291,10 +318,19 @@
     font-size: 1.125rem;
   }
   .menu-panel .cta {
+    background: var(--action-primary);
     color: white;
     text-align: center;
     text-decoration: none;
     margin-top: var(--space-4);
+  }
+  .menu-panel .cta:active {
+    background: var(--action-pressed);
+  }
+  @media (hover: hover) {
+    .menu-panel .cta:hover {
+      background: var(--action-hover);
+    }
   }
   @media (max-width: 1099px) {
     .menu-button {

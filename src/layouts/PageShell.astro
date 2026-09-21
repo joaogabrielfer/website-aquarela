@@ -61,7 +61,9 @@ const ogImageUrl =
   ><body
     >{
       BUILD_MODE === 'editorial-preview' && (
-        <div class="preview-banner">Prévia</div>
+        <aside class="preview-banner" aria-label="Modo de visualização">
+          Prévia
+        </aside>
       )
     }<a class="skip-link" href="#main-content">Pular para o conteúdo</a><Header
     /><main id="main-content" tabindex="-1"><slot /></main><Footer /></body
@@ -69,8 +71,6 @@ const ogImageUrl =
 </html>
 <style>
   .preview-banner {
-    position: relative;
-    z-index: 60;
     background: var(--brand-yellow);
     color: var(--text-ink);
     padding: 8px 20px;
