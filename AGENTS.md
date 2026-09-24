@@ -4,7 +4,7 @@ Guia operacional para agentes que trabalham neste repositório. Lido antes de qu
 
 ## 1. Autoridade normativa
 
-A fonte normativa é o **contrato AQ-WEB-1.1.3** (referido pelo usuário como "contrato da Astra" — Astra é o modelo autor do design), congelado em 09/09/2026, nos cinco arquivos de `design/`. Ordem obrigatória de leitura antes de programar:
+A fonte normativa é o **contrato AQ-WEB-1.1.4** (referido pelo usuário como "contrato da Astra" — Astra é o modelo autor do design), congelado em 14/09/2026, nos cinco arquivos de `design/`. Ordem obrigatória de leitura antes de programar:
 
 1. `design/design-spec.md` — escopo, tokens, variantes globais, qualidade.
 2. `design/routes.md` — rotas, ordem de seções, copy funcional, destinos.

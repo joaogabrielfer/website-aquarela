@@ -34,7 +34,6 @@ agent_prompt="$(<"$agent_prompt_file")"
 
 agent_command=(
   opencode run
-  --dir "$agent_repo_root"
   --agent "$agent_profile"
   --format json
   --title "$agent_title"
@@ -44,4 +43,5 @@ if [[ -n "${OPENCODE_ATTACH_URL:-}" ]]; then
   agent_command+=(--attach "$OPENCODE_ATTACH_URL")
 fi
 
+cd -- "$agent_repo_root"
 exec "${agent_command[@]}" "$agent_prompt"
