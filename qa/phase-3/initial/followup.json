@@ -1,0 +1,31 @@
+[
+  {
+    "route": "/ensino",
+    "focus": {
+      "tag": "BODY",
+      "href": null
+    },
+    "dialogs": 0
+  },
+  {
+    "route": "/",
+    "focus": {
+      "tag": "BODY",
+      "href": null
+    },
+    "dialogs": 0
+  },
+  {
+    "route": "/visite",
+    "focus": {
+      "tag": "BODY",
+      "href": null
+    },
+    "dialogs": 0
+  },
+  {
+    "publicHtmlCount": 9,
+    "previewMarkers": false,
+    "reviewFields": false
+  }
+]

@@ -54,6 +54,9 @@ const proposal = getProposal();
     support={support}
     imageSrc={heroMedia?.src ?? null}
     imageAlt={heroMedia?.alt}
+    imageWidth={heroMedia?.width}
+    imageHeight={heroMedia?.height}
+    imageFocalPoint={heroMedia?.focalPoint}
   />
   {/* 2. Banner sazonal — opcional, após o Hero */}
   {seasonalBanner && <SeasonalBanner banner={seasonalBanner} />}
@@ -110,6 +113,9 @@ const proposal = getProposal();
               src: p.src,
               alt: p.alt,
               caption: p.caption,
+              width: p.width,
+              height: p.height,
+              focalPoint: p.focalPoint,
             }))}
           />
           <a href="/nosso-espaco" class="section-link">

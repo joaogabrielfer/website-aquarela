@@ -3,29 +3,22 @@ import Button from './Button.astro';
 import TextLink from './TextLink.astro';
 import { getPublicSchool } from '../lib/content/school';
 import { whatsappUrl, telUrl } from '../lib/urls';
-import { resolveInterest } from '../lib/interest';
+import type { InterestOption } from '../lib/interest';
 import { BUILD_MODE } from '../lib/env';
 
-interface Segment {
-  slug: string;
-  name: string;
-}
-
-interface Activity {
-  slug: string;
-  name: string;
-}
-
 interface Props {
-  interestQuery?: string | null;
-  segments?: Segment[];
-  activities?: Activity[];
+  segments?: InterestOption[];
+  activities?: InterestOption[];
 }
 
-const { interestQuery = null, segments = [], activities = [] } = Astro.props;
+const { segments = [], activities = [] } = Astro.props;
+// Serialização explícita: somente slugs/nomes já projetados, nunca registros editoriais.
+const interestOptions = JSON.stringify({
+  segments: segments.map(({ slug, name }) => ({ slug, name })),
+  activities: activities.map(({ slug, name }) => ({ slug, name })),
+});
 
 const school = getPublicSchool();
-const resolvedInterest = resolveInterest(interestQuery, segments, activities);
 const isPreview = BUILD_MODE === 'editorial-preview';
 
 const hasPhone = school.phoneE164 !== null;
@@ -39,20 +32,16 @@ const hasAnyContact = hasActions || hasInfo;
 const hasBothGroups = hasActions && hasInfo;
 ---
 
-<div class="contact-panel">
+<div class="contact-panel" data-visit-interest={interestOptions}>
   <div class="container contact-panel-inner">
     <p class="contact-panel-intro">
       Converse com a equipe para combinar sua visita.
     </p>
 
-    {
-      resolvedInterest && (
-        <div class="contact-panel-interest">
-          <p class="interest-label">Sobre: {resolvedInterest.humanName}</p>
-          <TextLink href="/ensino">Ver todas as etapas</TextLink>
-        </div>
-      )
-    }
+    <div class="contact-panel-interest" hidden>
+      <p class="interest-label" aria-live="polite" aria-atomic="true"></p>
+      <TextLink href="/ensino">Ver todas as etapas</TextLink>
+    </div>
 
     {
       isPreview && !hasAnyContact ? (
@@ -71,10 +60,8 @@ const hasBothGroups = hasActions && hasInfo;
               {/* WhatsApp primary when confirmed, phone secondary */}
               {hasWhatsapp && school.whatsappE164 && (
                 <Button
-                  href={whatsappUrl(
-                    school.whatsappE164,
-                    resolvedInterest?.humanName,
-                  )}
+                  href={whatsappUrl(school.whatsappE164)}
+                  data-visit-whatsapp={school.whatsappE164}
                   variant="primary"
                 >
                   Conversar no WhatsApp
@@ -122,10 +109,48 @@ const hasBothGroups = hasActions && hasInfo;
   </div>
 </div>
 
+<script>
+  import { resolveInterest, type InterestOption } from '../lib/interest';
+  import { whatsappUrl } from '../lib/urls';
+
+  // O HTML SSG mantém os contatos genéricos; só este contexto depende da URL runtime.
+  const query = new URLSearchParams(window.location.search);
+  document
+    .querySelectorAll<HTMLElement>('[data-visit-interest]')
+    .forEach((panel) => {
+      const { segments, activities } = JSON.parse(
+        panel.dataset.visitInterest!,
+      ) as {
+        segments: InterestOption[];
+        activities: InterestOption[];
+      };
+      const interest = resolveInterest(query, segments, activities);
+      if (!interest) return;
+
+      const context = panel.querySelector<HTMLElement>(
+        '.contact-panel-interest',
+      );
+      const label = panel.querySelector<HTMLElement>('.interest-label');
+      if (context && label) {
+        context.hidden = false;
+        label.textContent = `Sobre: ${interest.humanName}`;
+      }
+
+      // Nunca criar canal nem usar o telefone como autorização para WhatsApp.
+      const whatsapp = panel.querySelector<HTMLAnchorElement>(
+        'a[data-visit-whatsapp]',
+      );
+      const phone = whatsapp?.dataset.visitWhatsapp;
+      if (whatsapp && phone) {
+        whatsapp.href = whatsappUrl(phone, interest.humanName);
+      }
+    });
+</script>
+
 <style>
   .contact-panel {
     background: var(--surface-paper);
-    padding: var(--space-8) 0;
+    padding: var(--space-8) var(--space-5);
     border-radius: var(--radius-card);
   }
   .contact-panel-inner {
@@ -143,6 +168,9 @@ const hasBothGroups = hasActions && hasInfo;
     font-size: 1.125rem;
     font-weight: 500;
     color: var(--text-ink);
+  }
+  .contact-panel-interest[hidden] {
+    display: none;
   }
   .contact-panel-interest {
     display: flex;
@@ -173,8 +201,8 @@ const hasBothGroups = hasActions && hasInfo;
   }
   .contact-panel-detail {
     color: var(--text-ink);
-    font-size: 0.9375rem;
-    line-height: 1.5;
+    font-size: 1rem;
+    line-height: 1.6;
   }
   .contact-panel-detail strong {
     font-weight: 500;
@@ -183,6 +211,9 @@ const hasBothGroups = hasActions && hasInfo;
   @media (min-width: 768px) {
     .contact-panel {
       padding: var(--space-10);
+    }
+    .contact-panel-detail {
+      font-size: 1.125rem;
     }
   }
 

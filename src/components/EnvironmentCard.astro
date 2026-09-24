@@ -1,10 +1,15 @@
 ---
+import { focalPointStyle, responsiveSrcset } from '../lib/responsive-media';
+
 interface Props {
   name: string;
   purpose: string;
   imageUrl?: string | null;
   imageAlt?: string | undefined;
   caption?: string | null | undefined;
+  imageWidth?: number | undefined;
+  imageHeight?: number | undefined;
+  imageFocalPoint?: { x: number; y: number } | undefined;
   feature?: boolean;
   photos?: { src: string; alt: string; caption?: string | null }[];
   class?: string;
@@ -16,6 +21,9 @@ const {
   imageUrl,
   imageAlt,
   caption,
+  imageWidth,
+  imageHeight,
+  imageFocalPoint,
   feature = false,
   photos = [],
   class: className,
@@ -45,9 +53,12 @@ const lightboxPhotos = photosForLightbox.map((photo) => ({
       <div class="card-media">
         <img
           src={imageUrl}
+          srcset={responsiveSrcset(imageUrl, imageWidth)}
+          sizes={feature ? '100vw' : '(min-width: 768px) 50vw, 100vw'}
           alt={imageAlt || name}
-          width={feature ? '800' : '400'}
-          height={feature ? '450' : '300'}
+          width={imageWidth ?? (feature ? 800 : 400)}
+          height={imageHeight ?? (feature ? 450 : 300)}
+          style={focalPointStyle(imageFocalPoint)}
           loading="lazy"
         />
         <button

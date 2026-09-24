@@ -32,6 +32,9 @@ importers:
       '@astrojs/check':
         specifier: ^0.9.4
         version: 0.9.10(prettier-plugin-astro@0.14.1)(prettier@3.9.6)(typescript@5.9.3)
+      '@axe-core/playwright':
+        specifier: ^4.13.0
+        version: 4.13.0(playwright-core@1.63.0)
       '@playwright/test':
         specifier: ^1.55.0
         version: 1.63.0
@@ -160,6 +163,14 @@ packages:
       {
         integrity: sha512-8oddpOae35pJsXPQXhTkM0ypfKPskVsh2bCxRtbf7e+/Epw2nReakFYpLKjZMEr75CsoF203PMnCocpfz0s69A==,
       }
+
+  '@axe-core/playwright@4.13.0':
+    resolution:
+      {
+        integrity: sha512-6YLx+kxXu5GJceG4ozFg+33a2EMTdjYwWGloJ3sb9Kta5pp+ZNS53uxGVog5JetIY8s++P5UrtX+cri+u0VAVg==,
+      }
+    peerDependencies:
+      playwright-core: '>= 1.0.0'
 
   '@babel/helper-string-parser@7.29.7':
     resolution:
@@ -2078,6 +2089,13 @@ packages:
     engines: { node: ^18.18.0 || >=20.9.0 }
     peerDependencies:
       '@astrojs/compiler': '>=0.27.0'
+
+  axe-core@4.13.0:
+    resolution:
+      {
+        integrity: sha512-UzGt8zg7Ny8djbYMhxl2zuEevVa7r2gJjYY5Lwr1xM7+XU2nd6CkIWFTVcCIbAP63vSz71NaVyyuSk9lHKcy0A==,
+      }
+    engines: { node: '>=4' }
 
   axobject-query@4.1.0:
     resolution:
@@ -5202,6 +5220,11 @@ snapshots:
     dependencies:
       yaml: 2.9.0
 
+  '@axe-core/playwright@4.13.0(playwright-core@1.63.0)':
+    dependencies:
+      axe-core: 4.13.0
+      playwright-core: 1.63.0
+
   '@babel/helper-string-parser@7.29.7': {}
 
   '@babel/helper-validator-identifier@7.29.7': {}
@@ -6231,6 +6254,8 @@ snapshots:
     dependencies:
       '@astrojs/compiler': 3.0.1
       synckit: 0.11.13
+
+  axe-core@4.13.0: {}
 
   axobject-query@4.1.0: {}
 

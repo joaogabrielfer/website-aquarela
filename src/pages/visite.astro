@@ -15,7 +15,6 @@ const pageCopy = getPageCopy('visite');
 const segments = getSegments();
 const activities = getActivities();
 const faqs = getFaqs('visita');
-const interestQuery = Astro.url.searchParams.get('interesse');
 ---
 
 <PageShell title={pageTitles.visite} description={pageCopy?.metaDescription}>
@@ -29,7 +28,6 @@ const interestQuery = Astro.url.searchParams.get('interesse');
   <section class="section-contact">
     <div class="container">
       <ContactPanel
-        interestQuery={interestQuery}
         segments={segments.map((s) => ({ slug: s.slug, name: s.name }))}
         activities={activities.map((a) => ({ slug: a.slug, name: a.name }))}
       />

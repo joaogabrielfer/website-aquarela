@@ -3,15 +3,27 @@ import { eyebrow } from '../lib/copy';
 import Button from './Button.astro';
 import AssetPlaceholder from './AssetPlaceholder.astro';
 import { BUILD_MODE } from '../lib/env';
+import { focalPointStyle, responsiveSrcset } from '../lib/responsive-media';
 
 interface Props {
   title: string;
   support: string;
   imageSrc?: string | null;
   imageAlt?: string | undefined;
+  imageWidth?: number | undefined;
+  imageHeight?: number | undefined;
+  imageFocalPoint?: { x: number; y: number } | undefined;
 }
 
-const { title, support, imageSrc, imageAlt } = Astro.props;
+const {
+  title,
+  support,
+  imageSrc,
+  imageAlt,
+  imageWidth,
+  imageHeight,
+  imageFocalPoint,
+} = Astro.props;
 const showImage = imageSrc !== null && imageSrc !== undefined;
 const showPlaceholder = BUILD_MODE === 'editorial-preview' && !showImage;
 const showMedia = showImage || showPlaceholder;
@@ -51,9 +63,12 @@ const showMedia = showImage || showPlaceholder;
             <img
               class="hero-photo"
               src={imageSrc}
+              srcset={responsiveSrcset(imageSrc, imageWidth)}
+              sizes="(min-width: 1100px) 50vw, 100vw"
               alt={imageAlt || 'Aquarela Colégio e Curso'}
-              width="600"
-              height="450"
+              width={imageWidth ?? 600}
+              height={imageHeight ?? 450}
+              style={focalPointStyle(imageFocalPoint)}
               loading="eager"
               fetchpriority="high"
             />

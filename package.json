@@ -17,7 +17,12 @@
     "check": "astro check",
     "check-content": "tsx scripts/check-content.ts",
     "check-release": "tsx scripts/check-release.ts",
-    "test": "vitest run",
+    "media:generate": "node scripts/generate-responsive-media.mjs",
+    "test": "vitest run tests/unit",
+    "test:e2e": "pnpm qa:build:e2e && playwright test",
+    "test:e2e:public": "pnpm qa:build:e2e && playwright test --project=public",
+    "test:e2e:preview": "pnpm qa:build:e2e && playwright test --project=preview",
+    "qa:build:e2e": "node scripts/qa/build-e2e.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -33,6 +38,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.55.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.3.0",

@@ -134,6 +134,28 @@ describe('resolveInterest — validação de query', () => {
     expect(result).toEqual({ slug: 'ensino-medio', humanName: 'Ensino Médio' });
   });
 
+  it('resolve URLSearchParams com um único interesse', () => {
+    const query = new URLSearchParams('interesse=educacao-infantil');
+    expect(resolveInterest(query, segments, activities)).toEqual({
+      slug: 'educacao-infantil',
+      humanName: 'Educação Infantil',
+    });
+  });
+
+  it('rejeita parâmetros de interesse duplicados, mesmo quando iguais', () => {
+    const query = new URLSearchParams(
+      'interesse=ensino-medio&interesse=ensino-medio',
+    );
+    expect(resolveInterest(query, segments, activities)).toBeNull();
+  });
+
+  it('não usa nome vindo da query nem atividade fora das opções projetadas', () => {
+    const query = new URLSearchParams(
+      'interesse=atividade-inexistente&nome=Conteúdo%20arbitrário',
+    );
+    expect(resolveInterest(query, segments, activities)).toBeNull();
+  });
+
   it('resolve atividade com prefixo atividade-', () => {
     const result = resolveInterest('atividade-natacao', segments, activities);
     expect(result).toEqual({ slug: 'atividade-natacao', humanName: 'Natação' });
