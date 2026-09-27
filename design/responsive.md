@@ -1,6 +1,6 @@
 # Contrato responsivo e validação visual
 
-**AQ-WEB-1.1.5** · Autoridade para medidas. Layout fluido entre os intervalos abaixo; não escalar uma captura Figma como imagem.
+**AQ-WEB-1.1.6** · Autoridade para medidas. Layout fluido entre os intervalos abaixo; não escalar uma captura Figma como imagem.
 
 ## B01 — Breakpoints
 
@@ -21,7 +21,7 @@ Em 320–359 px, manter gutter 20, fazer wrap de rótulos e botões e permitir a
 | Header | 80 px | 80 px | 96 px |
 | Logo visível | largura 180 px, altura auto | 200 px, auto | 220 px, auto |
 | Padding vertical HeroHome | 48 px | 64 px | 80 px |
-| HeroHome | full-bleed, altura natural, overlay paper forte | full-bleed, altura natural, overlay paper forte | full-bleed, mínimo natural de referência 512 px, fade paper abrindo à direita |
+| HeroHome | full-bleed, altura natural, overlay paper forte | full-bleed, altura natural, overlay paper forte | mídia 16:9 contida à direita, mínimo natural de referência 512 px, fade paper abrindo à direita |
 | Padding PageIntro vertical | 40 px | 48 px | 48 px |
 | Padding de seção vertical | 48 px | 64 px | 80 px |
 | Gap SectionHeading/grade | 24 px | 32 px | 32 px |
@@ -34,7 +34,7 @@ Em 320–359 px, manter gutter 20, fazer wrap de rótulos e botões e permitir a
 
 Os valores do estudo que eram intervalos (ex.: 80–96 px de seção) são resolvidos pela tabela. Não adicionar seções vazias para criar ritmo. Com 1–2 cards numa grade de 3, manter largura de coluna e alinhamento à esquerda; não ampliar o card para largura de hero. A grade de quatro segmentos permanece na ordem editorial.
 
-Hero: fotografia full-bleed com enquadramento responsivo e assunto à direita; fade paper protege a copy e fica mais forte em mobile/tablet. A faixa red é o limite inferior contínuo. Não usar `min-height:100vh`, travar H1 ou provocar overflow. CTA group: mobile em coluna com largura 100%; tablet/desktop em linha com wrap e largura pelo conteúdo.
+Hero: fotografia com enquadramento responsivo e assunto à direita; no desktop, usar `contain` dentro de uma caixa 16:9 alinhada à direita para preservar a escola completa, inclusive em telas ultralargas. O fade paper protege a copy e fica mais forte em mobile/tablet. A faixa red é o limite inferior contínuo. Não usar `min-height:100vh`, travar H1 ou provocar overflow. CTA group: mobile em coluna com largura 100%; tablet/desktop em linha com wrap e largura pelo conteúdo.
 
 PageIntro interno tem altura natural, não altura mínima de banner. Introdução até 65ch. Em 390×844, sua altura não deve empurrar todo o primeiro bloco de conteúdo para além da dobra por espaçamento artificial. É meta de composição, não autorização para cortar texto aprovado.
 

@@ -7,14 +7,14 @@ Lote de integração do POC Lenis e da composição revisada do HeroHome.
 - Objetivo: consolidar o relatório da Fase 4 (integração, ciclo completo e revisão final) a partir das evidências confirmadas pelo lead.
 - Branch: `phase/4-finalizacao-site`.
 - Baseline anterior: `1cf8b2d docs(qa): record phase four integration`.
-- Contrato: AQ-WEB-1.1.5, revisado em 27/09/2026.
+- Contrato: AQ-WEB-1.1.6, revisado em 27/09/2026.
 - Integridade da baseline validada neste worktree: `sha256sum -c design-contract.sha256` com 5/5 hashes OK (`design-spec.md`, `routes.md`, `components.md`, `responsive.md`, `content-model.md`).
-- Escopo deste lote: smooth scroll feature-flagado, HeroHome full-bleed, variante hero de 2400 px, contrato AQ-WEB-1.1.5 e testes relacionados; sem push, PR ou reescrita de histórico.
+- Escopo deste lote: smooth scroll feature-flagado, HeroHome com mídia 16:9 à direita, variante hero de 2400 px, contrato AQ-WEB-1.1.6 e testes relacionados; sem push, PR ou reescrita de histórico.
 
 ## 2. Implementação verificada
 
 - Lenis `1.3.26` habilitado por padrão, desligável no build com `ENABLE_SMOOTH_SCROLL=false`; reduced motion e ponteiro coarse preservam scroll nativo; overlays param/retomam a instância.
-- HeroHome usa imagem semântica full-bleed, fade paper para a esquerda, assunto preservado à direita e faixa contínua `--brand-red`; o arco anterior foi removido.
+- HeroHome usa imagem semântica 16:9 contida à direita no desktop, fade paper para a esquerda, enquadramento completo da escola e faixa contínua `--brand-red`; o arco anterior foi removido.
 - Hero possui variante WebP 2400×1350 no srcset; o guard público remove mídia observed, inclusive a nova largura.
 
 Evidência anterior preservada até o HEAD `1cf8b2d`:
@@ -26,7 +26,7 @@ Evidência anterior preservada até o HEAD `1cf8b2d`:
 
 ## 3. Impacto visual
 
-- A fotografia agora ocupa o fundo integral do Hero. O degradê paper mantém o H1, apoio e CTAs legíveis à esquerda e revela progressivamente o prédio à direita.
+- A fotografia ocupa o fundo do Hero sem o recorte vertical agressivo: no desktop, o quadro 16:9 mostra a escola inteira à direita e uma máscara dissolve sua borda esquerda no paper. O degradê mantém o H1, apoio e CTAs legíveis.
 - A faixa vermelha contínua encerra o Hero e cria uma separação mais forte para a seção seguinte.
 - O asset de 2400×1350 evita ampliação do WebP de 1600 px em telas largas; não houve reconstrução ou geração artificial da fotografia.
 
@@ -54,8 +54,8 @@ Confirmadas neste lote pelo lead:
 - 72 unit tests.
 - Build `public`.
 - Build `preview` (`editorial-preview`).
-- Playwright — 146 passed / 38 skipped, incluindo Lenis, fallback de movimento reduzido/coarse pointer, overlays, âncora e nova mídia do Hero.
-- Kill switch `ENABLE_SMOOTH_SCROLL=false` — projeto público com 58 passed / 34 skipped; a ilha não é montada.
+- Playwright — 148 passed / 38 skipped, incluindo interpolação temporal do Lenis, fallback de movimento reduzido/coarse pointer, overlays, âncora e nova mídia do Hero.
+- Kill switch `ENABLE_SMOOTH_SCROLL=false` — projeto público com 58 passed / 35 skipped; a ilha não é montada.
 - `check-release` — falha somente pelos seis bloqueios D06 listados acima.
 - `sha256sum -c design-contract.sha256` — 5/5 OK (revalidado neste lote antes da escrita).
 - `prettier --check qa/phase-4/README.md` e `git diff --check` deste lote.

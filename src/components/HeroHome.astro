@@ -173,6 +173,26 @@ const showMedia = showImage || showPlaceholder;
     .hero-inner {
       min-height: 32rem;
     }
+    .hero-media {
+      inset: calc(-1 * var(--space-20)) 0 calc(-1 * var(--space-20)) auto;
+      width: min(100vw, 75rem);
+    }
+    .hero-photo {
+      -webkit-mask-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgb(0 0 0 / 0.5) 10%,
+        black 28%
+      );
+      mask-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgb(0 0 0 / 0.5) 10%,
+        black 28%
+      );
+      object-fit: contain;
+      object-position: right center;
+    }
     .hero-copy {
       gap: var(--space-6);
     }
