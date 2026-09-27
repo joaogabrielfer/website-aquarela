@@ -37,13 +37,13 @@ const publicMediaGuard = {
           .map((record) =>
             path
               .basename(record.src, path.extname(record.src))
-              .replace(/-1600$/, ''),
+              .replace(/-(1600|2400)$/, ''),
           ),
       );
 
       for (const file of fs.readdirSync(outputMediaDir)) {
         const stem = path.basename(file, path.extname(file));
-        const prefix = stem.replace(/-(480|768|1200|1600)$/, '');
+        const prefix = stem.replace(/-(480|768|1200|1600|2400)$/, '');
         if (!allowedPrefixes.has(prefix)) {
           fs.rmSync(path.join(outputMediaDir, file));
         }

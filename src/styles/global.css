@@ -117,6 +117,9 @@ h3 {
   html {
     scroll-behavior: smooth;
   }
+  html[data-smooth-scroll='active'] {
+    scroll-behavior: auto;
+  }
   * {
     transition:
       color 160ms ease-out,

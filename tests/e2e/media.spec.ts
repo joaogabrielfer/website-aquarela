@@ -10,10 +10,10 @@ test('preview usa a opção 6 do hero com variantes responsivas', async ({
   await page.goto('/');
   const hero = page.locator('img.hero-photo');
   await expect(hero).toBeVisible();
-  await expect(hero).toHaveAttribute('src', /hero-colegio-1600\.webp$/);
+  await expect(hero).toHaveAttribute('src', /hero-colegio-2400\.webp$/);
   await expect(hero).toHaveAttribute(
     'srcset',
-    /hero-colegio-480\.webp 480w.*hero-colegio-1600\.webp 1600w/,
+    /hero-colegio-480\.webp 480w.*hero-colegio-2400\.webp 2400w/,
   );
   expect(
     await hero.evaluate((image: HTMLImageElement) => image.naturalWidth),
@@ -50,6 +50,6 @@ test('build público não antecipa mídia sem identificador editorial', async ({
   await expect(page.locator('img.hero-photo')).toHaveCount(0);
   await page.goto('/nosso-espaco');
   await expect(page.locator('.environment-card')).toHaveCount(0);
-  const directAsset = await request.get('/media/hero-colegio-1600.webp');
+  const directAsset = await request.get('/media/hero-colegio-2400.webp');
   expect(directAsset.status()).toBe(404);
 });

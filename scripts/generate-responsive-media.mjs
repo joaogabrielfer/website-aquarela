@@ -28,7 +28,8 @@ for (const [file, slug] of sources) {
   const metadata = await sharp(input).metadata();
   if (!metadata.width) throw new Error(`Largura ausente em ${file}`);
 
-  for (const width of widths.filter((value) => value <= metadata.width)) {
+  const outputWidths = slug === 'hero-colegio' ? [...widths, 2400] : widths;
+  for (const width of outputWidths.filter((value) => value <= metadata.width)) {
     const output = path.join(outputDir, `${slug}-${width}.webp`);
     await sharp(input)
       .rotate()

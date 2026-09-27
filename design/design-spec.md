@@ -1,6 +1,6 @@
 # Contrato de implementação — Aquarela
 
-**Contrato AQ-WEB-1.1.4 · revisado em 14/09/2026.**
+**Contrato AQ-WEB-1.1.5 · revisado em 27/09/2026.**
 
 “Congelado” significa baseline normativa para implementar, não aprovação dos dados escolares nem validação de um site pronto. Alterações de escopo ou aparência exigem revisão explícita deste contrato; conteúdo factual pode ser completado conforme o modelo de publicação, sem redesenhar a interface.
 
@@ -64,11 +64,11 @@ Escala de espaços, em px: `--space-1:4`, `--space-2:8`, `--space-3:12`, `--spac
 
 Raios: `--radius-control:12px`, `--radius-card:20px`, `--radius-media:24px`, `--radius-pill:999px`. Seções abertas não têm raio nem sombra. Card tem borda de 1 px e nenhuma sombra padrão. Header após scroll e card de navegação no hover podem usar `0 4px 16px rgb(18 55 71 / 0.10)`. Menu/lightbox são camadas sobrepostas, não cards decorativos.
 
-Movimento: cores/sombra em 160 ms, abertura de overlay em 200 ms, easing `ease-out`. Não animar a altura de conteúdo textual. `prefers-reduced-motion: reduce` remove transições e smooth scroll. Nada de autoplay, parallax, counters, skeleton permanente ou entrada que esconda conteúdo até JavaScript executar.
+Movimento: cores/sombra em 160 ms, abertura de overlay em 200 ms, easing `ease-out`. Não animar a altura de conteúdo textual. O POC aprovado usa Lenis em desktop com ponteiro não-coarse, habilitado por padrão e desligável no build com `ENABLE_SMOOTH_SCROLL=false`; usa `respectReducedMotion:true`, `syncTouch:false`, `anchors:true` e RAF automático. Em `prefers-reduced-motion: reduce` ou ponteiro coarse, preserva o scroll nativo. Menu e lightbox chamam `stop()` enquanto qualquer overlay estiver aberto e `start()` quando todos fecharem; listeners e instância são destruídos no cleanup. Âncoras, skip link, histórico, foco e body locking permanecem nativos/inalterados. Nada de autoplay, parallax, scroll-jacking, counters, skeleton permanente, reveal ou entrada que esconda conteúdo até JavaScript executar.
 
 ## 5. Mídia e composição
 
-Hero da home: texto fora da imagem, fundo creme, foto real à direita no desktop, nenhuma sobreposição de texto/filtro na fotografia. Proporção 4:3, raio 24 px, um arco decorativo de cor de marca no máximo, atrás da mídia. O overlay citado no exemplo do usuário não é obrigatório e não pertence a este Hero.
+Hero da home: fotografia real em camada de fundo full-bleed, com assunto visual preservado à direita; fade opaco de `--surface-paper` abrindo para a fotografia à esquerda protege toda a copy. Faixa contínua inferior usa `--brand-red`. Não usar filtro destrutivo nem arco decorativo. O enquadramento é responsivo, sem `100vh`; no mobile/tablet o overlay é mais forte. A imagem permanece semântica como `<img>`/`<picture>` responsivo, com alt, prioridade e dimensões.
 
 Foto real do colégio com origem e uso aprovados. Não gerar alunos, ambientes ou depoimentos. Não recolorir/reconstruir a [logo original](../assets/logo-aquarela.PNG). Criar derivado com margens externas ajustadas, preservando proporção e pixels da marca; guardar o original. Logo sem SVG oficial deve permanecer raster de qualidade, não vetorização inventada.
 
@@ -161,3 +161,11 @@ recomendações adicionais aprovadas estão em
 [revisao-visual-2026-09-14.md](./revisao-visual-2026-09-14.md). Recomendações
 dependentes de conteúdo continuam condicionadas à entrega e aprovação desse
 conteúdo; os ajustes estruturais e visuais integram esta baseline.
+
+### Revisão AQ-WEB-1.1.5 — 27/09/2026
+
+O HeroHome passa a usar a fotografia como fundo full-bleed, com fade paper
+protegendo a copy à esquerda e faixa vermelha inferior. O POC Lenis foi
+aprovado com kill switch de build, fallback nativo para movimento reduzido e
+ponteiro coarse, pausa durante menu/lightbox e preservação de âncoras, foco e
+histórico.

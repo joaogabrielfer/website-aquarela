@@ -1,30 +1,34 @@
 # Fase 4 — Finalização do site — Relatório
 
-Lote documental delimitado. Este lote cria somente este arquivo e não altera código, conteúdo, CSS ou assets.
+Lote de integração do POC Lenis e da composição revisada do HeroHome.
 
 ## 1. Objetivo e baseline
 
 - Objetivo: consolidar o relatório da Fase 4 (integração, ciclo completo e revisão final) a partir das evidências confirmadas pelo lead.
 - Branch: `phase/4-finalizacao-site`.
-- HEAD de referência confirmado pelo lead: `1602247`.
-- Contrato: AQ-WEB-1.1.4, congelado em 14/09/2026.
+- Baseline anterior: `1cf8b2d docs(qa): record phase four integration`.
+- Contrato: AQ-WEB-1.1.5, revisado em 27/09/2026.
 - Integridade da baseline validada neste worktree: `sha256sum -c design-contract.sha256` com 5/5 hashes OK (`design-spec.md`, `routes.md`, `components.md`, `responsive.md`, `content-model.md`).
-- Escopo deste lote: somente `qa/phase-4/README.md`, sem mutações Git (sem commit, push, PR ou reescrita de histórico).
+- Escopo deste lote: smooth scroll feature-flagado, HeroHome full-bleed, variante hero de 2400 px, contrato AQ-WEB-1.1.5 e testes relacionados; sem push, PR ou reescrita de histórico.
 
 ## 2. Implementação verificada
 
-Evidência confirmada pelo lead no HEAD `1602247`:
+- Lenis `1.3.26` habilitado por padrão, desligável no build com `ENABLE_SMOOTH_SCROLL=false`; reduced motion e ponteiro coarse preservam scroll nativo; overlays param/retomam a instância.
+- HeroHome usa imagem semântica full-bleed, fade paper para a esquerda, assunto preservado à direita e faixa contínua `--brand-red`; o arco anterior foi removido.
+- Hero possui variante WebP 2400×1350 no srcset; o guard público remove mídia observed, inclusive a nova largura.
+
+Evidência anterior preservada até o HEAD `1cf8b2d`:
 
 - Wrapper `scripts/agents/run-agent.sh` compatível com CLI 2.0.3; smoke test externo retornou `WRAPPER_OK`.
 - Referências operacionais de versão alinhadas em `AGENTS.md`, `README.md`, `user-to-do.md`, `docs/agent-architecture.md` e perfis de agente.
-- Portões verdes: `format:check`, `astro check` (73 arquivos, zero diagnósticos), `check-content`, `lint`, 72 unit tests, build `public`, build `preview` e Playwright com 142 passed / 36 skipped.
+- Portões verdes: `format:check`, `astro check`, `check-content`, `lint`, 72 unit tests, builds `public`/`preview` e Playwright.
 - `check-release` falha somente pelos seis bloqueios D06 esperados (ver seção 4). Não há outra falha funcional reportada pelo lead.
 
 ## 3. Impacto visual
 
-- A Fase 4 não alterou componentes, CSS, conteúdo renderizado ou assets.
-- Portanto, não há mudança visual intencional nesta fase.
-- A composição e as evidências da Fase 3 foram preservadas e revalidadas em Chromium headless pela matriz E2E.
+- A fotografia agora ocupa o fundo integral do Hero. O degradê paper mantém o H1, apoio e CTAs legíveis à esquerda e revela progressivamente o prédio à direita.
+- A faixa vermelha contínua encerra o Hero e cria uma separação mais forte para a seção seguinte.
+- O asset de 2400×1350 evita ampliação do WebP de 1600 px em telas largas; não houve reconstrução ou geração artificial da fotografia.
 
 ## 4. Conteúdo pendente
 
@@ -41,16 +45,17 @@ Enquanto pendentes, vale o comportamento contratual: estados vazios honestos (`E
 
 ## 5. Validações executadas
 
-Confirmadas pelo lead no HEAD de referência:
+Confirmadas neste lote pelo lead:
 
 - `format:check`.
-- `astro check` — 73 arquivos, zero diagnósticos.
+- `astro check` — 74 arquivos, zero diagnósticos.
 - `check-content`.
 - `lint`.
 - 72 unit tests.
 - Build `public`.
 - Build `preview` (`editorial-preview`).
-- Playwright — 142 passed / 36 skipped.
+- Playwright — 146 passed / 38 skipped, incluindo Lenis, fallback de movimento reduzido/coarse pointer, overlays, âncora e nova mídia do Hero.
+- Kill switch `ENABLE_SMOOTH_SCROLL=false` — projeto público com 58 passed / 34 skipped; a ilha não é montada.
 - `check-release` — falha somente pelos seis bloqueios D06 listados acima.
 - `sha256sum -c design-contract.sha256` — 5/5 OK (revalidado neste lote antes da escrita).
 - `prettier --check qa/phase-4/README.md` e `git diff --check` deste lote.
@@ -62,13 +67,13 @@ Confirmadas pelo lead no HEAD de referência:
 - Produção (`pages.dev` ou domínio próprio).
 - Leitor de tela real.
 - Aprovação editorial humana.
-- Zoom de 200%, movimento reduzido e matriz visual B05 além do já coberto pela Fase 3/E2E em Chromium headless não são declarados como revalidados neste lote.
+- A inspeção visual foi reexecutada em Chromium para a Home nos viewports do lote; isso não substitui Safari, Firefox ou leitor de tela real.
 
 Nada acima deve ser lido como aprovado sem evidência.
 
 ## 7. Decisões e pendências
 
-- Lenis não foi implementado porque segue pendente de decisão explícita do usuário, conforme AGENTS.md §3. Nenhuma POC foi incluída nesta fase.
+- Lenis foi implementado conforme a decisão explícita deste lote e pode ser desativado com `ENABLE_SMOOTH_SCROLL=false`.
 - Pendência normativa (sem editar `design/`): `design/routes.md`, `design/components.md` e `design/responsive.md` ainda contêm rótulos históricos de implementação pendente, apesar do código correspondente já estar implementado. Qualquer ajuste nesses arquivos exige revisão contratual explícita, incremento de versão e atualização do manifesto de hashes.
 - Para revisão do responsável: metadados internos permanecem versionados no repositório público. Este relatório não classifica o fato como vazamento confirmado e não propõe remoção sem preservar a rastreabilidade editorial. Decisão sobre retenção, expurgo ou segregação cabe ao responsável, com revisão contratual se aplicável.
-- Sem push e sem PR neste lote, por restrição operacional do lote documental.
+- Sem push e sem PR neste lote.

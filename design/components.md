@@ -1,6 +1,6 @@
 # Contrato de componentes
 
-**AQ-WEB-1.1.4** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
+**AQ-WEB-1.1.5** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
 
 Os nomes abaixo identificam responsabilidades; podem ser adaptados ao padrão de nomes da stack, mantendo uma correspondência no relatório de entrega. Reusar componentes entre rotas. Não criar variantes por página quando a diferença for apenas conteúdo.
 
@@ -37,7 +37,7 @@ Para evitar decisões implícitas caso haja revisão futura, padrão reservado: 
 
 ## C04 — HeroHome / PageIntro / Breadcrumb
 
-HeroHome: eyebrow → H1 → apoio → grupo de duas ações → mídia. DOM segue essa ordem em todas as larguras; desktop posiciona copy/mídia em colunas. Gap no copy 24 px; entre título e apoio 24 px; grupo de ações com gap 12 px. Fonte e tamanhos em responsive. Foto 4:3 e sem overlay textual. Até uma forma vetorial secundária; não ocultar rosto nem invadir texto.
+HeroHome: eyebrow → H1 → apoio → grupo de duas ações → imagem. DOM segue essa ordem semântica em todas as larguras; a imagem é camada visual de fundo full-bleed, com assunto à direita, fade paper opaco para proteger a copy e faixa inferior contínua red. Gap no copy 24 px; entre título e apoio 24 px; grupo de ações com gap 12 px. Fonte e tamanhos em responsive. Sem arco decorativo, filtro destrutivo ou texto diretamente sobre detalhe fotográfico.
 
 PageIntro: breadcrumb → H1 → introdução opcional; gap 16 px. Variantes: `default` branco, `paper` creme, `space` ciano com texto ink, `achievements` amarelo com navy, `activities` paper com pequena linha roxa de 4 px antes do título. Não exibir fotografia no PageIntro interno: primeira mídia entra na seção de conteúdo logo abaixo, evitando competir com H1. Esta decisão detalha e substitui a sugestão aberta de foto na abertura de Atividades.
 

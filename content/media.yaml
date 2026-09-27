@@ -1,7 +1,7 @@
 - id: hero-colegio
-  src: /media/hero-colegio-1600.webp
-  width: 1600
-  height: 900
+  src: /media/hero-colegio-2400.webp
+  width: 2400
+  height: 1350
   alt: Vista aérea do prédio do Aquarela Colégio e Curso
   caption: null
   focalPoint: { x: 0.5, y: 0.52 }

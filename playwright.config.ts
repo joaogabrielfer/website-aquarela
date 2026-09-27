@@ -1,6 +1,6 @@
 import { defineConfig } from '@playwright/test';
 
-// Fase 3 — Playwright sobre builds estáticos isolados (AQ-WEB-1.1.4).
+// Fase 3 — Playwright sobre builds estáticos isolados (AQ-WEB-1.1.5).
 // Nunca usa os HTMLs do `dist/` principal: os builds e2e vão para
 // subdiretórios isolados `dist/e2e-public` e `dist/e2e-preview`
 // (cobertos pelo ignore de `dist/` no tsconfig/eslint/gitignore).
