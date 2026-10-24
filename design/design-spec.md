@@ -1,6 +1,6 @@
 # Contrato de implementação — Aquarela
 
-**Contrato AQ-WEB-1.1.7 · revisado em 24/10/2026.**
+**Contrato AQ-WEB-1.1.8 · revisado em 24/10/2026.**
 
 “Congelado” significa baseline normativa para implementar, não aprovação dos dados escolares nem validação de um site pronto. Alterações de escopo ou aparência exigem revisão explícita deste contrato; conteúdo factual pode ser completado conforme o modelo de publicação, sem redesenhar a interface.
 
@@ -184,3 +184,11 @@ No desktop, a foto é deslocada 80 px para a direita, centralizando a escola
 na área revelada pelo degradê.
 Lenis passa a usar amortecimento contínuo por frame, sem reiniciar uma duração fixa a cada evento
 da roda; preserva a distância original do gesto e os guards existentes.
+
+### Revisão AQ-WEB-1.1.8 — 24/10/2026
+
+Em larguras menores que 1100 px, HeroHome usa texto e ações sobre paper,
+seguidos pela foto inteira 16:9, com gutters do container, gap 32 px e raio
+media. Não há degradê ou sobreposição nessa faixa. Esta regra substitui as
+referências anteriores a fundo fotográfico/overlay em mobile e tablet em
+design-spec, components e responsive. Desktop preserva a composição vigente.

@@ -121,11 +121,16 @@ const showMedia = showImage || showPlaceholder;
     width: 100%;
   }
   .hero-media {
-    position: absolute;
-    inset: 0;
+    position: relative;
+    margin: var(--space-8) auto 0;
+    width: calc(100% - 40px);
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-media);
     z-index: 0;
   }
   .hero-fade {
+    display: none;
     position: absolute;
     inset: 0;
     z-index: 1;
@@ -152,6 +157,9 @@ const showMedia = showImage || showPlaceholder;
     .hero-home {
       padding: var(--space-16) 0;
     }
+    .hero-media {
+      width: calc(100% - 64px);
+    }
     .hero-title {
       font-size: 3.5rem;
     }
@@ -174,6 +182,10 @@ const showMedia = showImage || showPlaceholder;
       min-height: 32rem;
     }
     .hero-media {
+      position: absolute;
+      margin: 0;
+      aspect-ratio: auto;
+      border-radius: 0;
       inset: calc(-1 * var(--space-20)) calc(-1 * var(--space-20))
         calc(-1 * var(--space-20)) auto;
       width: min(100vw, 75rem);
@@ -183,6 +195,7 @@ const showMedia = showImage || showPlaceholder;
       object-position: right center;
     }
     .hero-fade {
+      display: block;
       inset-block: calc(-1 * var(--space-20));
     }
     .hero-copy {

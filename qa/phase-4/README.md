@@ -2,6 +2,10 @@
 
 Lote de integração do POC Lenis e da composição revisada do HeroHome.
 
+Atualização mobile de 24/10/2026 (AQ-WEB-1.1.8): abaixo de 1100 px, o Hero
+empilha copy, ações e fotografia 16:9 com gutters e raio de mídia. O degradê
+fica exclusivo do desktop, evitando texto sobre detalhes fotográficos.
+
 Atualização de 24/10/2026 (AQ-WEB-1.1.7): removida a máscara duplicada da
 fotografia; o overlay cobre toda a altura do Hero, eliminando as bordas
 horizontais. Foto desktop deslocada 80 px para a direita. Lenis usa `lerp:0.075`
