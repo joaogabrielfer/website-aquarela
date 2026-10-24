@@ -3,7 +3,6 @@ import PageShell from '../layouts/PageShell.astro';
 import PageIntro from '../components/PageIntro.astro';
 import EnvironmentCard from '../components/EnvironmentCard.astro';
 import EmptyState from '../components/EmptyState.astro';
-import VisitCTA from '../components/VisitCTA.astro';
 import Lightbox from '../islands/Lightbox.svelte';
 import { h1, pageTitles, empty } from '../lib/copy';
 import { getEnvironments, getMediaById, getPageCopy } from '../lib/content';
@@ -80,7 +79,6 @@ const envData = environments.map((env, i) => {
     )
   }
 
-  <VisitCTA />
   <Lightbox client:only="svelte" />
 </PageShell>
 

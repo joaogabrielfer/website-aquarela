@@ -2,6 +2,18 @@
 
 Lote de integração do POC Lenis e da composição revisada do HeroHome.
 
+Revisão de interações e rodapé (24/10/2026, AQ-WEB-1.1.9): menu mobile
+restaura scroll instantaneamente e foco sem rolagem, mede o topo antes do lock
+e contém overscroll. SegmentDetail usa o mesmo CTA primary vermelho nas quatro
+etapas. SegmentCard amplia 1,02× em 200 ms apenas com mouse e movimento permitido.
+VisitCTA foi retirado das seis rotas; Footer é navy/branco, com logo original
+sobre base clara e foco branco. Aprovações editoriais D06 continuam pendentes;
+Safari/iOS, Firefox e o gesto específico do vídeo do usuário não foram verificados.
+Validação deste lote: typecheck sem diagnósticos, lint, conteúdo e 72 testes
+unitários aprovados; Playwright com 150 aprovados / 38 ignorados conforme modo,
+incluindo três ciclos de abertura/fechamento pela faixa superior a 650 px de scroll.
+Hover desktop conferido com escala final 1,02× e CTA vermelho com texto branco.
+
 Atualização mobile de 24/10/2026 (AQ-WEB-1.1.8): abaixo de 1100 px, o Hero
 empilha copy, ações e fotografia 16:9 com gutters e raio de mídia. O degradê
 fica exclusivo do desktop, evitando texto sobre detalhes fotográficos.

@@ -64,7 +64,8 @@ const hasApprovedContact = Boolean(
   .site-footer {
     border-top: 1px solid var(--border-subtle);
     padding: var(--space-8) 0 var(--space-5);
-    background: white;
+    background: var(--brand-navy);
+    color: white;
   }
   .footer-grid {
     display: grid;
@@ -73,9 +74,13 @@ const hasApprovedContact = Boolean(
   .footer-grid img {
     width: 160px;
     height: auto;
+    box-sizing: content-box;
+    padding: var(--space-3);
+    border-radius: var(--radius-control);
+    background: var(--surface-base);
   }
   .tagline {
-    color: var(--text-muted);
+    color: white;
     font-size: 0.875rem;
     margin-top: var(--space-2);
   }
@@ -99,18 +104,22 @@ const hasApprovedContact = Boolean(
   .footer-grid a {
     display: inline-flex;
     align-items: center;
-    color: var(--text-ink);
+    color: white;
   }
   .pending {
-    color: var(--text-muted);
+    color: white;
     font-style: italic;
   }
   .copyright {
     max-width: 1296px;
     margin: var(--space-5) auto 0;
     padding: 0 20px;
-    color: var(--text-muted);
+    color: white;
     font-size: 0.875rem;
+  }
+  .site-footer a:focus-visible {
+    outline-color: white;
+    box-shadow: 0 0 0 2px var(--text-ink);
   }
   @media (min-width: 768px) {
     .footer-grid {

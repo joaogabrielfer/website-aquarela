@@ -1,6 +1,6 @@
 # Contrato de implementação — Aquarela
 
-**Contrato AQ-WEB-1.1.8 · revisado em 24/10/2026.**
+**Contrato AQ-WEB-1.1.9 · revisado em 24/10/2026.**
 
 “Congelado” significa baseline normativa para implementar, não aprovação dos dados escolares nem validação de um site pronto. Alterações de escopo ou aparência exigem revisão explícita deste contrato; conteúdo factual pode ser completado conforme o modelo de publicação, sem redesenhar a interface.
 
@@ -192,3 +192,22 @@ seguidos pela foto inteira 16:9, com gutters do container, gap 32 px e raio
 media. Não há degradê ou sobreposição nessa faixa. Esta regra substitui as
 referências anteriores a fundo fotográfico/overlay em mobile e tablet em
 design-spec, components e responsive. Desktop preserva a composição vigente.
+
+### Revisão AQ-WEB-1.1.9 — 24/10/2026
+
+Revisão autorizada de interação e encerramento das páginas. Substitui as regras
+anteriores conflitantes de routes/components/responsive:
+
+- Remover VisitCTA do fim de todas as rotas; o CTA de visita permanece no Header
+  e nas ações contextuais. Footer usa navy com texto/links brancos, foco branco
+  e logo original preservada sobre base branca com padding 12 px e raio control.
+- Os quatro CTAs de SegmentDetail usam primary: action-primary/branco,
+  hover action-hover e pressed action-pressed, inclusive nos estados incompletos.
+- SegmentCard amplia 1,02× no hover com ponteiro fine, transição de 200 ms e
+  easing cubic-bezier(0.2,0.7,0.2,1). Não ampliar em touch ou reduced-motion;
+  preservar foco visível, borda e sombra. AlbumCard mantém o comportamento anterior.
+- MobileMenu mantém modal, teclado, backdrop e fechamento no cruzamento desktop.
+  Restauração do scroll é instantânea e foco usa preventScroll; posição superior
+  é medida antes do body lock e atualizada apenas em resize, sem acompanhar scroll
+  provocado pelo próprio lock. Painel com raio card no canto superior esquerdo,
+  overscroll contido, links com divisões subtle e CTA pill.
