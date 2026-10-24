@@ -1,6 +1,6 @@
 # Contrato de implementação — Aquarela
 
-**Contrato AQ-WEB-1.1.9 · revisado em 24/10/2026.**
+**Contrato AQ-WEB-1.1.10 · revisado em 24/10/2026.**
 
 “Congelado” significa baseline normativa para implementar, não aprovação dos dados escolares nem validação de um site pronto. Alterações de escopo ou aparência exigem revisão explícita deste contrato; conteúdo factual pode ser completado conforme o modelo de publicação, sem redesenhar a interface.
 
@@ -211,3 +211,12 @@ anteriores conflitantes de routes/components/responsive:
   é medida antes do body lock e atualizada apenas em resize, sem acompanhar scroll
   provocado pelo próprio lock. Painel com raio card no canto superior esquerdo,
   overscroll contido, links com divisões subtle e CTA pill.
+
+### Revisão AQ-WEB-1.1.10 — 24/10/2026
+
+O Footer substitui a caixa branca da logo pelo símbolo original existente
+(`favicon-192.png`) em selo circular de 56 px, seguido de nome textual branco
+em Outfit 24/700 e subtítulo 14/400. Sem recoloração ou redesenho da marca.
+Esta regra substitui a base retangular de 1.1.9 e a logo de 160 px no rodapé.
+PageShell ocupa no mínimo 100dvh (fallback 100vh); main expande para manter
+o Footer no final da tela em rotas curtas, sem faixas vazias abaixo dele.

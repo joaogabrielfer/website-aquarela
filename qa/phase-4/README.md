@@ -2,6 +2,12 @@
 
 Lote de integração do POC Lenis e da composição revisada do HeroHome.
 
+Refinamento do rodapé (AQ-WEB-1.1.10): símbolo original em selo circular de
+56 px com nome textual branco, sem caixa retangular. Body flex com altura
+mínima de viewport e main expansível elimina espaço após o rodapé em páginas
+curtas. Em Galeria, conferidos 1920×1200 e 1440×1600: borda inferior do Footer
+coincide com a viewport; em 390×844, conteúdo rola normalmente e sem overflow.
+
 Revisão de interações e rodapé (24/10/2026, AQ-WEB-1.1.9): menu mobile
 restaura scroll instantaneamente e foco sem rolagem, mede o topo antes do lock
 e contém overscroll. SegmentDetail usa o mesmo CTA primary vermelho nas quatro

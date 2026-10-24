@@ -17,12 +17,12 @@ const hasApprovedContact = Boolean(
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <img
-        src="/brand/logo-aquarela-360.png"
-        alt="Aquarela"
-        width="180"
-        height="52"
-      />
+      <div class="footer-brand">
+        <img src="/favicon-192.png" alt="" width="56" height="56" />
+        <span class="footer-brand-name"
+          >Aquarela<span>Colégio e Curso</span></span
+        >
+      </div>
       {school.tagline && <p class="tagline">{school.tagline}</p>}
     </div>
     <nav aria-label="Navegação do rodapé">
@@ -71,13 +71,27 @@ const hasApprovedContact = Boolean(
     display: grid;
     gap: var(--space-6);
   }
-  .footer-grid img {
-    width: 160px;
-    height: auto;
-    box-sizing: content-box;
-    padding: var(--space-3);
-    border-radius: var(--radius-control);
-    background: var(--surface-base);
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .footer-brand img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    flex: none;
+  }
+  .footer-brand-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .footer-brand-name span {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: 0.875rem;
+    font-weight: 400;
   }
   .tagline {
     color: white;
