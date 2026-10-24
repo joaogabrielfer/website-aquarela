@@ -184,11 +184,13 @@ const showMedia = showImage || showPlaceholder;
     .hero-media {
       position: absolute;
       margin: 0;
-      aspect-ratio: auto;
+      aspect-ratio: 16 / 9;
       border-radius: 0;
-      inset: calc(-1 * var(--space-20)) calc(-1 * var(--space-20))
-        calc(-1 * var(--space-20)) auto;
-      width: min(100vw, 75rem);
+      inset: calc(-1 * var(--space-20)) calc(-1 * var(--space-20)) auto auto;
+      height: calc(100% + 2 * var(--space-20));
+      width: auto;
+      mask-image: linear-gradient(90deg, transparent, black 20%);
+      -webkit-mask-image: linear-gradient(90deg, transparent, black 20%);
     }
     .hero-photo {
       object-fit: contain;

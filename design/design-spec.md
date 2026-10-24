@@ -1,6 +1,6 @@
 # Contrato de implementação — Aquarela
 
-**Contrato AQ-WEB-1.1.10 · revisado em 24/10/2026.**
+**Contrato AQ-WEB-1.1.11 · revisado em 24/10/2026.**
 
 “Congelado” significa baseline normativa para implementar, não aprovação dos dados escolares nem validação de um site pronto. Alterações de escopo ou aparência exigem revisão explícita deste contrato; conteúdo factual pode ser completado conforme o modelo de publicação, sem redesenhar a interface.
 
@@ -220,3 +220,13 @@ em Outfit 24/700 e subtítulo 14/400. Sem recoloração ou redesenho da marca.
 Esta regra substitui a base retangular de 1.1.9 e a logo de 160 px no rodapé.
 PageShell ocupa no mínimo 100dvh (fallback 100vh); main expande para manter
 o Footer no final da tela em rotas curtas, sem faixas vazias abaixo dele.
+
+### Revisão AQ-WEB-1.1.11 — 24/10/2026
+
+Button secondary mantém branco/navy em repouso; hover usa navy/branco e pressed
+ink/branco, substituindo o bege e o estado disabled anteriores de C02.
+Hero desktop dimensiona a caixa da foto pela altura total da seção e proporção
+16:9, preservando o deslocamento de 80 px à direita. A caixa acompanha o conteúdo
+sem letterboxing superior/inferior; máscara contínua transparente→opaca nos
+primeiros 20% dissolve a borda esquerda sob o overlay de proteção da copy.
+Mobile/tablet preservam a fotografia separada abaixo das ações.

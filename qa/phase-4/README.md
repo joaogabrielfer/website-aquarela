@@ -2,6 +2,11 @@
 
 Lote de integração do POC Lenis e da composição revisada do HeroHome.
 
+Refinamento AQ-WEB-1.1.11: hover secondary navy/branco e pressed ink/branco.
+Hero desktop mantém uma caixa 16:9 calculada pela altura total, sem folgas
+superiores/inferiores; máscara na borda esquerda elimina a emenda visível.
+Geometria conferida em 1100, 1280, 1440, 1920 e 2560 px, mantendo 16:9.
+
 Refinamento do rodapé (AQ-WEB-1.1.10): símbolo original em selo circular de
 56 px com nome textual branco, sem caixa retangular. Body flex com altura
 mínima de viewport e main expansível elimina espaço após o rodapé em páginas
