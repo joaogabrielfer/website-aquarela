@@ -1,6 +1,6 @@
 # Contrato de implementação — Aquarela
 
-**Contrato AQ-WEB-1.1.6 · revisado em 27/09/2026.**
+**Contrato AQ-WEB-1.1.7 · revisado em 24/10/2026.**
 
 “Congelado” significa baseline normativa para implementar, não aprovação dos dados escolares nem validação de um site pronto. Alterações de escopo ou aparência exigem revisão explícita deste contrato; conteúdo factual pode ser completado conforme o modelo de publicação, sem redesenhar a interface.
 
@@ -64,7 +64,7 @@ Escala de espaços, em px: `--space-1:4`, `--space-2:8`, `--space-3:12`, `--spac
 
 Raios: `--radius-control:12px`, `--radius-card:20px`, `--radius-media:24px`, `--radius-pill:999px`. Seções abertas não têm raio nem sombra. Card tem borda de 1 px e nenhuma sombra padrão. Header após scroll e card de navegação no hover podem usar `0 4px 16px rgb(18 55 71 / 0.10)`. Menu/lightbox são camadas sobrepostas, não cards decorativos.
 
-Movimento: cores/sombra em 160 ms, abertura de overlay em 200 ms, easing `ease-out`. Não animar a altura de conteúdo textual. O POC aprovado usa Lenis em desktop com ponteiro não-coarse, habilitado por padrão e desligável no build com `ENABLE_SMOOTH_SCROLL=false`; usa duração de 1,1 s com easing exponencial, `wheelMultiplier:0.9`, `respectReducedMotion:true`, `syncTouch:false`, `anchors:true` e RAF automático. Em `prefers-reduced-motion: reduce` ou ponteiro coarse, preserva o scroll nativo. Menu e lightbox chamam `stop()` enquanto qualquer overlay estiver aberto e `start()` quando todos fecharem; listeners e instância são destruídos no cleanup. Âncoras, skip link, histórico, foco e body locking permanecem nativos/inalterados. Nada de autoplay, parallax, scroll-jacking, counters, skeleton permanente, reveal ou entrada que esconda conteúdo até JavaScript executar.
+Movimento: cores/sombra em 160 ms, abertura de overlay em 200 ms, easing `ease-out`. Não animar a altura de conteúdo textual. O POC aprovado usa Lenis em desktop com ponteiro não-coarse, habilitado por padrão e desligável no build com `ENABLE_SMOOTH_SCROLL=false`; usa interpolação amortecida `lerp:0.075`, sem duração fixa, `wheelMultiplier:1`, `respectReducedMotion:true`, `syncTouch:false`, `anchors:true` e RAF automático. Em `prefers-reduced-motion: reduce` ou ponteiro coarse, preserva o scroll nativo. Menu e lightbox chamam `stop()` enquanto qualquer overlay estiver aberto e `start()` quando todos fecharem; listeners e instância são destruídos no cleanup. Âncoras, skip link, histórico, foco e body locking permanecem nativos/inalterados. Nada de autoplay, parallax, scroll-jacking, counters, skeleton permanente, reveal ou entrada que esconda conteúdo até JavaScript executar.
 
 ## 5. Mídia e composição
 
@@ -175,3 +175,12 @@ histórico.
 O HeroHome desktop preserva a proporção 16:9 e o enquadramento completo da
 escola à direita. O Lenis recebe duração e easing explícitos para tornar a
 interpolação perceptível sem alterar os fallbacks de acessibilidade.
+
+### Revisão AQ-WEB-1.1.7 — 24/10/2026
+
+Correção autorizada do Hero: um único degradê paper cobre toda a altura da
+fotografia, sem máscara adicional ou bordas horizontais.
+No desktop, a foto é deslocada 80 px para a direita, centralizando a escola
+na área revelada pelo degradê.
+Lenis passa a usar amortecimento contínuo por frame, sem reiniciar uma duração fixa a cada evento
+da roda; preserva a distância original do gesto e os guards existentes.

@@ -11,12 +11,11 @@
     const lenis = new Lenis({
       anchors: true,
       autoRaf: true,
-      duration: 1.1,
-      easing: (time) => Math.min(1, 1.001 - Math.pow(2, -10 * time)),
+      lerp: 0.075,
       respectReducedMotion: true,
       smoothWheel: true,
       syncTouch: false,
-      wheelMultiplier: 0.9,
+      wheelMultiplier: 1,
     });
     const overlays: string[] = [];
     document.documentElement.dataset.smoothScroll = 'active';

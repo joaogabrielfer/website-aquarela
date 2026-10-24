@@ -2,6 +2,14 @@
 
 Lote de integração do POC Lenis e da composição revisada do HeroHome.
 
+Atualização de 24/10/2026 (AQ-WEB-1.1.7): removida a máscara duplicada da
+fotografia; o overlay cobre toda a altura do Hero, eliminando as bordas
+horizontais. Foto desktop deslocada 80 px para a direita. Lenis usa `lerp:0.075`
+sem duração fixa e preserva a distância do gesto (`wheelMultiplier:1`).
+Verificados: tipos, lint, 72 testes unitários, conteúdo e 148 E2E aprovados
+(38 ignorados por modo). A inspeção visual local confirma o fade contínuo;
+a sensação em hardware real do usuário ainda depende da avaliação dele.
+
 ## 1. Objetivo e baseline
 
 - Objetivo: consolidar o relatório da Fase 4 (integração, ciclo completo e revisão final) a partir das evidências confirmadas pelo lead.
