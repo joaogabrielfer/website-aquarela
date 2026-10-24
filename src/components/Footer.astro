@@ -17,12 +17,12 @@ const hasApprovedContact = Boolean(
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <img
-        src="/brand/logo-aquarela-360.png"
-        alt="Aquarela"
-        width="180"
-        height="52"
-      />
+      <div class="footer-brand">
+        <img src="/favicon-192.png" alt="" width="56" height="56" />
+        <span class="footer-brand-name"
+          >Aquarela<span>Colégio e Curso</span></span
+        >
+      </div>
       {school.tagline && <p class="tagline">{school.tagline}</p>}
     </div>
     <nav aria-label="Navegação do rodapé">
@@ -64,18 +64,37 @@ const hasApprovedContact = Boolean(
   .site-footer {
     border-top: 1px solid var(--border-subtle);
     padding: var(--space-8) 0 var(--space-5);
-    background: white;
+    background: var(--brand-navy);
+    color: white;
   }
   .footer-grid {
     display: grid;
     gap: var(--space-6);
   }
-  .footer-grid img {
-    width: 160px;
-    height: auto;
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .footer-brand img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    flex: none;
+  }
+  .footer-brand-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .footer-brand-name span {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: 0.875rem;
+    font-weight: 400;
   }
   .tagline {
-    color: var(--text-muted);
+    color: white;
     font-size: 0.875rem;
     margin-top: var(--space-2);
   }
@@ -99,18 +118,22 @@ const hasApprovedContact = Boolean(
   .footer-grid a {
     display: inline-flex;
     align-items: center;
-    color: var(--text-ink);
+    color: white;
   }
   .pending {
-    color: var(--text-muted);
+    color: white;
     font-style: italic;
   }
   .copyright {
     max-width: 1296px;
     margin: var(--space-5) auto 0;
     padding: 0 20px;
-    color: var(--text-muted);
+    color: white;
     font-size: 0.875rem;
+  }
+  .site-footer a:focus-visible {
+    outline-color: white;
+    box-shadow: 0 0 0 2px var(--text-ink);
   }
   @media (min-width: 768px) {
     .footer-grid {

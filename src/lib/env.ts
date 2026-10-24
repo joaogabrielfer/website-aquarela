@@ -21,3 +21,7 @@ export const IS_CF_PREVIEW = Boolean(
   process.env.CF_PAGES_BRANCH && process.env.CF_PAGES_BRANCH !== 'main',
 );
 export const IS_PREVIEW = BUILD_MODE === 'editorial-preview' || IS_CF_PREVIEW;
+
+// Resolved during the build so disabled builds do not mount the island.
+export const ENABLE_SMOOTH_SCROLL =
+  process.env.ENABLE_SMOOTH_SCROLL !== 'false';

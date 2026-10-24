@@ -26,9 +26,21 @@ html {
   scroll-padding-top: 104px;
 }
 body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
   margin: 0;
   font-size: 1rem;
   line-height: 1.6;
+}
+#main-content {
+  flex: 1 0 auto;
+}
+.site-header,
+.site-footer,
+.preview-banner {
+  flex-shrink: 0;
 }
 a {
   color: var(--brand-navy);
@@ -116,6 +128,9 @@ h3 {
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+  html[data-smooth-scroll='active'] {
+    scroll-behavior: auto;
   }
   * {
     transition:

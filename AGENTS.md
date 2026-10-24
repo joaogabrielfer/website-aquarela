@@ -4,7 +4,7 @@ Guia operacional para agentes que trabalham neste repositório. Lido antes de qu
 
 ## 1. Autoridade normativa
 
-A fonte normativa é o **contrato AQ-WEB-1.1.3** (referido pelo usuário como "contrato da Astra" — Astra é o modelo autor do design), congelado em 09/09/2026, nos cinco arquivos de `design/`. Ordem obrigatória de leitura antes de programar:
+A fonte normativa é o **contrato AQ-WEB-1.1.11** (referido pelo usuário como "contrato da Astra" — Astra é o modelo autor do design), revisado em 24/10/2026, nos cinco arquivos de `design/`. Ordem obrigatória de leitura antes de programar:
 
 1. `design/design-spec.md` — escopo, tokens, variantes globais, qualidade.
 2. `design/routes.md` — rotas, ordem de seções, copy funcional, destinos.
@@ -56,7 +56,7 @@ sha256sum -c design-contract.sha256
 - Domínio provisório: `https://<projeto>.pages.dev`. `SITE_URL` é variável de build pública (não secreta); canonical/sitemap/OG derivam dela. Ao comprar o `.com.br`: adicionar Custom Domain no dashboard e atualizar `SITE_URL` (seção 9).
 - Nenhum adapter SSR é necessário; deploy = diretório `dist/` gerado por `pnpm build`.
 
-**Movimento:** transições de 160/200 ms e scroll suave **nativo de âncoras** (`scroll-behavior: smooth` apenas em `@media (prefers-reduced-motion: no-preference)`), conforme design-spec §4. Biblioteca de smooth scroll inercial (Lenis) está **proposta, pendente de decisão do usuário** — se aprovada, entra como POC ao final (flag de build), com guards: desligada em reduced-motion e touch, `stop()` quando menu/lightbox abrem, validação de âncoras/teclado. Proibidos pelo contrato: parallax, scroll-jacking, reveal-on-scroll, conteúdo que dependa de JS para aparecer.
+**Movimento:** transições de 160/200 ms e scroll suave **nativo de âncoras** (`scroll-behavior: smooth` apenas em `@media (prefers-reduced-motion: no-preference)`), conforme design-spec §4. Biblioteca de smooth scroll inercial (Lenis) está aprovada como POC de Fase 4, habilitada por padrão e desligável com `ENABLE_SMOOTH_SCROLL=false`, com guards: desligada em reduced-motion e ponteiro coarse, `stop()` quando menu/lightbox abrem, validação de âncoras/teclado. Proibidos pelo contrato: parallax, scroll-jacking, reveal-on-scroll, conteúdo que dependa de JS para aparecer.
 
 ## 4. Arquitetura planejada
 

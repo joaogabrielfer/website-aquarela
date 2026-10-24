@@ -3,7 +3,13 @@ import '../styles/tokens.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { BUILD_MODE, IS_CF_PREVIEW, SITE_URL } from '../lib/env';
+import {
+  BUILD_MODE,
+  ENABLE_SMOOTH_SCROLL,
+  IS_CF_PREVIEW,
+  SITE_URL,
+} from '../lib/env';
+import SmoothScroll from '../islands/SmoothScroll.svelte';
 
 interface Props {
   title: string;
@@ -66,7 +72,9 @@ const ogImageUrl =
         </aside>
       )
     }<a class="skip-link" href="#main-content">Pular para o conteúdo</a><Header
-    /><main id="main-content" tabindex="-1"><slot /></main><Footer /></body
+    /><main id="main-content" tabindex="-1"><slot /></main><Footer />{
+      ENABLE_SMOOTH_SCROLL && <SmoothScroll client:load />
+    }</body
   >
 </html>
 <style>

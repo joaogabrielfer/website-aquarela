@@ -11,16 +11,17 @@ const mediaDir = path.resolve(process.cwd(), 'public/media');
 
 describe('responsiveSrcset', () => {
   it('produz todas as variantes convencionadas para um hero completo', () => {
-    expect(responsiveSrcset('/media/hero-colegio-1600.webp', 1600)).toBe(
+    expect(responsiveSrcset('/media/hero-colegio-2400.webp', 2400)).toBe(
       '/media/hero-colegio-480.webp 480w, ' +
         '/media/hero-colegio-768.webp 768w, ' +
         '/media/hero-colegio-1200.webp 1200w, ' +
-        '/media/hero-colegio-1600.webp 1600w',
+        '/media/hero-colegio-1600.webp 1600w, ' +
+        '/media/hero-colegio-2400.webp 2400w',
     );
   });
 
   it('limita variantes à largura intrínseca sem inventar uma maior', () => {
-    expect(responsiveSrcset('/media/hero-colegio-1600.webp', 1200)).toBe(
+    expect(responsiveSrcset('/media/hero-colegio-2400.webp', 1200)).toBe(
       '/media/hero-colegio-480.webp 480w, ' +
         '/media/hero-colegio-768.webp 768w, ' +
         '/media/hero-colegio-1200.webp 1200w',
@@ -57,12 +58,13 @@ describe('focalPointStyle', () => {
 });
 
 describe('artefatos responsivos públicos do hero', () => {
-  const widths = [480, 768, 1200, 1600] as const;
+  const widths = [480, 768, 1200, 1600, 2400] as const;
   const expectedHeights = new Map([
     [480, 270],
     [768, 432],
     [1200, 675],
     [1600, 900],
+    [2400, 1350],
   ]);
 
   it('contém as quatro larguras com dimensões 16:9 esperadas', async () => {

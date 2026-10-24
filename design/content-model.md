@@ -1,6 +1,6 @@
 # Modelo de conteúdo e publicação
 
-**AQ-WEB-1.1.4** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
+**AQ-WEB-1.1.11** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
 
 ## D01 — Evidência e estados
 
@@ -210,6 +210,9 @@ Validar no build: IDs/slugs, enums, E.164, URLs, datas, obrigatórios condiciona
 preenchido, o ID deve existir em `media.yaml`; se a Home for `approved`, a
 mídia precisa estar `approved`, `usageApproved` e existir no caminho local.
 Preview resolve mídia visível; público/release resolve apenas mídia aprovada.
+
+O mesmo `heroImageId` alimenta a imagem semântica da camada de fundo do HeroHome;
+isso não altera o schema nem cria uma segunda referência de mídia.
 
 `SeasonalBanner` tem os campos `id`, `eyebrow`, `title`, `body`, `ctaLabel`,
 `href`, `tone`, `active` e `review`. `tone` é obrigatório e aceita somente

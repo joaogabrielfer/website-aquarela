@@ -1,6 +1,6 @@
 # Rotas e composição
 
-**AQ-WEB-1.1.4** · Normativo. Complementa [design-spec.md](./design-spec.md).
+**AQ-WEB-1.1.11** · Normativo. Complementa [design-spec.md](./design-spec.md).
 
 ## R01 — Regras globais
 
@@ -18,7 +18,7 @@ As condições de dados são as de `content-model.md`. Se uma seção opcional n
 
 | Ordem / ID | Composição | Dados / ação |
 | --- | --- | --- |
-| 1 `inicio` | HeroHome, fundo paper | Rótulo “Aquarela Colégio e Curso · Paulista/PE”; H1 “Presente em cada fase. Pronto para novas descobertas.”; apoio “Conheça as etapas de ensino, os espaços e as experiências do Aquarela.” |
+| 1 `inicio` | HeroHome, fotografia full-bleed ao fundo, fade paper à esquerda e faixa red inferior | Rótulo “Aquarela Colégio e Curso · Paulista/PE”; H1 “Presente em cada fase. Pronto para novas descobertas.”; apoio “Conheça as etapas de ensino, os espaços e as experiências do Aquarela.” |
 | 2 `banner-sazonal` | SeasonalBanner opcional, após o Hero | No máximo um banner `active`; público somente approved, preview pode mostrar draft/observed; CTA/destino opcionais em par; tom editorial da paleta autorizada |
 | 3 `etapas` | SectionHeading + 4 SegmentCard, fundo branco | H2 “Ensino em cada fase”; ordem Infantil, Anos Iniciais, Anos Finais, Médio; destinos na tabela de Ensino abaixo |
 | 4 `proposta` | MediaText, fundo paper | H2 “O jeito Aquarela de aprender”; foto + 3 fatos pedagógicos aprovados; ocultar bloco se conteúdo incompleto |

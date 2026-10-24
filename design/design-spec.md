@@ -1,6 +1,6 @@
 # Contrato de implementação — Aquarela
 
-**Contrato AQ-WEB-1.1.4 · revisado em 14/09/2026.**
+**Contrato AQ-WEB-1.1.11 · revisado em 24/10/2026.**
 
 “Congelado” significa baseline normativa para implementar, não aprovação dos dados escolares nem validação de um site pronto. Alterações de escopo ou aparência exigem revisão explícita deste contrato; conteúdo factual pode ser completado conforme o modelo de publicação, sem redesenhar a interface.
 
@@ -64,11 +64,11 @@ Escala de espaços, em px: `--space-1:4`, `--space-2:8`, `--space-3:12`, `--spac
 
 Raios: `--radius-control:12px`, `--radius-card:20px`, `--radius-media:24px`, `--radius-pill:999px`. Seções abertas não têm raio nem sombra. Card tem borda de 1 px e nenhuma sombra padrão. Header após scroll e card de navegação no hover podem usar `0 4px 16px rgb(18 55 71 / 0.10)`. Menu/lightbox são camadas sobrepostas, não cards decorativos.
 
-Movimento: cores/sombra em 160 ms, abertura de overlay em 200 ms, easing `ease-out`. Não animar a altura de conteúdo textual. `prefers-reduced-motion: reduce` remove transições e smooth scroll. Nada de autoplay, parallax, counters, skeleton permanente ou entrada que esconda conteúdo até JavaScript executar.
+Movimento: cores/sombra em 160 ms, abertura de overlay em 200 ms, easing `ease-out`. Não animar a altura de conteúdo textual. O POC aprovado usa Lenis em desktop com ponteiro não-coarse, habilitado por padrão e desligável no build com `ENABLE_SMOOTH_SCROLL=false`; usa interpolação amortecida `lerp:0.075`, sem duração fixa, `wheelMultiplier:1`, `respectReducedMotion:true`, `syncTouch:false`, `anchors:true` e RAF automático. Em `prefers-reduced-motion: reduce` ou ponteiro coarse, preserva o scroll nativo. Menu e lightbox chamam `stop()` enquanto qualquer overlay estiver aberto e `start()` quando todos fecharem; listeners e instância são destruídos no cleanup. Âncoras, skip link, histórico, foco e body locking permanecem nativos/inalterados. Nada de autoplay, parallax, scroll-jacking, counters, skeleton permanente, reveal ou entrada que esconda conteúdo até JavaScript executar.
 
 ## 5. Mídia e composição
 
-Hero da home: texto fora da imagem, fundo creme, foto real à direita no desktop, nenhuma sobreposição de texto/filtro na fotografia. Proporção 4:3, raio 24 px, um arco decorativo de cor de marca no máximo, atrás da mídia. O overlay citado no exemplo do usuário não é obrigatório e não pertence a este Hero.
+Hero da home: fotografia real em camada de fundo, com assunto visual preservado à direita; fade opaco de `--surface-paper` abrindo para a fotografia à esquerda protege toda a copy. No desktop, a mídia mantém a proporção 16:9 com `contain`, alinhada à direita, sem cortar a escola para preencher telas ultralargas. Faixa contínua inferior usa `--brand-red`. Não usar filtro destrutivo nem arco decorativo. O enquadramento é responsivo, sem `100vh`; no mobile/tablet o overlay é mais forte. A imagem permanece semântica como `<img>`/`<picture>` responsivo, com alt, prioridade e dimensões.
 
 Foto real do colégio com origem e uso aprovados. Não gerar alunos, ambientes ou depoimentos. Não recolorir/reconstruir a [logo original](../assets/logo-aquarela.PNG). Criar derivado com margens externas ajustadas, preservando proporção e pixels da marca; guardar o original. Logo sem SVG oficial deve permanecer raster de qualidade, não vetorização inventada.
 
@@ -161,3 +161,72 @@ recomendações adicionais aprovadas estão em
 [revisao-visual-2026-09-14.md](./revisao-visual-2026-09-14.md). Recomendações
 dependentes de conteúdo continuam condicionadas à entrega e aprovação desse
 conteúdo; os ajustes estruturais e visuais integram esta baseline.
+
+### Revisão AQ-WEB-1.1.5 — 27/09/2026
+
+O HeroHome passa a usar a fotografia como fundo full-bleed, com fade paper
+protegendo a copy à esquerda e faixa vermelha inferior. O POC Lenis foi
+aprovado com kill switch de build, fallback nativo para movimento reduzido e
+ponteiro coarse, pausa durante menu/lightbox e preservação de âncoras, foco e
+histórico.
+
+### Revisão AQ-WEB-1.1.6 — 27/09/2026
+
+O HeroHome desktop preserva a proporção 16:9 e o enquadramento completo da
+escola à direita. O Lenis recebe duração e easing explícitos para tornar a
+interpolação perceptível sem alterar os fallbacks de acessibilidade.
+
+### Revisão AQ-WEB-1.1.7 — 24/10/2026
+
+Correção autorizada do Hero: um único degradê paper cobre toda a altura da
+fotografia, sem máscara adicional ou bordas horizontais.
+No desktop, a foto é deslocada 80 px para a direita, centralizando a escola
+na área revelada pelo degradê.
+Lenis passa a usar amortecimento contínuo por frame, sem reiniciar uma duração fixa a cada evento
+da roda; preserva a distância original do gesto e os guards existentes.
+
+### Revisão AQ-WEB-1.1.8 — 24/10/2026
+
+Em larguras menores que 1100 px, HeroHome usa texto e ações sobre paper,
+seguidos pela foto inteira 16:9, com gutters do container, gap 32 px e raio
+media. Não há degradê ou sobreposição nessa faixa. Esta regra substitui as
+referências anteriores a fundo fotográfico/overlay em mobile e tablet em
+design-spec, components e responsive. Desktop preserva a composição vigente.
+
+### Revisão AQ-WEB-1.1.9 — 24/10/2026
+
+Revisão autorizada de interação e encerramento das páginas. Substitui as regras
+anteriores conflitantes de routes/components/responsive:
+
+- Remover VisitCTA do fim de todas as rotas; o CTA de visita permanece no Header
+  e nas ações contextuais. Footer usa navy com texto/links brancos, foco branco
+  e logo original preservada sobre base branca com padding 12 px e raio control.
+- Os quatro CTAs de SegmentDetail usam primary: action-primary/branco,
+  hover action-hover e pressed action-pressed, inclusive nos estados incompletos.
+- SegmentCard amplia 1,02× no hover com ponteiro fine, transição de 200 ms e
+  easing cubic-bezier(0.2,0.7,0.2,1). Não ampliar em touch ou reduced-motion;
+  preservar foco visível, borda e sombra. AlbumCard mantém o comportamento anterior.
+- MobileMenu mantém modal, teclado, backdrop e fechamento no cruzamento desktop.
+  Restauração do scroll é instantânea e foco usa preventScroll; posição superior
+  é medida antes do body lock e atualizada apenas em resize, sem acompanhar scroll
+  provocado pelo próprio lock. Painel com raio card no canto superior esquerdo,
+  overscroll contido, links com divisões subtle e CTA pill.
+
+### Revisão AQ-WEB-1.1.10 — 24/10/2026
+
+O Footer substitui a caixa branca da logo pelo símbolo original existente
+(`favicon-192.png`) em selo circular de 56 px, seguido de nome textual branco
+em Outfit 24/700 e subtítulo 14/400. Sem recoloração ou redesenho da marca.
+Esta regra substitui a base retangular de 1.1.9 e a logo de 160 px no rodapé.
+PageShell ocupa no mínimo 100dvh (fallback 100vh); main expande para manter
+o Footer no final da tela em rotas curtas, sem faixas vazias abaixo dele.
+
+### Revisão AQ-WEB-1.1.11 — 24/10/2026
+
+Button secondary mantém branco/navy em repouso; hover usa navy/branco e pressed
+ink/branco, substituindo o bege e o estado disabled anteriores de C02.
+Hero desktop dimensiona a caixa da foto pela altura total da seção e proporção
+16:9, preservando o deslocamento de 80 px à direita. A caixa acompanha o conteúdo
+sem letterboxing superior/inferior; máscara contínua transparente→opaca nos
+primeiros 20% dissolve a borda esquerda sob o overlay de proteção da copy.
+Mobile/tablet preservam a fotografia separada abaixo das ações.

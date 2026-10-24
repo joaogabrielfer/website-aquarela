@@ -30,50 +30,39 @@ const showMedia = showImage || showPlaceholder;
 ---
 
 <section class="hero-home">
-  <div class="container hero-inner">
-    <div class="hero-copy">
-      <p class="hero-eyebrow">{eyebrow}</p>
-      <h1 class="hero-title">{title}</h1>
-      {support && <p class="hero-support">{support}</p>}
-      <div class="hero-actions">
-        <Button href="/visite" variant="primary">Quero conhecer</Button>
-        <Button href="/ensino" variant="secondary">Explore nosso ensino</Button>
+  <div class="hero-inner">
+    <div class="hero-fade" aria-hidden="true"></div>
+    <div class="container hero-inner-content">
+      <div class="hero-copy">
+        <p class="hero-eyebrow">{eyebrow}</p>
+        <h1 class="hero-title">{title}</h1>
+        {support && <p class="hero-support">{support}</p>}
+        <div class="hero-actions">
+          <Button href="/visite" variant="primary">Quero conhecer</Button>
+          <Button href="/ensino" variant="secondary"
+            >Explore nosso ensino</Button
+          >
+        </div>
       </div>
     </div>
     {
       showMedia ? (
         <div class="hero-media">
-          <svg
-            class="hero-arc"
-            aria-hidden="true"
-            viewBox="0 0 200 200"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle
-              cx="100"
-              cy="100"
-              r="95"
-              stroke="var(--brand-red)"
-              stroke-width="2"
-              opacity="0.2"
-            />
-          </svg>
           {showImage ? (
             <img
               class="hero-photo"
               src={imageSrc}
               srcset={responsiveSrcset(imageSrc, imageWidth)}
-              sizes="(min-width: 1100px) 50vw, 100vw"
+              sizes="100vw"
               alt={imageAlt || 'Aquarela Colégio e Curso'}
-              width={imageWidth ?? 600}
-              height={imageHeight ?? 450}
+              width={imageWidth ?? 2400}
+              height={imageHeight ?? 1350}
               style={focalPointStyle(imageFocalPoint)}
               loading="eager"
               fetchpriority="high"
             />
           ) : (
-            <AssetPlaceholder aspectRatio="4/3" />
+            <AssetPlaceholder aspectRatio="16/9" />
           )}
         </div>
       ) : null
@@ -84,17 +73,25 @@ const showMedia = showImage || showPlaceholder;
 <style>
   .hero-home {
     background: var(--surface-paper);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     padding: var(--space-12) 0;
+    border-bottom: var(--space-3) solid var(--brand-red);
   }
   .hero-inner {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-8);
+    position: relative;
+    min-height: 0;
+  }
+  .hero-inner-content {
+    position: relative;
+    z-index: 2;
   }
   .hero-copy {
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
+    max-width: 42rem;
   }
   .hero-eyebrow {
     margin: 0;
@@ -125,27 +122,34 @@ const showMedia = showImage || showPlaceholder;
   }
   .hero-media {
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .hero-arc {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
+    margin: var(--space-8) auto 0;
+    width: calc(100% - 40px);
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-media);
     z-index: 0;
   }
-  .hero-photo {
-    position: relative;
+  .hero-fade {
+    display: none;
+    position: absolute;
+    inset: 0;
     z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      var(--surface-paper) 0%,
+      var(--surface-paper) 27%,
+      rgb(255 249 239 / 0.92) 50%,
+      rgb(255 249 239 / 0.18) 78%,
+      transparent 100%
+    );
+  }
+  .hero-photo {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
-    aspect-ratio: 4/3;
-    border-radius: var(--radius-media);
+    object-position: center;
   }
 
   /* Tablet */
@@ -153,11 +157,11 @@ const showMedia = showImage || showPlaceholder;
     .hero-home {
       padding: var(--space-16) 0;
     }
+    .hero-media {
+      width: calc(100% - 64px);
+    }
     .hero-title {
       font-size: 3.5rem;
-    }
-    .hero-inner {
-      gap: var(--space-10);
     }
     .hero-support {
       font-size: 1.25rem;
@@ -175,10 +179,26 @@ const showMedia = showImage || showPlaceholder;
       padding: var(--space-20) 0;
     }
     .hero-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-12);
-      align-items: center;
+      min-height: 32rem;
+    }
+    .hero-media {
+      position: absolute;
+      margin: 0;
+      aspect-ratio: 16 / 9;
+      border-radius: 0;
+      inset: calc(-1 * var(--space-20)) calc(-1 * var(--space-20)) auto auto;
+      height: calc(100% + 2 * var(--space-20));
+      width: auto;
+      mask-image: linear-gradient(90deg, transparent, black 20%);
+      -webkit-mask-image: linear-gradient(90deg, transparent, black 20%);
+    }
+    .hero-photo {
+      object-fit: contain;
+      object-position: right center;
+    }
+    .hero-fade {
+      display: block;
+      inset-block: calc(-1 * var(--space-20));
     }
     .hero-copy {
       gap: var(--space-6);
