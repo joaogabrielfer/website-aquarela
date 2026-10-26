@@ -42,7 +42,12 @@
 - id: sala-infantil
   name: Sala infantil
   purpose: Sala com mobiliário dimensionado para crianças.
-  images: [sala-infantil]
+  images:
+    [
+      sala-infantil,
+      sala-infantil-criancas-estudo,
+      sala-infantil-mesas-coloridas-tablets,
+    ]
   accessInfo: null
   order: 6
   review: *environment_review
@@ -56,7 +61,7 @@
 - id: sala-bancas-vermelhas
   name: Sala de aula — bancas vermelhas
   purpose: Sala de aula com bancas individuais e quadro branco.
-  images: [sala-bancas-vermelhas]
+  images: [sala-bancas-vermelhas, sala-bancas-vermelhas-estudo]
   accessInfo: null
   order: 8
   review: *environment_review
@@ -68,3 +73,25 @@
   accessInfo: null
   order: 9
   review: *environment_review
+- id: piscina
+  name: Piscina
+  purpose: Área externa com piscina e espaço pavimentado ao redor.
+  images: [piscina-angulo-principal, piscina-angulo-complementar]
+  accessInfo: null
+  order: 10
+  review:
+    status: observed
+    source: 'Ambiente identificado em fotos fornecidas pelo responsável e uso autorizado nesta conversa em 26/10/2026'
+    reviewedAt: null
+    reviewedBy: null
+- id: quadra-coberta
+  name: Quadra coberta
+  purpose: Quadra com piso colorido, traves e cobertura.
+  images: [quadra-coberta-angulo-principal, quadra-coberta-angulo-complementar]
+  accessInfo: null
+  order: 11
+  review:
+    status: observed
+    source: 'Ambiente identificado em fotos fornecidas pelo responsável e uso autorizado nesta conversa em 26/10/2026'
+    reviewedAt: null
+    reviewedBy: null
