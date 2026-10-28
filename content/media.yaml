@@ -121,3 +121,94 @@
   focalPoint: { x: 0.5, y: 0.55 }
   review: *photo_review
   usageApproved: true
+- id: piscina-angulo-principal
+  src: /media/piscina-angulo-principal-1600.webp
+  width: 1600
+  height: 1200
+  alt: Piscina escolar vista de frente, com área pavimentada ao redor
+  caption: null
+  focalPoint: { x: 0.5, y: 0.52 }
+  review:
+    status: observed
+    source: 'Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026'
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: piscina-angulo-complementar
+  src: /media/piscina-angulo-complementar-1600.webp
+  width: 1600
+  height: 1200
+  alt: Piscina escolar vista pelo lado oposto, com a área externa ao redor
+  caption: null
+  focalPoint: { x: 0.5, y: 0.52 }
+  review:
+    status: observed
+    source: 'Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026'
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: quadra-coberta-angulo-principal
+  src: /media/quadra-coberta-angulo-principal-1600.webp
+  width: 1600
+  height: 1200
+  alt: Quadra coberta com piso colorido, traves e cobertura metálica
+  caption: null
+  focalPoint: { x: 0.5, y: 0.52 }
+  review:
+    status: observed
+    source: 'Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026'
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: quadra-coberta-angulo-complementar
+  src: /media/quadra-coberta-angulo-complementar-1600.webp
+  width: 1600
+  height: 1200
+  alt: Quadra coberta vista do lado oposto, com piso colorido e arquibancada
+  caption: null
+  focalPoint: { x: 0.5, y: 0.52 }
+  review:
+    status: observed
+    source: 'Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026'
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: sala-infantil-criancas-estudo
+  src: /media/sala-infantil-criancas-estudo-1200.webp
+  width: 1200
+  height: 899
+  alt: Crianças sentadas em mesas brancas de uma sala de aula
+  caption: null
+  focalPoint: { x: 0.5, y: 0.5 }
+  review:
+    status: observed
+    source: 'Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026'
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: sala-infantil-mesas-coloridas-tablets
+  src: /media/sala-infantil-mesas-coloridas-tablets-1200.webp
+  width: 1200
+  height: 900
+  alt: Crianças usando tablets em uma mesa amarela de sala de aula
+  caption: null
+  focalPoint: { x: 0.5, y: 0.5 }
+  review:
+    status: observed
+    source: 'Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026'
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: sala-bancas-vermelhas-estudo
+  src: /media/sala-bancas-vermelhas-estudo-1200.webp
+  width: 1200
+  height: 900
+  alt: Alunos estudando em sala com bancas vermelhas
+  caption: null
+  focalPoint: { x: 0.5, y: 0.5 }
+  review:
+    status: observed
+    source: 'Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026'
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
