@@ -212,3 +212,141 @@
     reviewedAt: null
     reviewedBy: null
   usageApproved: true
+
+# Retratos extraídos das artes fornecidas; somente preview enquanto observed.
+- id: retrato-jose-kaua
+  src: /media/approvals/jose-kaua-800.webp
+  width: 800
+  height: 1000
+  alt: Retrato de José Kauã com uniforme do Aquarela
+  caption: null
+  focalPoint:
+    x: 0.5
+    'y': 0.35
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/jose-kaua-cpaeam-2027.jpg. Inclusão em
+      preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: retrato-ricardo-cesar
+  src: /media/approvals/ricardo-cesar-800.webp
+  width: 800
+  height: 1000
+  alt: Retrato de Ricardo Cesar com uniforme do Aquarela
+  caption: null
+  focalPoint:
+    x: 0.5
+    'y': 0.35
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/ricardo-cesar-cpaeam-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: retrato-pedro-henrique
+  src: /media/approvals/pedro-henrique-800.webp
+  width: 800
+  height: 1000
+  alt: Retrato de Pedro Henrique com uniforme do Aquarela
+  caption: null
+  focalPoint:
+    x: 0.5
+    'y': 0.35
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/pedro-henrique-cpaeam-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: retrato-miguel-vasconcelos
+  src: /media/approvals/miguel-vasconcelos-800.webp
+  width: 800
+  height: 1000
+  alt: Retrato de Miguel Vasconcelos com uniforme do Aquarela
+  caption: null
+  focalPoint:
+    x: 0.5
+    'y': 0.35
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/miguel-vasconcelos-cpaeam-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: retrato-richarlyson-augusto
+  src: /media/approvals/richarlyson-augusto-800.webp
+  width: 800
+  height: 1000
+  alt: Retrato de Richarlyson Augusto com uniforme do Aquarela
+  caption: null
+  focalPoint:
+    x: 0.5
+    'y': 0.35
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/richarlyson-augusto-cfn-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: retrato-gabriele-goncalves
+  src: /media/approvals/gabriele-goncalves-800.webp
+  width: 800
+  height: 1000
+  alt: Retrato de Gabriele Gonçalves com uniforme do Aquarela
+  caption: null
+  focalPoint:
+    x: 0.5
+    'y': 0.35
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/gabriele-goncalves-cfn-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: retrato-breno-alexandre
+  src: /media/approvals/breno-alexandre-800.webp
+  width: 800
+  height: 1000
+  alt: Retrato de Breno Alexandre com uniforme do Aquarela
+  caption: null
+  focalPoint:
+    x: 0.5
+    'y': 0.35
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/breno-alexandre-cfn-2027.jpg. Inclusão
+      em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true
+- id: retrato-pedro-vasconcelos
+  src: /media/approvals/pedro-vasconcelos-800.webp
+  width: 800
+  height: 1000
+  alt: Retrato de Pedro Vasconcelos com uniforme do Aquarela
+  caption: null
+  focalPoint:
+    x: 0.5
+    'y': 0.35
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/pedro-vasconcelos-cpaeam-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+  usageApproved: true

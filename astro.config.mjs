@@ -35,19 +35,34 @@ const publicMediaGuard = {
               record?.usageApproved === true,
           )
           .map((record) =>
-            path
-              .basename(record.src, path.extname(record.src))
-              .replace(/-(1600|2400)$/, ''),
+            record.src
+              .replace(/^\/media\//, '')
+              .replace(/-(400|480|768|800|1200|1600|2400)\.[^.]+$/, ''),
           ),
       );
 
-      for (const file of fs.readdirSync(outputMediaDir)) {
-        const stem = path.basename(file, path.extname(file));
-        const prefix = stem.replace(/-(480|768|1200|1600|2400)$/, '');
-        if (!allowedPrefixes.has(prefix)) {
-          fs.rmSync(path.join(outputMediaDir, file));
+      const pruneMedia = (directory) => {
+        for (const entry of fs.readdirSync(directory, {
+          withFileTypes: true,
+        })) {
+          const file = path.join(directory, entry.name);
+          if (entry.isDirectory()) {
+            pruneMedia(file);
+            if (fs.readdirSync(file).length === 0) fs.rmdirSync(file);
+            continue;
+          }
+          const relative = path
+            .relative(outputMediaDir, file)
+            .split(path.sep)
+            .join('/');
+          const prefix = relative.replace(
+            /-(400|480|768|800|1200|1600|2400)\.[^.]+$/,
+            '',
+          );
+          if (!allowedPrefixes.has(prefix)) fs.rmSync(file);
         }
-      }
+      };
+      pruneMedia(outputMediaDir);
 
       if (fs.readdirSync(outputMediaDir).length === 0) {
         fs.rmdirSync(outputMediaDir);

@@ -1,0 +1,86 @@
+# Aprovações — integração editorial de 30/10/2026
+
+## Escopo
+
+Dez conquistas transcritas das dez artes fornecidas, com oito retratos distintos.
+Um registro por conquista, sem totais agregados ou destaque automático na Home.
+Cards informativos, retrato 4:5, grade de 1/2/3 colunas, paleta e tokens vigentes.
+A mesma implementação de card atende o mural e o componente Astro da Home.
+
+## Proveniência e pendências editoriais
+
+- Originais preservados em `assets/approvals/`, identificados pelo ID da conquista.
+- Todos os registros continuam `observed`, com `reviewedAt` e `reviewedBy` nulos.
+- `publicationAuthorized` permanece falso: o pedido atual escolhe preview editorial.
+  A projeção permite a conferência na prévia explícita; público/release continuam
+  exigindo status aprovado e autorização. Os metadados não chegam ao navegador.
+- O pedido autoriza o tratamento dos retratos para essa prévia (`usageApproved`).
+  Isso não promove o estado editorial das mídias.
+- A fonte CPAEAM escreve **José Kauã** e a fonte CFN escreve **José Cauã**.
+  Cada registro preserva sua grafia, usando o mesmo retrato. Confirmar antes
+  de aprovar; não consolidar silenciosamente o nome.
+- **Ricardo Cesar** foi transcrito sem acrescentar acento ausente na fonte.
+- CPAEAM: processo **CPAEAM 2027** e ano **2027**, conforme as artes.
+- CFN: processo **CFN 2026/2027**, preservando os dois anos da arte. O campo
+  numérico de agrupamento usa o ano final **2027**; confirmar essa classificação
+  editorial antes da aprovação pública.
+- Instituição transcrita dos brasões: **Marinha do Brasil**.
+- Nenhum identificador de aprovação humana foi criado. Publicação pendente
+  da revisão dos nomes, conquistas, anos e permissão final de publicação.
+
+## Tratamento dos retratos
+
+Extração assistida pela ferramenta integrada de imagens, em modo de edição
+com transparência; um recorte por pessoa. Sem recriar as artes promocionais.
+Os resultados precisam de conferência editorial contra os originais.
+
+Prompt aplicado separadamente a cada original (com o slug do retrato):
+
+> Extraia somente a pessoa fotografada à direita como recorte transparente.
+> Preserve rosto, identidade, expressão, cabelo, óculos, textura da pele, corpo,
+> braços cruzados, mãos, uniforme, marcas e pose. Remova fundo, navio, céu,
+> textos, brasões e rodapé. Sem nova pessoa, reconstrução, retoque ou mudança
+> de traços. Preserve cabeça e corpo visíveis, sem inventar partes ausentes.
+> Centralize em tela transparente 4:5, com pequena margem acima da cabeça.
+
+Recortes em `assets/approvals/portraits/`; variantes WebP 400×500 e 800×1000
+em `public/media/approvals/`, geradas sem distorção e com canal alfa preservado:
+
+```bash
+pnpm exec node scripts/generate-approval-portraits.mjs
+```
+
+O guard de build percorre também subpastas de mídia e exclui retratos não
+aprovados do output público, inclusive para acesso direto à URL.
+
+## Validação
+
+- Integridade do contrato: cinco hashes conferidos; `design/` inalterado.
+- `pnpm check-content`: conteúdo válido, incluindo existência e dimensões reais.
+- `pnpm check`: 0 erros, 0 avisos, 0 hints.
+- `pnpm lint` e Prettier nos arquivos alterados: passaram.
+- `pnpm test`: 72 testes unitários passaram.
+- `pnpm qa:build:e2e`: builds público e editorial passaram.
+- Playwright: `approvals.spec.ts`, `preview-absence.spec.ts` e
+  `load-more.spec.ts`, 15 passaram; 11 skips condicionais por modo.
+- Layout conferido em 320, 390, 768, 1099, 1100 e 1440 px, com 1/2/3 colunas,
+  sem overflow e com todos os retratos carregados.
+- SSR sem JavaScript: dez cards presentes. Paginação genérica preservou foco,
+  itens e anúncios. Axe na rota editorial: zero violações.
+- Público: nenhum card observado, nenhum nome e URLs diretas de variantes
+  400/800 retornando 404. Prévia: noindex e ausência de metadados internos.
+- Capturas finais revisadas: `approvals-390.png` (390×844) e
+  `approvals-1440.png` (1440×900), página inteira, retornando ao topo antes
+  da captura para posicionar corretamente o header sticky.
+- `pnpm build:preview`: build de trabalho disponível em `dist/`.
+
+Não executados neste lote: matriz B05 completa das demais rotas, zoom real de
+200%, leitor de tela, dispositivos físicos, build de release e validação em
+produção. Não houve deploy nem push. O preview do T3 permitiu navegação e leitura
+do DOM, mas falhou duas vezes na captura (`Preview automation snapshot timed
+out after 15000ms`); a revisão visual usou o Playwright previsto pelo repositório.
+
+## Checkpoints locais
+
+- `757cb3f` — `docs(agents): allow direct implementation and Codex delegation`.
+- Implementação e evidências: commit local separado após validação.

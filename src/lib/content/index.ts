@@ -213,7 +213,11 @@ export const getApprovals = (): PublicApproval[] => {
   if (!Array.isArray(raw)) return [];
   const all = raw.map((a) => ApprovalSchema.parse(a));
   return all
-    .filter((a) => isVisible(a.review) && a.publicationAuthorized)
+    .filter(
+      (a) =>
+        isVisible(a.review) &&
+        (BUILD_MODE === 'editorial-preview' || a.publicationAuthorized),
+    )
     .sort(
       (a, b) =>
         b.year - a.year ||
