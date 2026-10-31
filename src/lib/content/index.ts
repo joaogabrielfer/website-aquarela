@@ -1,3 +1,4 @@
+import { groupApprovalPeople, type ApprovalPerson } from '../approval-groups';
 import yaml from 'js-yaml';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -205,7 +206,7 @@ export const getFeaturedActivities = (limit = 3): PublicActivity[] => {
 
 export type ApprovalGroup = {
   year: number;
-  items: PublicApproval[];
+  items: ApprovalPerson[];
 };
 
 export const getApprovals = (): PublicApproval[] => {
@@ -224,12 +225,18 @@ export const getApprovals = (): PublicApproval[] => {
         a.displayName.localeCompare(b.displayName, 'pt-BR') ||
         a.id.localeCompare(b.id),
     )
-    .map(project);
+    .map((approval) => ({
+      ...project(approval),
+      portraitId:
+        approval.portraitId && getMediaById(approval.portraitId)
+          ? approval.portraitId
+          : null,
+    }));
 };
 
 export const getApprovalsGrouped = (): ApprovalGroup[] => {
-  const approvals = getApprovals();
-  const grouped = new Map<number, PublicApproval[]>();
+  const approvals = groupApprovalPeople(getApprovals());
+  const grouped = new Map<number, ApprovalPerson[]>();
   for (const a of approvals) {
     const existing = grouped.get(a.year) ?? [];
     existing.push(a);
@@ -245,6 +252,11 @@ export const getFeaturedApprovals = (limit = 3): PublicApproval[] => {
     .filter((a) => a.featured)
     .slice(0, limit);
 };
+
+export const getFeaturedApprovalPeople = (limit = 3): ApprovalPerson[] =>
+  groupApprovalPeople(
+    getApprovals().filter((approval) => approval.featured),
+  ).slice(0, limit);
 
 /* ------------------------------------------------------------------ */
 /*  Álbuns                                                            */

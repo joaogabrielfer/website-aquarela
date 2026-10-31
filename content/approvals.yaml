@@ -1,4 +1,5 @@
 - id: jose-kaua-cpaeam-2027
+  personId: jose-kaua
   displayName: José Kauã
   course: Aprendizes-Marinheiros
   institution: Marinha do Brasil
@@ -15,6 +16,7 @@
     reviewedAt: null
     reviewedBy: null
 - id: ricardo-cesar-cpaeam-2027
+  personId: ricardo-cesar
   displayName: Ricardo Cesar
   course: Aprendizes-Marinheiros
   institution: Marinha do Brasil
@@ -31,6 +33,7 @@
     reviewedAt: null
     reviewedBy: null
 - id: pedro-henrique-cpaeam-2027
+  personId: pedro-henrique
   displayName: Pedro Henrique
   course: Aprendizes-Marinheiros
   institution: Marinha do Brasil
@@ -47,6 +50,7 @@
     reviewedAt: null
     reviewedBy: null
 - id: miguel-vasconcelos-cpaeam-2027
+  personId: miguel-vasconcelos
   displayName: Miguel Vasconcelos
   course: Aprendizes-Marinheiros
   institution: Marinha do Brasil
@@ -63,6 +67,7 @@
     reviewedAt: null
     reviewedBy: null
 - id: richarlyson-augusto-cfn-2027
+  personId: richarlyson-augusto
   displayName: Richarlyson Augusto
   course: Fuzileiro Naval
   institution: Marinha do Brasil
@@ -79,6 +84,7 @@
     reviewedAt: null
     reviewedBy: null
 - id: jose-caua-cfn-2027
+  personId: jose-kaua
   displayName: José Cauã
   course: Fuzileiro Naval
   institution: Marinha do Brasil
@@ -95,6 +101,7 @@
     reviewedAt: null
     reviewedBy: null
 - id: gabriele-goncalves-cfn-2027
+  personId: gabriele-goncalves
   displayName: Gabriele Gonçalves
   course: Fuzileiro Naval
   institution: Marinha do Brasil
@@ -111,6 +118,7 @@
     reviewedAt: null
     reviewedBy: null
 - id: breno-alexandre-cfn-2027
+  personId: breno-alexandre
   displayName: Breno Alexandre
   course: Fuzileiro Naval
   institution: Marinha do Brasil
@@ -127,6 +135,7 @@
     reviewedAt: null
     reviewedBy: null
 - id: pedro-vasconcelos-cpaeam-2027
+  personId: pedro-vasconcelos
   displayName: Pedro Vasconcelos
   course: Aprendizes-Marinheiros
   institution: Marinha do Brasil
@@ -143,6 +152,7 @@
     reviewedAt: null
     reviewedBy: null
 - id: breno-alexandre-cpaeam-2027
+  personId: breno-alexandre
   displayName: Breno Alexandre
   course: Aprendizes-Marinheiros
   institution: Marinha do Brasil

@@ -1,12 +1,10 @@
 ---
 import ApprovalCard from '../islands/ApprovalCard.svelte';
+import type { ApprovalAchievement } from '../lib/approval-groups';
 
 interface Props {
   displayName: string;
-  course: string;
-  institution: string;
-  selectionProcess: string;
-  year: number;
+  achievements: ApprovalAchievement[];
   portraitUrl?: string | null;
   portraitAlt?: string | undefined;
   class?: string;

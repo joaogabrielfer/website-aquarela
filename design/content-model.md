@@ -1,6 +1,6 @@
 # Modelo de conteúdo e publicação
 
-**AQ-WEB-1.1.11** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
+**AQ-WEB-1.1.12** · Autoridade para dados e estados de ausência. Contrato de formato, não implementação do armazenamento. Usar objetos tipados ou validação equivalente na stack escolhida.
 
 ## D01 — Evidência e estados
 
@@ -110,7 +110,7 @@ type Activity = {
   order: number; featured: boolean; review: Review;
 };
 type Approval = {
-  id: string; displayName: string; course: string;
+  id: string; personId: string | null; displayName: string; course: string;
   institution: string; selectionProcess: string; year: number;
   portraitId: string | null;
   publicationAuthorized: boolean;
@@ -125,13 +125,13 @@ type Album = {
 };
 ```
 
-Slug: único na coleção, minúsculas ASCII, dígitos e hífens; não aceitar `/`, query ou espaços. IDs únicos e estáveis; nome não é ID. Ordem de segmentos é fixa conforme routes, independentemente de entrada. Demais ordenações em routes; empate de `order` usa ID. Destaque de Atividades/Aprovações seleciona `featured=true`, aplica ordem definida e limita a 3. Sem featured, omitir bloco de destaque; não selecionar implicitamente por favoritismo.
+Slug: único na coleção, minúsculas ASCII, dígitos e hífens; não aceitar `/`, query ou espaços. IDs únicos e estáveis; nome não é ID. Ordem de segmentos é fixa conforme routes, independentemente de entrada. Demais ordenações em routes; empate de `order` usa ID. Destaque seleciona `featured=true` antes de agrupar: Atividades limita a 3 registros; Aprovações limita a 3 cards de pessoa/ano, incluindo somente suas conquistas selecionadas. Aplicar a ordem definida em routes. Sem featured, omitir bloco de destaque; não selecionar implicitamente por favoritismo.
 
 Segmentos publicados detalhados: nome/slug, resumo, descrição, foto aprovada e pelo menos duas experiências. Séries, idades e turnos podem ficar null/vazios, sem legenda de placeholder pública. Esqueleto dos quatro títulos é parte da arquitetura; quando faltar conteúdo aprovado, mostrar o estado neutro de etapa, sem afirmar serviços.
 
 Environment precisa de nome, finalidade e ao menos uma foto aprovada. Galeria de espaços é a concatenação de fotos desses ambientes na ordem editorial; não duplicar a mesma Media. Activity precisa de descrição e público; foto é opcional. Não inferir valores/defaults para turnos, cobrança ou local.
 
-Approval precisa de todos os campos textuais, ano e autorização; retrato é opcional, mas sua permissão é independente. Um registro por conquista, podendo a mesma pessoa aparecer em várias; sem totais agregados em V1. Não criar páginas públicas individuais ou links para redes pessoais.
+Approval precisa de todos os campos textuais, ano e autorização; retrato é opcional, mas sua permissão é independente. Um registro por conquista. personId é um ID editorial estável de pessoa (nullable; ausente equivale a null). Depois de filtrar aprovação e autorização por conquista, agrupar por personId e ano para apresentação. Sem personId, manter registro separado; não agrupar por nome ou retrato. O selo conta somente as conquistas visíveis naquele card; sem totais agregados do site em V1. Não criar páginas públicas individuais ou links para redes pessoais.
 
 Album precisa de capa aprovada presente em `photoIds` e ao menos uma foto aprovada. Filtrar fotos não aprovadas antes de montar página, contador e lightbox. Zero fotos elegíveis retira o álbum do público e sua rota é 404. Datas históricas são preservadas; exibir em pt-BR sem deslocamento de dia por fuso horário. Não usar data de build como data de evento.
 
@@ -255,3 +255,14 @@ amostra como experiência pedagógica. Dados observados existentes podem aparece
 na prévia, identificada pela faixa global. No público/release, excluir a fixture
 e a reserva artificial de mídia e manter D06. A ausência de descrição não deve
 ocultar metadados disponíveis na composição demonstrativa do preview.
+
+## D11 — Revisão 1.1.12: identidade para agrupamento de conquistas
+
+personId usa o mesmo formato de ID e não é uma aprovação editorial. Não
+consolidar os registros de conquista, suas permissões ou review. A projeção
+filtra cada resultado antes de agrupar e contar, evitando revelar resultados
+pendentes no público. Uma pessoa em anos distintos tem um card em cada ano.
+A Home agrupa apenas resultados featured elegíveis. O retrato do grupo é o
+primeiro retrato elegível por ID de conquista; ausência preserva card textual.
+Nomes divergentes permanecem nos registros e são exibidos juntos no título
+do card até revisão humana; o agente não escolhe silenciosamente uma grafia.

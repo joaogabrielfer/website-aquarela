@@ -23,10 +23,29 @@ test('resultados observados aparecem somente na prévia e sem metadados internos
     return;
   }
 
-  await expect(cards).toHaveCount(10);
+  await expect(cards).toHaveCount(8);
   await expect(
     page.getByRole('heading', { name: 'Breno Alexandre', exact: true }),
-  ).toHaveCount(2);
+  ).toHaveCount(1);
+  const breno = cards.filter({
+    has: page.getByRole('heading', { name: 'Breno Alexandre', exact: true }),
+  });
+  await expect(breno.locator('.approval-count')).toHaveText('2 aprovações');
+  await expect(breno.locator('.achievement')).toHaveCount(2);
+  await expect(breno).toContainText('Fuzileiro Naval');
+  await expect(breno).toContainText('Aprendizes-Marinheiros');
+  await expect(cards.locator('.achievement')).toHaveCount(10);
+  await expect(cards.locator('.approval-count')).toHaveCount(2);
+  await expect(
+    cards
+      .filter({
+        has: page.getByRole('heading', {
+          name: 'Gabriele Gonçalves',
+          exact: true,
+        }),
+      })
+      .locator('.approval-count'),
+  ).toHaveCount(0);
   await expect(
     page.getByRole('heading', { name: 'Gabriele Gonçalves', exact: true }),
   ).toBeVisible();
@@ -43,7 +62,7 @@ test('resultados observados aparecem somente na prévia e sem metadados internos
   ]) {
     expect(html).not.toContain(field);
   }
-  await expect(cards.locator('img')).toHaveCount(10);
+  await expect(cards.locator('img')).toHaveCount(8);
   expect(await cards.locator('a, button').count()).toBe(0);
 });
 
@@ -55,7 +74,7 @@ for (const width of [320, 390, 768, 1099, 1100, 1440]) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
     await page.goto('/aprovacoes');
     const cards = page.locator('.approval-card');
-    await expect(cards).toHaveCount(10);
+    await expect(cards).toHaveCount(8);
     for (const image of await cards.locator('img').all()) {
       await image.scrollIntoViewIfNeeded();
       await expect(image).toHaveJSProperty('complete', true);
@@ -101,7 +120,9 @@ test('mural acessível e com conteúdo presente sem JavaScript', async ({
   });
   const page = await context.newPage();
   await page.goto('/aprovacoes');
-  await expect(page.locator('.approval-card')).toHaveCount(10);
+  await expect(page.locator('.approval-card')).toHaveCount(8);
+  await expect(page.locator('.achievement')).toHaveCount(10);
+  await expect(page.getByText('2 aprovações', { exact: true })).toHaveCount(2);
   await context.close();
 });
 

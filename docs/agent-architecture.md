@@ -2,7 +2,7 @@
 
 Decisão do usuário em 30/10/2026: o fluxo usa Codex. OpenCode foi retirado
 da operação ativa. Esta documentação segue AGENTS.md §5 e não altera o
-contrato visual AQ-WEB-1.1.11.
+contrato visual AQ-WEB-1.1.12.
 
 ## Execução e responsabilidade
 

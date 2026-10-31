@@ -3,7 +3,11 @@
 ## Escopo
 
 Dez conquistas transcritas das dez artes fornecidas, com oito retratos distintos.
-Um registro por conquista, sem totais agregados ou destaque automático na Home.
+Na revisão 1.1.12 solicitada pelo usuário, o mural reúne essas conquistas em
+oito cards por pessoa/ano. Cada conquista continua um registro independente.
+Breno e José têm selo “2 aprovações” e lista visível de ambas as conquistas;
+os demais cards têm um resultado, sem selo. Sem totais gerais ou destaque
+automático na Home.
 Cards informativos, retrato 4:5, grade de 1/2/3 colunas, paleta e tokens vigentes.
 A mesma implementação de card atende o mural e o componente Astro da Home.
 
@@ -17,8 +21,9 @@ A mesma implementação de card atende o mural e o componente Astro da Home.
 - O pedido autoriza o tratamento dos retratos para essa prévia (`usageApproved`).
   Isso não promove o estado editorial das mídias.
 - A fonte CPAEAM escreve **José Kauã** e a fonte CFN escreve **José Cauã**.
-  Cada registro preserva sua grafia, usando o mesmo retrato. Confirmar antes
-  de aprovar; não consolidar silenciosamente o nome.
+  Cada registro preserva sua grafia, usando o mesmo retrato. O card agrupado
+  exibe ambas as grafias separadas por “ / ”. Confirmar antes de aprovar;
+  não escolher silenciosamente o nome.
 - **Ricardo Cesar** foi transcrito sem acrescentar acento ausente na fonte.
 - CPAEAM: processo **CPAEAM 2027** e ano **2027**, conforme as artes.
 - CFN: processo **CFN 2026/2027**, preservando os dois anos da arte. O campo
@@ -55,17 +60,19 @@ aprovados do output público, inclusive para acesso direto à URL.
 
 ## Validação
 
-- Integridade do contrato: cinco hashes conferidos; `design/` inalterado.
+- Integridade do contrato: cinco hashes conferidos; baseline revisada para AQ-WEB-1.1.12
+  antes da implementação, conforme o pedido de agrupar conquistas.
 - `pnpm check-content`: conteúdo válido, incluindo existência e dimensões reais.
 - `pnpm check`: 0 erros, 0 avisos, 0 hints.
 - `pnpm lint` e Prettier nos arquivos alterados: passaram.
-- `pnpm test`: 72 testes unitários passaram.
+- `pnpm test`: 78 testes unitários passaram, incluindo homônimos, identidade ausente,
+  anos distintos, grafias divergentes, destaque e filtro de autorização.
 - `pnpm qa:build:e2e`: builds público e editorial passaram.
 - Playwright: `approvals.spec.ts`, `preview-absence.spec.ts` e
   `load-more.spec.ts`, 15 passaram; 11 skips condicionais por modo.
 - Layout conferido em 320, 390, 768, 1099, 1100 e 1440 px, com 1/2/3 colunas,
   sem overflow e com todos os retratos carregados.
-- SSR sem JavaScript: dez cards presentes. Paginação genérica preservou foco,
+- SSR sem JavaScript: oito cards, dez conquistas e dois selos presentes. Paginação genérica preservou foco,
   itens e anúncios. Axe na rota editorial: zero violações.
 - Público: nenhum card observado, nenhum nome e URLs diretas de variantes
   400/800 retornando 404. Prévia: noindex e ausência de metadados internos.
@@ -84,3 +91,17 @@ out after 15000ms`); a revisão visual usou o Playwright previsto pelo repositó
 
 - `757cb3f` — `docs(agents): allow direct implementation and Codex delegation`.
 - Implementação e evidências: commit local separado após validação.
+
+## Agrupamento de conquistas — revisão 1.1.12
+
+Agrupamento por personId explícito e ano após filtrar permissões. Nunca por
+coincidência de nome ou de retrato. Contagem do selo inclui somente as
+conquistas visíveis no card. A Home aplica featured antes de agrupar e limita
+a três cards, sem antecipar resultados não destacados. Paginação do mural
+conta cards completos para não dividir as conquistas da pessoa entre lotes.
+
+A lista sempre aberta foi escolhida para facilitar comparação e leitura em
+mobile. Alternativas futuras: composição horizontal com retrato menor para
+reduzir altura, ou pequenos selos de processos próximos ao nome para reforçar
+a leitura rápida; ambas exigem nova revisão visual antes de substituir o
+layout atual. Acordeão/carrossel esconderiam resultados e não foram adotados.

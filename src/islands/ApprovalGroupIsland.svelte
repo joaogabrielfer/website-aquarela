@@ -5,13 +5,12 @@
 <script lang="ts">
   import LoadMore from './LoadMore.svelte';
   import ApprovalCard from './ApprovalCard.svelte';
+  import type { ApprovalAchievement } from '../lib/approval-groups';
 
   interface Approval {
     id: string;
     displayName: string;
-    course: string;
-    institution: string;
-    selectionProcess: string;
+    achievements: ApprovalAchievement[];
     year: number;
     portraitUrl?: string | null;
     portraitAlt?: string;
@@ -27,7 +26,7 @@
     batchSize?: number;
   } = $props();
 
-  const year = approvals[0]?.year;
+  const year = $derived(approvals[0]?.year);
 </script>
 
 <LoadMore

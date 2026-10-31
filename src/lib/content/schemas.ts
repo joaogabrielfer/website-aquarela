@@ -160,6 +160,7 @@ export const Activity = z.object({
 });
 export const Approval = z.object({
   id,
+  personId: id.nullable().default(null),
   displayName: z.string(),
   course: z.string(),
   institution: z.string(),

@@ -1,6 +1,6 @@
 # Contrato responsivo e validação visual
 
-**AQ-WEB-1.1.11** · Autoridade para medidas. Layout fluido entre os intervalos abaixo; não escalar uma captura Figma como imagem.
+**AQ-WEB-1.1.12** · Autoridade para medidas. Layout fluido entre os intervalos abaixo; não escalar uma captura Figma como imagem.
 
 ## B01 — Breakpoints
 
@@ -107,3 +107,12 @@ estreitas. Texto máximo 65ch, alvos ≥44 px e tipografia de B03 preservados.
 Validar a proposta em 390, 768, 1099, 1100 e 1440 px, além de zoom 200%, com
 títulos longos e amostra de texto. Novos PageIntro mantêm paddings e escala
 existentes; as cores não autorizam aumentar artificialmente sua altura.
+
+## B07 — Revisão 1.1.12: conquistas agrupadas
+
+ApprovalCard mantém retrato 4:5 e grade de 1/2/3 colunas em B02. Corpo com
+padding 20 px mobile e 24 px nas demais faixas. Selo e nome aceitam quebra;
+lista sem altura fixa ou line-clamp. Títulos de conquistas usam corpo 16/18 px,
+peso 500; instituição e metadados usam legenda 14 px. Não esticar espaços
+entre itens para igualar cards com uma e várias conquistas. Validar 320, 390,
+768, 1099, 1100 e 1440 px com duas conquistas e nome longo.
