@@ -66,7 +66,7 @@ test('resultados observados aparecem somente na prévia e sem metadados internos
   expect(await cards.locator('a, button').count()).toBe(0);
 });
 
-for (const width of [320, 390, 768, 1099, 1100, 1440]) {
+for (const width of [320, 390, 767, 768, 1099, 1100, 1440, 1920]) {
   test(`mural sem overflow e com retratos legíveis em ${width}px`, async ({
     page,
   }, testInfo) => {
@@ -92,7 +92,24 @@ for (const width of [320, 390, 768, 1099, 1100, 1440]) {
       .evaluate(
         (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length,
       );
-    expect(columns).toBe(width >= 1100 ? 3 : width >= 768 ? 2 : 1);
+    expect(columns).toBe(width >= 1100 ? 4 : width >= 768 ? 2 : 1);
+    for (const card of await cards.all()) {
+      const media = await card.locator('.card-media').boundingBox();
+      const body = await card.locator('.card-body').boundingBox();
+      expect(media).not.toBeNull();
+      expect(body).not.toBeNull();
+      if (width < 768) {
+        expect(media!.x + media!.width).toBeLessThanOrEqual(body!.x + 1);
+        expect(Math.abs(media!.y - body!.y)).toBeLessThanOrEqual(1);
+      } else {
+        expect(media!.y + media!.height).toBeLessThanOrEqual(body!.y + 1);
+      }
+      if (width >= 1100) {
+        const box = await card.boundingBox();
+        expect(box!.width).toBeLessThanOrEqual(306);
+        expect(media!.height).toBeLessThan(250);
+      }
+    }
     if (width === 390 || width === 1440) {
       await page.evaluate(async () => {
         await document.fonts.ready;
@@ -131,4 +148,62 @@ test('mural sem violações axe graves', async ({ page }, testInfo) => {
   await page.goto('/aprovacoes');
   const result = await new AxeBuilder({ page }).analyze();
   expect(result.violations).toEqual([]);
+});
+
+test('hover das aprovações repete a ampliação de Ensino e respeita movimento reduzido', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'preview');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const segment = page.locator('.segment-card').first();
+  await segment.hover();
+  await expect(segment).toHaveCSS(
+    'transform',
+    'matrix(1.02, 0, 0, 1.02, 0, 0)',
+  );
+  const teachingTransition = await segment.evaluate(
+    (el) => getComputedStyle(el).transition,
+  );
+  await page.goto('/aprovacoes');
+  const card = page.locator('.approval-card').first();
+  await card.scrollIntoViewIfNeeded();
+  await page.mouse.move(0, 0);
+  const initial = await card.boundingBox();
+  await card.hover();
+  await expect(card).toHaveCSS('transform', 'matrix(1.02, 0, 0, 1.02, 0, 0)');
+  expect(await card.evaluate((el) => getComputedStyle(el).transition)).toBe(
+    teachingTransition,
+  );
+  const enlarged = await card.boundingBox();
+  expect(enlarged!.width / initial!.width).toBeCloseTo(1.02, 2);
+  await expect(card).toHaveCSS('border-top-color', 'rgb(0, 76, 115)');
+  expect(await card.evaluate((el) => getComputedStyle(el).boxShadow)).not.toBe(
+    'none',
+  );
+  await page.screenshot({ path: 'qa/approvals/approvals-hover-1440.png' });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(card).toHaveCSS('transform', 'none');
+  await expect(card).toHaveCSS('transition-duration', '0s');
+});
+
+test('ponteiro de toque não amplia os cards mesmo em largura desktop', async ({
+  browser,
+  baseURL,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'preview');
+  const context = await browser.newContext({
+    hasTouch: true,
+    viewport: { width: 1440, height: 900 },
+    ...(baseURL ? { baseURL } : {}),
+  });
+  const page = await context.newPage();
+  await page.goto('/aprovacoes');
+  expect(
+    await page.evaluate(() => matchMedia('(pointer: coarse)').matches),
+  ).toBe(true);
+  const card = page.locator('.approval-card').first();
+  await card.hover();
+  await expect(card).toHaveCSS('transform', 'none');
+  await context.close();
 });

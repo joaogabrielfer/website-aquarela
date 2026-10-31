@@ -159,6 +159,7 @@ const proposal = getProposal();
               <ApprovalCard
                 displayName={app.displayName}
                 achievements={app.achievements}
+                portraitSizes="(min-width: 1392px) 416px, (min-width: 1100px) calc((100vw - 144px) / 3), (min-width: 768px) calc((100vw - 84px) / 2), (max-width: 340px) 96px, 32vw"
                 portraitUrl={
                   app.portraitId
                     ? (getMediaById(app.portraitId)?.src ?? null)

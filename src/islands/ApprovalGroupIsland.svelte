@@ -59,7 +59,7 @@
   }
   @media (min-width: 1100px) {
     .approval-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: var(--space-6);
     }
   }

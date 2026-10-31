@@ -1,6 +1,6 @@
 # Contrato de implementação — Aquarela
 
-**Contrato AQ-WEB-1.1.12 · revisado em 30/10/2026.**
+**Contrato AQ-WEB-1.1.13 · revisado em 30/10/2026.**
 
 “Congelado” significa baseline normativa para implementar, não aprovação dos dados escolares nem validação de um site pronto. Alterações de escopo ou aparência exigem revisão explícita deste contrato; conteúdo factual pode ser completado conforme o modelo de publicação, sem redesenhar a interface.
 
@@ -240,3 +240,15 @@ de curso, instituição, processo e ano de cada conquista. Exibir selo amarelo
 “{n} aprovações” quando n > 1, contando só os itens elegíveis daquele card.
 Sem estatísticas gerais, carrossel, detalhes ocultos ou mudança de tokens.
 A grade mantém 1/2/3 colunas e paginação de 12 cards por grupo anual.
+
+### Revisão AQ-WEB-1.1.13 — 30/10/2026
+
+Pedido do usuário autoriza cards de aprovações menores no desktop, hover igual
+ao SegmentCard da Home e composição horizontal no mobile. Substitui apenas
+a geometria e o hover anteriores de ApprovalCard, sem alterar dados, contagens
+ou permissões. Desktop: quatro colunas no mural e área de mídia 4:3 com
+retrato inteiro em contain. Mobile: foto à esquerda, informação à direita.
+Hover em desktop com ponteiro fine: borda navy, sombra existente e scale(1.02),
+200 ms cubic-bezier(0.2,0.7,0.2,1); sem ampliação em reduced-motion ou toque.
+É efeito visual autorizado em card informativo; não adicionar link, botão,
+cursor pointer ou tab stop. Tokens e aprovação editorial permanecem vigentes.

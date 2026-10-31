@@ -5,12 +5,14 @@
     achievements,
     portraitUrl = null,
     portraitAlt,
+    portraitSizes = '(min-width: 1392px) 306px, (min-width: 1100px) calc((100vw - 168px) / 4), (min-width: 768px) calc((100vw - 84px) / 2), (max-width: 340px) 96px, 32vw',
     class: className = '',
   }: {
     displayName: string;
     achievements: ApprovalAchievement[];
     portraitUrl?: string | null;
     portraitAlt?: string | undefined;
+    portraitSizes?: string;
     class?: string;
   } = $props();
 
@@ -22,13 +24,13 @@
   );
 </script>
 
-<article class={`approval-card ${className}`}>
+<article class={`approval-card ${className}`} class:has-portrait={portraitUrl}>
   {#if portraitUrl}
     <div class="card-media">
       <img
         src={portraitUrl}
         srcset={portraitSrcset}
-        sizes="(min-width: 1392px) 416px, (min-width: 1100px) calc((100vw - 144px) / 3), (min-width: 768px) calc((100vw - 84px) / 2), calc(100vw - 40px)"
+        sizes={portraitSizes}
         alt={portraitAlt || displayName}
         width="800"
         height="1000"
@@ -74,11 +76,15 @@
     overflow: hidden;
   }
   .card-media {
+    position: relative;
+    flex: none;
     aspect-ratio: 4 / 5;
     background: var(--surface-paper);
     border-bottom: 4px solid var(--brand-yellow);
   }
   .card-media img {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
@@ -163,8 +169,57 @@
     font-weight: 500;
   }
   @media (max-width: 767px) {
+    .approval-card.has-portrait {
+      display: grid;
+      grid-template-columns: minmax(96px, 32%) minmax(0, 1fr);
+    }
+    .card-media {
+      display: flex;
+      align-items: center;
+      aspect-ratio: auto;
+      border-bottom: 0;
+      border-right: 4px solid var(--brand-yellow);
+    }
+    .card-media img {
+      position: static;
+      height: auto;
+      aspect-ratio: 4 / 5;
+    }
+    .card-body {
+      min-width: 0;
+      padding: var(--space-4);
+    }
+    .card-course,
+    dd {
+      overflow-wrap: anywhere;
+    }
+    .card-facts {
+      column-gap: var(--space-3);
+    }
+  }
+  @media (min-width: 1100px) {
+    .card-media {
+      aspect-ratio: 4 / 3;
+    }
     .card-body {
       padding: var(--space-5);
+    }
+  }
+  @media (min-width: 1100px) and (hover: hover) {
+    .approval-card:hover {
+      box-shadow: var(--shadow);
+      border-color: var(--brand-navy);
+    }
+  }
+  @media (min-width: 1100px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .approval-card {
+      transition:
+        transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1),
+        box-shadow 200ms ease-out,
+        border-color 200ms ease-out;
+    }
+    .approval-card:hover {
+      transform: scale(1.02);
     }
   }
 </style>

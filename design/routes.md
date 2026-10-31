@@ -1,6 +1,6 @@
 # Rotas e composição
 
-**AQ-WEB-1.1.12** · Normativo. Complementa [design-spec.md](./design-spec.md).
+**AQ-WEB-1.1.13** · Normativo. Complementa [design-spec.md](./design-spec.md).
 
 ## R01 — Regras globais
 
@@ -116,3 +116,9 @@ O mural agrupa somente conquistas elegíveis da mesma pessoa e ano. Registros
 sem personId ficam separados; nomes ou retratos iguais não autorizam agrupamento.
 A Home aplica featured=true antes de agrupar e limita a três cards, sem incluir
 conquistas não selecionadas como destaque. Ordem das conquistas por ID estável.
+
+### Revisão 1.1.13 — apresentação compacta de Aprovações
+
+Preservar agrupamento, ordem e lotes de 12 cards. A apresentação do mural usa
+1/2/4 colunas e cards horizontais em mobile conforme B08. A Home mantém a
+seleção de até três cards, compartilhando o estilo e o hover de ApprovalCard.

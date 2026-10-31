@@ -8,7 +8,9 @@ oito cards por pessoa/ano. Cada conquista continua um registro independente.
 Breno e José têm selo “2 aprovações” e lista visível de ambas as conquistas;
 os demais cards têm um resultado, sem selo. Sem totais gerais ou destaque
 automático na Home.
-Cards informativos, retrato 4:5, grade de 1/2/3 colunas, paleta e tokens vigentes.
+Cards informativos: foto à esquerda e texto à direita no mobile; tablet
+vertical em duas colunas; desktop compacto em quatro colunas, com mídia 4:3
+e retrato inteiro em contain. Paleta e tokens vigentes.
 A mesma implementação de card atende o mural e o componente Astro da Home.
 
 ## Proveniência e pendências editoriais
@@ -60,8 +62,8 @@ aprovados do output público, inclusive para acesso direto à URL.
 
 ## Validação
 
-- Integridade do contrato: cinco hashes conferidos; baseline revisada para AQ-WEB-1.1.12
-  antes da implementação, conforme o pedido de agrupar conquistas.
+- Integridade do contrato: cinco hashes conferidos; baseline AQ-WEB-1.1.13 registrada
+  antes da implementação, conforme o pedido de cards compactos e horizontais.
 - `pnpm check-content`: conteúdo válido, incluindo existência e dimensões reais.
 - `pnpm check`: 0 erros, 0 avisos, 0 hints.
 - `pnpm lint` e Prettier nos arquivos alterados: passaram.
@@ -69,8 +71,8 @@ aprovados do output público, inclusive para acesso direto à URL.
   anos distintos, grafias divergentes, destaque e filtro de autorização.
 - `pnpm qa:build:e2e`: builds público e editorial passaram.
 - Playwright: `approvals.spec.ts`, `preview-absence.spec.ts` e
-  `load-more.spec.ts`, 15 passaram; 11 skips condicionais por modo.
-- Layout conferido em 320, 390, 768, 1099, 1100 e 1440 px, com 1/2/3 colunas,
+  `load-more.spec.ts`, 19 passaram; 15 skips condicionais por modo.
+- Layout conferido em 320, 390, 767, 768, 1099, 1100, 1440 e 1920 px, com 1/2/4 colunas,
   sem overflow e com todos os retratos carregados.
 - SSR sem JavaScript: oito cards, dez conquistas e dois selos presentes. Paginação genérica preservou foco,
   itens e anúncios. Axe na rota editorial: zero violações.
@@ -79,6 +81,9 @@ aprovados do output público, inclusive para acesso direto à URL.
 - Capturas finais revisadas: `approvals-390.png` (390×844) e
   `approvals-1440.png` (1440×900), página inteira, retornando ao topo antes
   da captura para posicionar corretamente o header sticky.
+- Hover real: ampliação geométrica de 1,02× e transição iguais ao SegmentCard,
+  borda navy e sombra; `approvals-hover-1440.png` registra o estado. Redução de
+  movimento desliga ampliação/transição; contexto touch/coarse não amplia.
 - `pnpm build:preview`: build de trabalho disponível em `dist/`.
 
 Não executados neste lote: matriz B05 completa das demais rotas, zoom real de
@@ -101,7 +106,20 @@ a três cards, sem antecipar resultados não destacados. Paginação do mural
 conta cards completos para não dividir as conquistas da pessoa entre lotes.
 
 A lista sempre aberta foi escolhida para facilitar comparação e leitura em
-mobile. Alternativas futuras: composição horizontal com retrato menor para
-reduzir altura, ou pequenos selos de processos próximos ao nome para reforçar
-a leitura rápida; ambas exigem nova revisão visual antes de substituir o
-layout atual. Acordeão/carrossel esconderiam resultados e não foram adotados.
+mobile. A alternativa horizontal foi adotada na revisão 1.1.13 a pedido do
+usuário; pequenos selos de processos seriam outra revisão visual possível. Acordeão/carrossel esconderiam resultados e não foram adotados.
+
+## Cards compactos e horizontais — revisão 1.1.13
+
+Pedido do usuário: menores no desktop, hover de Ensino na Home e foto à
+esquerda/informações à direita no mobile. Mural desktop passou de três cards
+de 416 px para quatro de 306 px em 1440 px. A mídia passou de aproximadamente
+520 px para 228 px de altura, preservando a imagem inteira em contain.
+A altura do texto continua natural e todas as dez conquistas permanecem
+visíveis. A Home mantém até três destaques e recebe a mídia mais baixa e hover.
+
+O teste de geometria verificou foto e texto lado a lado abaixo de 768 px,
+empilhados a partir de 768 px; quatro colunas a partir de 1100 px. Em mobile,
+foto centralizada verticalmente em coluna paper com divisor amarelo de 4 px.
+Cards com duas aprovações crescem com o texto, sem corte de rosto ou conteúdo.
+O hover decorativo não cria link, cursor de ação ou parada de teclado.

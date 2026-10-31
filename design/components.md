@@ -1,6 +1,6 @@
 # Contrato de componentes
 
-**AQ-WEB-1.1.12** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
+**AQ-WEB-1.1.13** · Normativo. Tokens em [design-spec.md](./design-spec.md), geometria em [responsive.md](./responsive.md), dados em [content-model.md](./content-model.md).
 
 Os nomes abaixo identificam responsabilidades; podem ser adaptados ao padrão de nomes da stack, mantendo uma correspondência no relatório de entrega. Reusar componentes entre rotas. Não criar variantes por página quando a diferença for apenas conteúdo.
 
@@ -60,7 +60,7 @@ Base comum: branco, raio card, borda 1px subtle, mídia recortada nos cantos sup
 | SegmentCard | Título de etapa, link “Conhecer esta etapa”; resumo aprovado opcional | 4:3 | Um único link envolvendo card; destino exato R02; sem outros botões dentro |
 | ActivityCard summary | Nome, resumo | 4:3 se aprovado | Link textual “Ver atividades” para `/atividades` |
 | ActivityCard detail | Nome, descrição, público aprovado; metadados opcionais | 4:3 se aprovado | CTA “Consultar esta atividade”; card inteiro não é clicável |
-| ApprovalCard | Nome autorizado, lista visível de conquistas (curso, instituição, processo e ano), selo “{n} aprovações” quando n > 1 | Um retrato 4:5 opcional por pessoa/ano | Informativo, sem hover de link; não inventar página do estudante |
+| ApprovalCard | Nome autorizado, lista visível de conquistas (curso, instituição, processo e ano), selo “{n} aprovações” quando n > 1 | Um retrato opcional por pessoa/ano, inteiro em contain; geometria da revisão 1.1.13 | Informativo, hover visual de Ensino autorizado na revisão 1.1.13; não inventar página do estudante |
 | AlbumCard | Capa, título, data, categoria | 4:3 | Um link envolvendo card para álbum |
 | EnvironmentCard | Nome, finalidade, foto com legenda | Primeiro 16:9; demais 4:3 | Botão da foto abre lightbox; corpo não é botão |
 
@@ -145,3 +145,13 @@ Separar itens com borda subtle e gap 16 px. Cards permanecem informativos e
 sem hover de link; diferenças naturais de altura não escondem conteúdo.
 Grafias divergentes são preservadas no título do grupo, separadas por “ / ”,
 até confirmação editorial, sem alterar os registros de origem.
+
+### Revisão 1.1.13 — ApprovalCard compacto e horizontal
+
+Substitui a restrição de hover do ApprovalCard em C06/1.1.12. No desktop
+(≥1100 px), aplicar borda navy e sombra --shadow no hover com hover:hover;
+scale(1.02) somente com pointer:fine e movimento não reduzido. Transições
+iguais a SegmentCard: transform 200 ms cubic-bezier(0.2,0.7,0.2,1), sombra
+e borda 200 ms ease-out. O card continua article informativo, sem ação ou
+parada de teclado. Em mobile, foto à esquerda com divisor amarelo vertical,
+texto à direita. Selo e lista de conquistas continuam integralmente visíveis.
