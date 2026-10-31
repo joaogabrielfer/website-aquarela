@@ -15,7 +15,7 @@ import {
   getSeasonalBanners,
   getSegments,
   getFeaturedActivities,
-  getFeaturedApprovals,
+  getFeaturedApprovalPeople,
   getEnvironmentPhotos,
   getAlbums,
   getMediaById,
@@ -24,7 +24,7 @@ import {
 const pageCopy = getHomePageCopy();
 const segments = getSegments();
 const featuredActivities = getFeaturedActivities(3);
-const featuredApprovals = getFeaturedApprovals(3);
+const featuredApprovals = getFeaturedApprovalPeople(3);
 const environmentPhotos = getEnvironmentPhotos().slice(0, 3);
 const albums = getAlbums().slice(0, 3);
 const seasonalBanner = getSeasonalBanners()[0] ?? null;
@@ -158,10 +158,8 @@ const proposal = getProposal();
             {featuredApprovals.map((app) => (
               <ApprovalCard
                 displayName={app.displayName}
-                course={app.course}
-                institution={app.institution}
-                selectionProcess={app.selectionProcess}
-                year={app.year}
+                achievements={app.achievements}
+                portraitSizes="(min-width: 1392px) 416px, (min-width: 1100px) calc((100vw - 144px) / 3), (min-width: 768px) calc((100vw - 84px) / 2), (max-width: 340px) 96px, 32vw"
                 portraitUrl={
                   app.portraitId
                     ? (getMediaById(app.portraitId)?.src ?? null)

@@ -1,1 +1,170 @@
-[]
+- id: jose-kaua-cpaeam-2027
+  personId: jose-kaua
+  displayName: José Kauã
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-jose-kaua
+  publicationAuthorized: false
+  featured: false
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/jose-kaua-cpaeam-2027.jpg. Inclusão em
+      preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+- id: ricardo-cesar-cpaeam-2027
+  personId: ricardo-cesar
+  displayName: Ricardo Cesar
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-ricardo-cesar
+  publicationAuthorized: false
+  featured: false
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/ricardo-cesar-cpaeam-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+- id: pedro-henrique-cpaeam-2027
+  personId: pedro-henrique
+  displayName: Pedro Henrique
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-pedro-henrique
+  publicationAuthorized: false
+  featured: false
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/pedro-henrique-cpaeam-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+- id: miguel-vasconcelos-cpaeam-2027
+  personId: miguel-vasconcelos
+  displayName: Miguel Vasconcelos
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-miguel-vasconcelos
+  publicationAuthorized: false
+  featured: false
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/miguel-vasconcelos-cpaeam-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+- id: richarlyson-augusto-cfn-2027
+  personId: richarlyson-augusto
+  displayName: Richarlyson Augusto
+  course: Fuzileiro Naval
+  institution: Marinha do Brasil
+  selectionProcess: CFN 2026/2027
+  year: 2027
+  portraitId: retrato-richarlyson-augusto
+  publicationAuthorized: false
+  featured: false
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/richarlyson-augusto-cfn-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+- id: jose-caua-cfn-2027
+  personId: jose-kaua
+  displayName: José Cauã
+  course: Fuzileiro Naval
+  institution: Marinha do Brasil
+  selectionProcess: CFN 2026/2027
+  year: 2027
+  portraitId: retrato-jose-kaua
+  publicationAuthorized: false
+  featured: false
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/jose-caua-cfn-2027.jpg. Inclusão em
+      preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+- id: gabriele-goncalves-cfn-2027
+  personId: gabriele-goncalves
+  displayName: Gabriele Gonçalves
+  course: Fuzileiro Naval
+  institution: Marinha do Brasil
+  selectionProcess: CFN 2026/2027
+  year: 2027
+  portraitId: retrato-gabriele-goncalves
+  publicationAuthorized: false
+  featured: false
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/gabriele-goncalves-cfn-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+- id: breno-alexandre-cfn-2027
+  personId: breno-alexandre
+  displayName: Breno Alexandre
+  course: Fuzileiro Naval
+  institution: Marinha do Brasil
+  selectionProcess: CFN 2026/2027
+  year: 2027
+  portraitId: retrato-breno-alexandre
+  publicationAuthorized: false
+  featured: false
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/breno-alexandre-cfn-2027.jpg. Inclusão
+      em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+- id: pedro-vasconcelos-cpaeam-2027
+  personId: pedro-vasconcelos
+  displayName: Pedro Vasconcelos
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-pedro-vasconcelos
+  publicationAuthorized: false
+  featured: false
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/pedro-vasconcelos-cpaeam-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null
+- id: breno-alexandre-cpaeam-2027
+  personId: breno-alexandre
+  displayName: Breno Alexandre
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-breno-alexandre
+  publicationAuthorized: false
+  featured: false
+  review:
+    status: observed
+    source: >-
+      Arte fornecida pelo usuário: assets/approvals/breno-alexandre-cpaeam-2027.jpg.
+      Inclusão em preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+    reviewedAt: null
+    reviewedBy: null

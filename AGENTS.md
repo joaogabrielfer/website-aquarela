@@ -4,7 +4,7 @@ Guia operacional para agentes que trabalham neste repositório. Lido antes de qu
 
 ## 1. Autoridade normativa
 
-A fonte normativa é o **contrato AQ-WEB-1.1.11** (referido pelo usuário como "contrato da Astra" — Astra é o modelo autor do design), revisado em 24/10/2026, nos cinco arquivos de `design/`. Ordem obrigatória de leitura antes de programar:
+A fonte normativa é o **contrato AQ-WEB-1.1.13** (referido pelo usuário como "contrato da Astra" — Astra é o modelo autor do design), revisado em 30/10/2026, nos cinco arquivos de `design/`. Ordem obrigatória de leitura antes de programar:
 
 1. `design/design-spec.md` — escopo, tokens, variantes globais, qualidade.
 2. `design/routes.md` — rotas, ordem de seções, copy funcional, destinos.
@@ -108,108 +108,59 @@ Dois eixos ortogonais: **modo editorial** (dados) e **ambiente de deploy** (URL/
 - Toda branch não-main recebe URL de preview `<hash>.<projeto>.pages.dev` e alias estável derivado do nome. O Pages injeta `CF_PAGES_BRANCH` e `CF_PAGES_URL`; o build usa a URL real do preview em canonical/OG e adiciona noindex.
 - `preview` não é branch de desenvolvimento primária nem recebe conteúdo automaticamente: o usuário escolhe quais branches integrar nela. Merge/fast-forward e push continuam exigindo autorização explícita. Preview editorial nunca vai para a `main`.
 
-## 5. Arquitetura de agentes — Sol no Codex + OpenCode Go
+## 5. Arquitetura de agentes — implementação direta ou subagentes no Codex
 
-O agente principal é **GPT-5.6 Sol no Codex**. Sol conserva o contexto do projeto, decide arquitetura e design system, decompõe o trabalho, integra os resultados e faz a revisão final. Luna pode ser criado nativamente pelo Codex ou executado pelo OpenCode Go, sempre após escolha do usuário para o lote. Spark é um trabalhador OpenCode delimitado. Nenhum agente delegado substitui o lead.
+O agente principal conserva o contexto, decide arquitetura e design system,
+implementa ou decompõe o trabalho, integra resultados e faz a revisão final.
+Conforme decisão do usuário em 30/10/2026, **OpenCode não faz parte do fluxo ativo**.
+Não usar sua CLI, perfis, franquias ou portões de provider. Os arquivos legados
+em `.opencode/` e `scripts/agents/` não são instruções operacionais vigentes.
 
-OpenCode Go tem limites de **US$ 12/5h, US$ 30/semana e US$ 60/mês**, medidos em valor. Estimativas publicadas em 09/09/2026: GPT-5.6 Luna ≈2.050 requests/5h e Muse Spark 1.3 Contributor ≈45.300 requests/5h. São referências de capacidade, não cotas garantidas; a quantidade real depende dos tokens e pode mudar.
+O principal pode implementar qualquer lote diretamente ou delegar a subagentes
+no Codex conforme seu julgamento, sem pedir autorização por lote. Respeitar
+qualquer modelo ou opção explicitamente escolhidos pelo usuário; não substituir
+provider silenciosamente. Delegar somente quando houver benefício concreto e
+arquivos de posse exclusiva. Arquitetura, contrato e revisão final permanecem
+sob responsabilidade do principal.
 
-| Trabalho                                                          | Responsável padrão | Escalação                                          |
-| ----------------------------------------------------------------- | ------------------ | -------------------------------------------------- |
-| Plano geral, arquitetura e decisões de design system              | Sol                | não delegar decisão                                |
-| Integração e revisão final de código/design                       | Sol                | —                                                  |
-| Componentes compartilhados complexos                              | Luna               | Sol se houver decisão transversal                  |
-| UI stateful difícil e bugs TypeScript/runtime estranhos           | Luna               | Sol se não houver causa isolada                    |
-| Páginas diretas a partir de componentes estabelecidos             | Spark              | Luna se exigir julgamento estrutural               |
-| CSS e responsivo                                                  | Spark              | Luna para composição acoplada/complexa             |
-| Testes e fixtures sintéticas                                      | Spark              | Luna se a infraestrutura de teste estiver quebrada |
-| Inspeção de acessibilidade e busca de inconsistências/duplicações | Spark read-only    | Sol decide correções transversais                  |
+### 5.0 Preflight antes de implementar
 
-Os perfis usados quando o provider escolhido é OpenCode ficam em `.opencode/agents/`:
+1. **Modo e branch:** classificar como fase formal, editorial ou build público.
+   Para trabalho fora de fase, perguntar o modo conforme §5.6 apenas se o usuário
+   ainda não o escolheu. Conferir o prefixo da branch antes de editar.
+2. **Contrato e estado:** ler os cinco arquivos normativos, verificar o manifesto
+   de hashes e inspecionar o estado do worktree; preservar alterações existentes.
+3. **Execução:** comunicar se o principal implementará ou delegará e o escopo.
+   Não existe portão obrigatório de Luna, Spark ou escolha Codex/OpenCode.
 
-- `luna-builder`: implementação complexa, sem permissão de criar agentes.
-- `luna-lead`: subsistema excepcionalmente grande; pode criar somente agentes `spark-*`.
-- `spark-page`, `spark-css`, `spark-tests`: implementação barata e delimitada; não criam agentes.
-- `spark-a11y`, `spark-audit`: inspeção read-only; não criam agentes.
+### 5.1 Responsabilidades e delegação
 
-### 5.0 Preflight obrigatório antes de implementar
+O principal escolhe entre execução direta e subagentes conforme complexidade,
+independência e custo de coordenação. Não há obrigação de usar papéis ou modelos
+fixos por categoria. Subagentes recebem objetivo, posse de arquivos, restrições,
+contrato aplicável, critérios de aceite e comandos de validação. Não iniciam
+novas delegações sem instrução explícita do principal.
 
-Antes da primeira edição de código de cada tarefa, Sol deve concluir e comunicar
-um preflight bloqueante. Não é permitido começar a implementação e corrigir
-branch ou delegação retrospectivamente. O preflight contém, nesta ordem:
+Conflitos normativos e mudanças de escopo/aparência voltam ao usuário; decisões
+transversais e integração voltam ao principal.
 
-1. **Modo e branch:** classificar a tarefa como fase formal, editorial ou build
-   público. Para trabalho fora de fase, fazer a pergunta da §5.6, salvo quando o
-   pedido atual já escolher explicitamente o modo. Mesmo quando dispensada a
-   pergunta, declarar a classificação e conferir se o nome da branch tem o
-   prefixo correspondente antes de editar. Divergência deve ser resolvida antes
-   da implementação conforme §5.6.
-2. **Responsável pela implementação:** decompor o lote e declarar quem escreverá
-   o código: Luna ou Spark, segundo a tabela desta seção. Sol não absorve
-   silenciosamente implementação rotineira atribuída a Luna/Spark; permanece
-   responsável por contrato, arquitetura, integração e revisão.
-3. **Portão do agente:** se for Luna, fazer a pergunta de provider da §5.2 e
-   aguardar a resposta. Se for Spark, informar que ele usa OpenCode Go e perguntar
-   se o usuário autoriza Spark ou prefere elevar o lote a Luna; aguardar a
-   resposta. Consultar limites conforme §5.3 antes de recomendar.
+### 5.2 Provider e modelos
 
-Formato mínimo para uma tarefa fora de fase que ainda não escolheu nenhuma das
-duas decisões:
+Usar Codex para o principal e subagentes. Consultar o catálogo disponível antes
+de delegar e preservar seleção explícita de modelo e opções. Usar os mecanismos
+de delegação suportados pelo host/T3; não criar conversas independentes para
+simular subagentes. Mudança para outro provider exige pedido explícito.
 
-> Esta tarefa deve usar preview editorial? Recomendo `<sim|não>` porque `<motivo>`.
-> Para a implementação (`<escopo>`), proponho `<Luna|Spark>` porque `<motivo>`.
-> `<pergunta de provider da §5.2 ou autorização de Spark>`
+### 5.3 Limites e privacidade
 
-Se o pedido já responder uma dessas decisões, registrar a escolha e perguntar
-somente o que faltar. Inspeção read-only, leitura do contrato e consulta de
-limites podem ocorrer antes das respostas; edição de código e criação de agente,
-não.
-
-### 5.1 Hierarquia e nesting
-
-Hierarquia normal: `Usuário → Sol/Codex → Luna (Codex ou OpenCode) ou Spark (OpenCode)`. Só existe um segundo nível quando Sol classifica explicitamente uma tarefa como grande e decomponível: `Sol → Luna lead → spark-*`. Não há nenhum outro nesting. Se Luna estiver no Codex, os Spark ainda são iniciados pela CLI OpenCode e não ganham visibilidade nativa no painel de agentes do T3 Code.
-
-Escala de julgamento: `Spark → Luna → Sol`. Escalar por natureza da decisão, não apenas porque uma primeira tentativa falhou. Contradição normativa, alteração de schema público, tokens globais, shell, projeção de conteúdo ou convenção compartilhada volta diretamente ao Sol; se afetar escopo/aparência do contrato, volta ao usuário.
-
-### 5.2 Portão obrigatório de provider para Luna
-
-Antes de criar qualquer Luna, Sol deve perguntar ao usuário qual franquia usar **para aquele lote**: `Codex/ChatGPT Plus` ou `OpenCode Go`. A pergunta inclui em uma frase o escopo do Luna e a recomendação do Sol, considerando limites atuais, privacidade e necessidade de visibilidade no T3 Code. Nenhum Luna começa antes da resposta.
-
-Formato mínimo: **“Para este lote Luna (`<escopo>`), você prefere Codex ou OpenCode Go? Recomendo `<provider>` porque `<motivo curto>`.”**
-
-- `Codex`: consome a franquia Codex/Plus e o Luna nativo pode aparecer no painel de agentes do T3 Code.
-- `OpenCode Go`: consome a franquia Go; quando iniciado pela CLI dentro da tarefa Sol, não aparece como agente nativo no painel do T3 Code.
-- A escolha vale somente para o lote descrito, não cria preferência permanente.
-- Se o pedido atual do usuário já nomear explicitamente o provider daquele Luna, Sol registra a escolha e não pergunta de novo.
-- Spark permanece no OpenCode Go, salvo instrução explícita posterior do usuário.
-
-### 5.3 Gestão de limites e recomendação de provider
-
-Sol é responsável por observar as duas franquias e considerar o menor saldo relevante entre as janelas ativas. Antes do portão de provider de cada Luna, no início de uma fase longa e depois de qualquer erro de rate limit, deve consultar os dados atuais quando a integração estiver disponível:
-
-- **Codex/ChatGPT Plus:** usar a leitura nativa de usage/rate limits exposta pelo host; em integrações via Codex app-server, usar `account/rateLimits/read`.
-- **OpenCode Go:** usar o endpoint autenticado de usage da conta (`GET https://opencode.ai/zen/go/v1/usage`) ou o status oficial equivalente exposto pela CLI/serviço.
-
-Credenciais nunca entram em prompts, logs, arquivos do repositório ou contexto de subagentes. Sol lê os dados diretamente e repassa somente um resumo sanitizado: provider, janela, percentual restante e horário de reset. Campo ausente ou falha de consulta significa **desconhecido**, nunca saldo zero nem saldo saudável.
-
-| Menor saldo restante nas janelas aplicáveis | Estado       | Conduta padrão                                                                              |
-| ------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------- |
-| `> 25%`                                     | saudável     | provider elegível normalmente                                                               |
-| `> 10%` e `≤ 25%`                           | baixo        | preservar para tarefas de maior valor; recomendar a outra franquia se estiver mais saudável |
-| `> 0%` e `≤ 10%`                            | crítico      | não iniciar lote volumoso; recomendar troca ou espera                                       |
-| `0%`, bloqueado ou rate limit ativo         | esgotado     | não iniciar novas chamadas; informar o reset e oferecer provider alternativo                |
-| consulta indisponível                       | desconhecido | declarar a falta de telemetria e decidir pelo escopo/custo, sem alegar disponibilidade      |
-
-- Percentual restante = `100 - usedPercent` quando a API fornece consumo. Se houver janelas de 5h, semanal e mensal, prevalece a mais restritiva.
-- Se Codex ficar com `≤ 25%` e OpenCode estiver saudável, Sol recomenda OpenCode no portão da §5.2. Se OpenCode estiver baixo/esgotado e Codex estiver saudável, recomenda Codex.
-- A troca é **semiautomática**: Sol calcula e recomenda, mas não muda a franquia de Luna silenciosamente; a resposta do usuário no portão autoriza o lote. Uma escolha anterior não autoriza lotes futuros.
-- Spark continua exclusivo do OpenCode. Se Go estiver esgotado, Sol pausa o Spark e pode propor executar o trabalho como Luna no Codex, sempre passando pelo portão.
-- Se um limite acabar no meio da execução, o agente para novas chamadas, preserva e audita o estado parcial, informa o que está verificável e pede escolha antes de retomar em outro provider.
-- Se ambas as franquias estiverem baixas ou esgotadas, Sol propõe reduzir o lote, aguardar o reset ou continuar localmente apenas com trabalho que não consuma agentes externos.
+Consultar telemetria do host quando disponível e relevante. Saldo ausente é
+**desconhecido**, nunca evidência de disponibilidade. Em rate limit, preservar
+o estado parcial, informar o impedimento e não trocar de provider silenciosamente.
+Não enviar segredos, credenciais ou dados editoriais privados a subagentes.
 
 ### 5.4 Commits incrementais durante implementação
 
-**Agentes lead** significam Sol e um perfil `luna-lead` explicitamente ativado. Eles têm autorização permanente para criar commits **locais** durante fases de implementação; Luna builder e todos os Spark continuam proibidos de commitar. Essa autorização não inclui `push` nem reescrita de histórico.
+**Agente lead** significa o agente principal desta tarefa. Ele tem autorização permanente para criar commits **locais** durante fases de implementação; subagentes não fazem commits. Essa autorização não inclui `push` nem reescrita de histórico.
 
 1. Criar um commit após cada fatia coesa e verificável de feature — por exemplo foundation, projeção de conteúdo, componente compartilhado, ilha, rota ou conjunto de testes correspondente.
 2. Usar **aproximadamente 30 minutos como limite de trabalho ainda não salvo em commit**, não como motivo para quebrar atomicidade. Ao atingir esse ponto, terminar a menor fatia coerente, executar os checks relevantes e commitar. Nunca criar commit sabidamente quebrado, parcial ou apenas `WIP` para obedecer ao relógio.
@@ -222,17 +173,19 @@ Credenciais nunca entram em prompts, logs, arquivos do repositório ou contexto 
 
 ### 5.5 Protocolo de delegação
 
-1. Sol conclui o preflight bloqueante da §5.0, verifica `sha256sum -c design-contract.sha256` e inspeciona o estado atual antes de delegar.
-2. Nenhum trabalhador começa e nenhum arquivo de implementação é editado antes das escolhas exigidas pela §5.0; para Luna, a escolha de provider continua sendo feita a cada lote.
-3. Cada prompt informa objetivo, arquivos de posse exclusiva, arquivos proibidos, trechos normativos relevantes, critérios de aceite e comandos de verificação. Subagentes começam com contexto novo.
-4. Paralelização só ocorre entre tarefas com arquivos exclusivos. Nunca dois agentes editam o mesmo arquivo; arquivos compartilhados são integrados sequencialmente pelo Sol ou por um único Luna.
-5. O trabalhador não faz `commit`, `push`, `reset`, troca de branch nem outra mutação git. A única exceção é `luna-lead`, que pode criar commits locais seguindo integralmente a §5.4. Todos entregam um resumo curto com alterações, verificações e pendências.
-6. Sol lê o diff real, executa os portões adequados e decide aceitar, corrigir, escalar ou reverter. Relato de subagente não é evidência suficiente.
-7. Para trabalhadores OpenCode, `opencode run` é a interface padrão. `opencode serve` é somente uma otimização opcional para uma leva de chamadas via `run --attach`; indisponibilidade do servidor não bloqueia execução direta.
-8. Não usar `--auto`. Sessão só é continuada para a mesma tarefa; trabalhos distintos recebem sessões novas.
-9. Muse Spark 1.3 Contributor pode usar prompts e respostas para treinamento e não é ZDR. Spark recebe apenas código destinado ao repositório público, contrato público e fixtures sintéticas — nunca segredos, credenciais, dados de alunos, conteúdo editorial privado ou referências internas de aprovação.
+1. Concluir o preflight da §5.0 antes de editar ou delegar.
+2. Cada prompt informa objetivo, arquivos de posse exclusiva e proibidos,
+   referências normativas, critérios de aceite e comandos de verificação.
+3. Paralelizar somente tarefas sem sobreposição de arquivos. Integrar arquivos
+   compartilhados sequencialmente.
+4. Subagentes não fazem commit, push, reset, troca de branch nem mutações git.
+   Entregam alterações, verificações e pendências em resumo curto.
+5. O principal lê o diff real e executa os checks adequados. Relato de subagente
+   não substitui evidência de integração.
+6. Enviar somente o contexto necessário; nunca credenciais, segredos ou
+   informações editoriais privadas. Preservar a disciplina do repositório público.
 
-O protocolo executável e os exemplos estão em `docs/agent-architecture.md` e `scripts/agents/`.
+O fluxo atual está descrito em `docs/agent-architecture.md`.
 
 ### 5.6 Branches, worktrees T3 e pull requests
 
@@ -251,13 +204,13 @@ Commits seguem §5.4. Quando o usuário pedir abertura de PR, o título também 
 ## 6. Fases de trabalho
 
 - **Fase 0 (Sol)** — verificação do contrato, decisão de stack/hosting e arquitetura operacional.
-- **Fase 1 (Luna, sequencial; Sol decide e revisa)** — scaffold Astro+Svelte, tokens.css, fontes locais (Outfit OFL), derivado da logo, schemas Zod + `check-content`/`check-release`, projeção pública, conteúdo inicial = inventário D05 como `observed`, PageShell/Header/Footer, modos de build, `public/_headers`. Portão: build vazio passa + lint/typecheck verdes.
-- **Fase 2 (Luna/Spark por complexidade, lotes com posse exclusiva)** —
+- **Fase 1 (principal ou subagentes, sequencial)** — scaffold Astro+Svelte, tokens.css, fontes locais (Outfit OFL), derivado da logo, schemas Zod + `check-content`/`check-release`, projeção pública, conteúdo inicial = inventário D05 como `observed`, PageShell/Header/Footer, modos de build, `public/_headers`. Portão: build vazio passa + lint/typecheck verdes.
+- **Fase 2 (principal ou subagentes, lotes com posse exclusiva)** —
   - Lote A: primitives (Button/TextLink/IconButton, SectionHeading, Breadcrumb, PageIntro, EmptyState/AssetPlaceholder).
   - Lote B: cards e grades (Segment/Activity/Approval/Album/Environment cards; AlbumGrid/PhotoGrid/GalleryPreview).
   - Lote C: ilhas (MobileMenu, Lightbox, LoadMore) + HeroHome/MediaText/VisitCTA/ContactPanel/FAQ.
   - Lote D: rotas (`/`, `/ensino`, `/nosso-espaco`, `/aprovacoes`, `/atividades`, `/galeria`, `/galeria/[slug]`, `/visite`, `/privacidade`, 404) com todos os estados vazios D06.
-- **Fase 3 (Spark testa/audita; Sol revisa)** — e2e de comportamento (menu/Esc/foco, deep link + refresh, lightbox e retorno de foco, paginação preservando itens e foco, contatos condicionais, query inválida, slug desconhecido, 404), matriz visual B05 com evidências em `qa/`, axe-core, revisão cruzada + tabela de correspondência de componentes.
+- **Fase 3 (principal ou subagentes testam/auditam; principal revisa)** — e2e de comportamento (menu/Esc/foco, deep link + refresh, lightbox e retorno de foco, paginação preservando itens e foco, contatos condicionais, query inválida, slug desconhecido, 404), matriz visual B05 com evidências em `qa/`, axe-core, revisão cruzada + tabela de correspondência de componentes.
 - **Fase 4 (Sol)** — integração, ciclo completo (lint → typecheck → check-content → testes → build), correção de inconsistências, revisão final e relatório em três partes. POC Lenis (se aprovada) entra aqui, feature-flagada.
 - **Fase 5 (usuário + Sol)** — deploy no Cloudflare Pages (seção 9), validação em produção do `pages.dev`.
 

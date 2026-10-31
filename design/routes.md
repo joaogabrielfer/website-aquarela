@@ -1,6 +1,6 @@
 # Rotas e composição
 
-**AQ-WEB-1.1.11** · Normativo. Complementa [design-spec.md](./design-spec.md).
+**AQ-WEB-1.1.13** · Normativo. Complementa [design-spec.md](./design-spec.md).
 
 ## R01 — Regras globais
 
@@ -53,7 +53,7 @@ H1 “Espaço para aprender. Liberdade para descobrir.” Ordem: PageIntro space
 
 ### `/aprovacoes` — Aprovações · Figma [2:4](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA?node-id=2-4)
 
-H1 “Conquistas que abrem novos caminhos”. PageIntro achievements → grupos de resultados por ano, decrescentes → link “Conheça o Ensino Médio” → `/ensino#ensino-medio` → VisitCTA → Footer. Dentro do ano: ordenar por nome de exibição em pt-BR, depois ID. Ano é H2, cada resultado é H3. Sem filtro nem estatística total nesta versão. Cada grupo exibe no máximo 12 registros inicialmente; botão “Carregar mais aprovações de {ano}” acrescenta 12 no próprio grupo. Sem reset dos grupos ao carregar outro.
+H1 “Conquistas que abrem novos caminhos”. PageIntro achievements → grupos de resultados por ano, decrescentes → link “Conheça o Ensino Médio” → `/ensino#ensino-medio` → VisitCTA → Footer. Dentro do ano: reunir conquistas por personId explícito, ordenar os cards por nome de exibição em pt-BR, depois ID. Ano é H2, cada pessoa é H3; conquistas são itens de lista no card. Sem filtro nem estatística total nesta versão. Cada grupo exibe no máximo 12 cards inicialmente; botão “Carregar mais aprovações de {ano}” acrescenta 12 cards no próprio grupo, sem separar conquistas da mesma pessoa. Sem reset dos grupos ao carregar outro.
 
 Zero registros: EmptyState “Resultados em atualização” com texto “Fale com a equipe para conhecer as trajetórias do Aquarela.” e link `/visite`. Manter o acesso ao Ensino Médio. Não inserir cards fictícios no público.
 
@@ -109,3 +109,16 @@ não aos quatro cards de navegação da Home. O CTA contextual fica à direita n
 desktop conforme C06/B06. Na prévia incompleta, aplicar a amostra de texto e
 reserva de imagem de D10, evitando repetir o EmptyState dentro da composição
 representativa. O estado público incompleto continua seguindo D06.
+
+### Revisão 1.1.12 — cards de aprovações por pessoa
+
+O mural agrupa somente conquistas elegíveis da mesma pessoa e ano. Registros
+sem personId ficam separados; nomes ou retratos iguais não autorizam agrupamento.
+A Home aplica featured=true antes de agrupar e limita a três cards, sem incluir
+conquistas não selecionadas como destaque. Ordem das conquistas por ID estável.
+
+### Revisão 1.1.13 — apresentação compacta de Aprovações
+
+Preservar agrupamento, ordem e lotes de 12 cards. A apresentação do mural usa
+1/2/4 colunas e cards horizontais em mobile conforme B08. A Home mantém a
+seleção de até três cards, compartilhando o estilo e o hover de ApprovalCard.

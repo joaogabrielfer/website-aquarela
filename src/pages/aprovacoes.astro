@@ -34,9 +34,7 @@ const hasApprovals = groups.length > 0;
                 approvals={group.items.map((a) => ({
                   id: a.id,
                   displayName: a.displayName,
-                  course: a.course,
-                  institution: a.institution,
-                  selectionProcess: a.selectionProcess,
+                  achievements: a.achievements,
                   year: a.year,
                   portraitUrl: a.portraitId
                     ? (getMediaById(a.portraitId)?.src ?? null)

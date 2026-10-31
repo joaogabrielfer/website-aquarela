@@ -1,6 +1,6 @@
 # Contrato responsivo e validação visual
 
-**AQ-WEB-1.1.11** · Autoridade para medidas. Layout fluido entre os intervalos abaixo; não escalar uma captura Figma como imagem.
+**AQ-WEB-1.1.13** · Autoridade para medidas. Layout fluido entre os intervalos abaixo; não escalar uma captura Figma como imagem.
 
 ## B01 — Breakpoints
 
@@ -107,3 +107,30 @@ estreitas. Texto máximo 65ch, alvos ≥44 px e tipografia de B03 preservados.
 Validar a proposta em 390, 768, 1099, 1100 e 1440 px, além de zoom 200%, com
 títulos longos e amostra de texto. Novos PageIntro mantêm paddings e escala
 existentes; as cores não autorizam aumentar artificialmente sua altura.
+
+## B07 — Revisão 1.1.12: conquistas agrupadas
+
+ApprovalCard mantém retrato 4:5 e grade de 1/2/3 colunas em B02. Corpo com
+padding 20 px mobile e 24 px nas demais faixas. Selo e nome aceitam quebra;
+lista sem altura fixa ou line-clamp. Títulos de conquistas usam corpo 16/18 px,
+peso 500; instituição e metadados usam legenda 14 px. Não esticar espaços
+entre itens para igualar cards com uma e várias conquistas. Validar 320, 390,
+768, 1099, 1100 e 1440 px com duas conquistas e nome longo.
+
+## B08 — Revisão 1.1.13: aprovações compactas
+
+Substitui apenas ApprovalCard/B07: mural com uma coluna horizontal em mobile
+(<768 px), duas colunas verticais em tablet e quatro colunas em desktop
+(≥1100 px), gaps 16/20/24 px e container global preservados. Na Home, manter
+a grade existente de até três destaques; o card compartilha a mídia compacta.
+
+Mobile: coluna da foto minmax(96px,32%), texto minmax(0,1fr), padding de corpo
+16 px e gap 12 px. Retrato inteiro 4:5 com contain, centralizado verticalmente
+na coluna paper; divisor amarelo de 4 px à direita. Altura natural conforme
+texto, sem truncamento, sem reduzir título de 24 px ou corpo abaixo de 16 px.
+Sem foto, corpo ocupa toda a largura. Tablet mantém mídia 4:5 e padding 24 px.
+Desktop usa área de mídia 4:3, retrato inteiro em contain, padding de corpo
+20 px. Não cortar rosto ou braços para preencher a área mais baixa.
+
+Validar 320, 390, 768, 1099, 1100, 1440 e 1920 px; nome divergente longo,
+duas conquistas e hover real, além de reduced-motion e ponteiro coarse.
