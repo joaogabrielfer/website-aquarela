@@ -31,7 +31,7 @@ sha256sum -c design-contract.sha256
 5. **Tokens exatos** de `design-spec.md` §3–4 (cores, espaços, raios, tipografia). Não usar paleta padrão de biblioteca. Fonte Outfit em WOFF2 local (baixar do repositório oficial google/fonts, OFL) com licença preservada em `public/fonts/`; sem requisição de fonte a terceiros em runtime.
 6. **Idioma: pt-BR** em toda a interface, copy funcional e documentação do projeto. Copy funcional (navegação, CTAs, EmptyStates, controles) está congelada em `routes.md`/`components.md`; não reescrever.
 7. **Acessibilidade é critério de aceitação**: contraste ≥4,5:1 em texto normal, alvos ≥44×44 px, anel de foco global, um H1 por rota, `lang="pt-BR"`, skip link, teclado completo (menu, lightbox, paginação).
-8. **Não publicar automaticamente.** Existe autorização permanente apenas para commits locais incrementais feitos por agentes lead durante fases de implementação, conforme §5.4, e para o renomeio único da branch local temporária de uma nova worktree T3 antes do primeiro commit, conforme §5.6. `push`, publicação, outras trocas ou renomeios de branch, `reset`, `rebase`, `merge`, `cherry-pick` e demais mutações de histórico continuam exigindo pedido explícito do usuário.
+8. **Não publicar automaticamente.** Existe autorização permanente apenas para commits locais incrementais feitos por agentes lead durante fases de implementação, conforme §5.4, e para o renomeio único da branch local temporária de uma nova worktree T3 antes do primeiro commit, conforme §5.6. `push`, publicação, outras trocas ou renomeios de branch, `reset`, `rebase`, `merge`, `cherry-pick` e demais mutações de histórico exigem pedido explícito do usuário; um pedido para criar ou atualizar um PR autoriza o push dessa branch e a publicação desse PR, sem autorizar merge.
 9. **Relatórios separam**: (1) implementação verificada, (2) conteúdo pendente, (3) validações não executadas. Não marcar item como aprovado sem evidência.
 10. **Repositório público no GitHub.** Nunca commitar segredos, tokens ou dados privados; o modelo de conteúdo já veda dados de revisão no output público — manter essa disciplina também em config e CI.
 
@@ -200,6 +200,26 @@ Para trabalho fora de uma fase, antes de renomear a branch ou implementar, pergu
 A branch `preview` é reservada à integração do que o usuário decidiu mostrar ao cliente. Não iniciar feature diretamente nela. Atualizá-la por merge ou fast-forward somente com autorização explícita e sem presumir que toda mudança de fase deve ser mostrada.
 
 Commits seguem §5.4. Quando o usuário pedir abertura de PR, o título também usa Conventional Commit em inglês (`type(scope): concise description`) e descreve a preocupação principal; o corpo separa resumo, checks, conteúdo pendente, validações não executadas e URL de preview quando existir. A base é `main`, salvo instrução explícita diferente. Criar PR e fazer push continuam dependendo de pedido explícito.
+
+### 5.7 Iteração revisada pelo preview do Cloudflare
+
+O usuário não faz desenvolvimento local. Trate a implementação como trabalho
+do agente: inspecionar o checkout, preservar alterações existentes, criar uma
+branch de tarefa, implementar, validar e preparar um PR para revisão visual no
+Cloudflare Pages. Não peça ao usuário para instalar dependências, executar o
+projeto localmente ou reproduzir mudanças no próprio computador.
+
+Quando o pedido incluir branch/PR ou atualização de um PR existente, publique
+a branch e crie/atualize o PR correspondente conforme a autorização daquele
+pedido. Escolha a base segundo §5.6; mudanças editoriais para conferência usam
+`editorial/*` e preview editorial. Deixe o PR aberto para revisão; não faça
+merge nem integre em `preview` ou `main` sem autorização específica.
+
+Após o push, confirme o deploy do Cloudflare Pages e inclua no relatório o link
+direto do preview e o estado do build. O usuário revisa a mudança pelo preview;
+se o deploy ainda estiver pendente ou falhar, informe isso claramente e não
+apresente a branch como visualmente revisável. Registre no PR o escopo, checks
+executados, pendências editoriais e validações não feitas.
 
 ## 6. Fases de trabalho
 
