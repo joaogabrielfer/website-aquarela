@@ -38,7 +38,7 @@ jobs:
       - name: Type-check Astro and TypeScript
         run: pnpm check
 
-      - name: Validate editorial content
+      - name: Validate content
         run: pnpm check-content
 
       - name: Run unit tests
@@ -47,5 +47,5 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
-      - name: Build public site
+      - name: Build site
         run: pnpm build

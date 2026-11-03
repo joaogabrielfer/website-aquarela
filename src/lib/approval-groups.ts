@@ -13,7 +13,7 @@ export type ApprovalPerson = {
   achievements: ApprovalAchievement[];
 };
 
-/** Recebe apenas resultados já filtrados pelas permissões do modo de build. */
+/** Reúne as conquistas por pessoa e ano sem misturar homônimos. */
 export const groupApprovalPeople = (
   approvals: readonly PublicApproval[],
 ): ApprovalPerson[] => {

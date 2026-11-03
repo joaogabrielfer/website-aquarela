@@ -1,0 +1,213 @@
+# Fontes registradas antes da simplificação em 03/11/2026. Histórico, sem efeito no build.
+- location: content/activities.yaml [atividade-ginastica]
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/activities.yaml [atividade-natacao]
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/activities.yaml [atividade-bale]
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/approvals.yaml [jose-kaua-cpaeam-2027]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/jose-kaua-cpaeam-2027.jpg. Inclusão em preview
+    editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/approvals.yaml [ricardo-cesar-cpaeam-2027]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/ricardo-cesar-cpaeam-2027.jpg. Inclusão em preview
+    editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/approvals.yaml [pedro-henrique-cpaeam-2027]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/pedro-henrique-cpaeam-2027.jpg. Inclusão em
+    preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/approvals.yaml [miguel-vasconcelos-cpaeam-2027]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/miguel-vasconcelos-cpaeam-2027.jpg. Inclusão em
+    preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/approvals.yaml [richarlyson-augusto-cfn-2027]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/richarlyson-augusto-cfn-2027.jpg. Inclusão em
+    preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/approvals.yaml [jose-caua-cfn-2027]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/jose-caua-cfn-2027.jpg. Inclusão em preview
+    editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/approvals.yaml [gabriele-goncalves-cfn-2027]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/gabriele-goncalves-cfn-2027.jpg. Inclusão em
+    preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/approvals.yaml [breno-alexandre-cfn-2027]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/breno-alexandre-cfn-2027.jpg. Inclusão em preview
+    editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/approvals.yaml [pedro-vasconcelos-cpaeam-2027]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/pedro-vasconcelos-cpaeam-2027.jpg. Inclusão em
+    preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/approvals.yaml [breno-alexandre-cpaeam-2027]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/breno-alexandre-cpaeam-2027.jpg. Inclusão em
+    preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/environments.yaml [sala-google-for-education]
+  source: Ambiente identificado em fotografia fornecida pelo responsável em 21/09/2026
+- location: content/environments.yaml [laboratorio-ciencias]
+  source: Ambiente identificado em fotografia fornecida pelo responsável em 21/09/2026
+- location: content/environments.yaml [cantina]
+  source: Ambiente identificado em fotografia fornecida pelo responsável em 21/09/2026
+- location: content/environments.yaml [patio]
+  source: Ambiente identificado em fotografia fornecida pelo responsável em 21/09/2026
+- location: content/environments.yaml [studio-danca]
+  source: Ambiente identificado em fotografia fornecida pelo responsável em 21/09/2026
+- location: content/environments.yaml [sala-infantil]
+  source: Ambiente identificado em fotografia fornecida pelo responsável em 21/09/2026
+- location: content/environments.yaml [sala-bancas-azuis]
+  source: Ambiente identificado em fotografia fornecida pelo responsável em 21/09/2026
+- location: content/environments.yaml [sala-bancas-vermelhas]
+  source: Ambiente identificado em fotografia fornecida pelo responsável em 21/09/2026
+- location: content/environments.yaml [brinquedoteca]
+  source: Ambiente identificado em fotografia fornecida pelo responsável em 21/09/2026
+- location: content/environments.yaml [piscina]
+  source: >-
+    Ambiente identificado em fotos fornecidas pelo responsável e uso autorizado nesta conversa em
+    26/10/2026
+- location: content/environments.yaml [quadra-coberta]
+  source: >-
+    Ambiente identificado em fotos fornecidas pelo responsável e uso autorizado nesta conversa em
+    26/10/2026
+- location: content/media.yaml [hero-colegio]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [brinquedoteca-01]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [brinquedoteca-02]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [brinquedoteca-03]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [brinquedoteca-04]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [cantina]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [sala-google-for-education]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [laboratorio-ciencias]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [patio]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [sala-bancas-azuis]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [sala-bancas-vermelhas]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [studio-danca]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [sala-infantil]
+  source: >-
+    Fotografia fornecida e uso aprovado pelo responsável nesta conversa em 21/09/2026; identificador
+    editorial pendente
+- location: content/media.yaml [piscina-angulo-principal]
+  source: Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026
+- location: content/media.yaml [piscina-angulo-complementar]
+  source: Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026
+- location: content/media.yaml [quadra-coberta-angulo-principal]
+  source: Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026
+- location: content/media.yaml [quadra-coberta-angulo-complementar]
+  source: Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026
+- location: content/media.yaml [sala-infantil-criancas-estudo]
+  source: Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026
+- location: content/media.yaml [sala-infantil-mesas-coloridas-tablets]
+  source: Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026
+- location: content/media.yaml [sala-bancas-vermelhas-estudo]
+  source: Foto fornecida pelo responsável e uso autorizado nesta conversa em 26/10/2026
+- location: content/media.yaml [retrato-jose-kaua]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/jose-kaua-cpaeam-2027.jpg. Inclusão em preview
+    editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/media.yaml [retrato-ricardo-cesar]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/ricardo-cesar-cpaeam-2027.jpg. Inclusão em preview
+    editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/media.yaml [retrato-pedro-henrique]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/pedro-henrique-cpaeam-2027.jpg. Inclusão em
+    preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/media.yaml [retrato-miguel-vasconcelos]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/miguel-vasconcelos-cpaeam-2027.jpg. Inclusão em
+    preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/media.yaml [retrato-richarlyson-augusto]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/richarlyson-augusto-cfn-2027.jpg. Inclusão em
+    preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/media.yaml [retrato-gabriele-goncalves]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/gabriele-goncalves-cfn-2027.jpg. Inclusão em
+    preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/media.yaml [retrato-breno-alexandre]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/breno-alexandre-cfn-2027.jpg. Inclusão em preview
+    editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/media.yaml [retrato-pedro-vasconcelos]
+  source: >-
+    Arte fornecida pelo usuário: assets/approvals/pedro-vasconcelos-cpaeam-2027.jpg. Inclusão em
+    preview editorial solicitada em 30/10/2026; revisão editorial pendente.
+- location: content/pages/aprovacoes.yaml
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/pages/atividades.yaml
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/pages/ensino.yaml
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/pages/galeria.yaml
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/pages/home.yaml
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/pages/nosso-espaco.yaml
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/pages/privacidade.yaml
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/pages/visite.yaml
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/school.yaml.name
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/school.yaml.tagline
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/school.yaml.phoneE164
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/school.yaml.whatsappE164
+  source: Confirmação direta do responsável nesta conversa em 09/09/2026
+- location: content/school.yaml.locality
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/school.yaml.address
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/school.yaml.officeHours
+  source: Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026
+- location: content/school.yaml.instagramUrl
+  source: https://www.instagram.com/aquarelacolegioecurso/
+- location: content/seasonal-banners.yaml [demonstracao-aviso-sazonal]
+  source: fixture sintética para demonstração com o cliente
+- location: content/segments.yaml [educacao-infantil]
+  source: Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026
+- location: content/segments.yaml [fundamental-anos-iniciais]
+  source: Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026
+- location: content/segments.yaml [fundamental-anos-finais]
+  source: Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026
+- location: content/segments.yaml [ensino-medio]
+  source: Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026

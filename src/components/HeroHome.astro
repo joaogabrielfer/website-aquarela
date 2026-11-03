@@ -2,7 +2,6 @@
 import { eyebrow } from '../lib/copy';
 import Button from './Button.astro';
 import AssetPlaceholder from './AssetPlaceholder.astro';
-import { BUILD_MODE } from '../lib/env';
 import { focalPointStyle, responsiveSrcset } from '../lib/responsive-media';
 
 interface Props {
@@ -25,8 +24,6 @@ const {
   imageFocalPoint,
 } = Astro.props;
 const showImage = imageSrc !== null && imageSrc !== undefined;
-const showPlaceholder = BUILD_MODE === 'editorial-preview' && !showImage;
-const showMedia = showImage || showPlaceholder;
 ---
 
 <section class="hero-home">
@@ -45,28 +42,26 @@ const showMedia = showImage || showPlaceholder;
         </div>
       </div>
     </div>
-    {
-      showMedia ? (
-        <div class="hero-media">
-          {showImage ? (
-            <img
-              class="hero-photo"
-              src={imageSrc}
-              srcset={responsiveSrcset(imageSrc, imageWidth)}
-              sizes="100vw"
-              alt={imageAlt || 'Aquarela Colégio e Curso'}
-              width={imageWidth ?? 2400}
-              height={imageHeight ?? 1350}
-              style={focalPointStyle(imageFocalPoint)}
-              loading="eager"
-              fetchpriority="high"
-            />
-          ) : (
-            <AssetPlaceholder aspectRatio="16/9" />
-          )}
-        </div>
-      ) : null
-    }
+    <div class="hero-media">
+      {
+        showImage ? (
+          <img
+            class="hero-photo"
+            src={imageSrc}
+            srcset={responsiveSrcset(imageSrc, imageWidth)}
+            sizes="100vw"
+            alt={imageAlt || 'Aquarela Colégio e Curso'}
+            width={imageWidth ?? 2400}
+            height={imageHeight ?? 1350}
+            style={focalPointStyle(imageFocalPoint)}
+            loading="eager"
+            fetchpriority="high"
+          />
+        ) : (
+          <AssetPlaceholder aspectRatio="16/9" />
+        )
+      }
+    </div>
   </div>
 </section>
 

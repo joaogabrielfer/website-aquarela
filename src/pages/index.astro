@@ -30,7 +30,7 @@ const albums = getAlbums().slice(0, 3);
 const seasonalBanner = getSeasonalBanners()[0] ?? null;
 
 // The Home PageCopy owns the explicit Hero media reference.
-// In preview mode, we use AssetPlaceholder if no photo.
+// Se faltar foto, o componente mostra o mesmo placeholder em todas as branches.
 const support = pageCopy?.intro ?? '';
 const heroMedia = pageCopy?.heroImageId
   ? getMediaById(pageCopy.heroImageId)

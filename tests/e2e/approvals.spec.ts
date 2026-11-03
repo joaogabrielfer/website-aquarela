@@ -1,28 +1,12 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-test('resultados observados aparecem somente na prévia e sem metadados internos', async ({
+test('mural exibe oito pessoas e dez conquistas com retratos disponíveis', async ({
   page,
   request,
-}, testInfo) => {
+}) => {
   await page.goto('/aprovacoes');
   const cards = page.locator('.approval-card');
-  if (testInfo.project.name === 'public') {
-    await expect(cards).toHaveCount(0);
-    for (const width of [400, 800]) {
-      expect(
-        (
-          await request.get(`/media/approvals/breno-alexandre-${width}.webp`)
-        ).status(),
-      ).toBe(404);
-    }
-    await expect(
-      page.getByRole('heading', { name: 'Resultados em atualização' }),
-    ).toBeVisible();
-    await expect(page.getByText('Breno Alexandre')).toHaveCount(0);
-    return;
-  }
-
   await expect(cards).toHaveCount(8);
   await expect(
     page.getByRole('heading', { name: 'Breno Alexandre', exact: true }),
@@ -49,10 +33,6 @@ test('resultados observados aparecem somente na prévia e sem metadados internos
   await expect(
     page.getByRole('heading', { name: 'Gabriele Gonçalves', exact: true }),
   ).toBeVisible();
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
-    'content',
-    /noindex/,
-  );
   const html = await page.content();
   for (const field of [
     'reviewedAt',
@@ -62,6 +42,12 @@ test('resultados observados aparecem somente na prévia e sem metadados internos
   ]) {
     expect(html).not.toContain(field);
   }
+  for (const width of [400, 800]) {
+    const asset = await request.get(
+      `/media/approvals/breno-alexandre-${width}.webp`,
+    );
+    expect(asset.status()).toBe(200);
+  }
   await expect(cards.locator('img')).toHaveCount(8);
   expect(await cards.locator('a, button').count()).toBe(0);
 });
@@ -69,8 +55,7 @@ test('resultados observados aparecem somente na prévia e sem metadados internos
 for (const width of [320, 390, 767, 768, 1099, 1100, 1440, 1920]) {
   test(`mural sem overflow e com retratos legíveis em ${width}px`, async ({
     page,
-  }, testInfo) => {
-    test.skip(testInfo.project.name !== 'preview');
+  }) => {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
     await page.goto('/aprovacoes');
     const cards = page.locator('.approval-card');
@@ -118,7 +103,7 @@ for (const width of [320, 390, 767, 768, 1099, 1100, 1440, 1920]) {
       });
       await page.waitForFunction(() => window.scrollY === 0);
       await page.screenshot({
-        path: `qa/approvals/approvals-${width}.png`,
+        path: `test-results/approvals/approvals-${width}.png`,
         fullPage: true,
         animations: 'disabled',
       });
@@ -129,8 +114,7 @@ for (const width of [320, 390, 767, 768, 1099, 1100, 1440, 1920]) {
 test('mural acessível e com conteúdo presente sem JavaScript', async ({
   browser,
   baseURL,
-}, testInfo) => {
-  test.skip(testInfo.project.name !== 'preview');
+}) => {
   const context = await browser.newContext({
     javaScriptEnabled: false,
     ...(baseURL ? { baseURL } : {}),
@@ -143,8 +127,7 @@ test('mural acessível e com conteúdo presente sem JavaScript', async ({
   await context.close();
 });
 
-test('mural sem violações axe graves', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== 'preview');
+test('mural sem violações axe graves', async ({ page }) => {
   await page.goto('/aprovacoes');
   const result = await new AxeBuilder({ page }).analyze();
   expect(result.violations).toEqual([]);
@@ -152,8 +135,7 @@ test('mural sem violações axe graves', async ({ page }, testInfo) => {
 
 test('hover das aprovações repete a ampliação de Ensino e respeita movimento reduzido', async ({
   page,
-}, testInfo) => {
-  test.skip(testInfo.project.name !== 'preview');
+}) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   const segment = page.locator('.segment-card').first();
@@ -181,7 +163,9 @@ test('hover das aprovações repete a ampliação de Ensino e respeita movimento
   expect(await card.evaluate((el) => getComputedStyle(el).boxShadow)).not.toBe(
     'none',
   );
-  await page.screenshot({ path: 'qa/approvals/approvals-hover-1440.png' });
+  await page.screenshot({
+    path: 'test-results/approvals/approvals-hover-1440.png',
+  });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(card).toHaveCSS('transform', 'none');
   await expect(card).toHaveCSS('transition-duration', '0s');
@@ -190,8 +174,7 @@ test('hover das aprovações repete a ampliação de Ensino e respeita movimento
 test('ponteiro de toque não amplia os cards mesmo em largura desktop', async ({
   browser,
   baseURL,
-}, testInfo) => {
-  test.skip(testInfo.project.name !== 'preview');
+}) => {
   const context = await browser.newContext({
     hasTouch: true,
     viewport: { width: 1440, height: 900 },

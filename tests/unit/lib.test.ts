@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { formatCivilDate } from '../../src/lib/dates';
 import { telUrl, whatsappUrl, formatPhone } from '../../src/lib/urls';
-import { projectVisible, project } from '../../src/lib/content';
 import { getPublicSchool } from '../../src/lib/content/school';
 import { resolveInterest } from '../../src/lib/interest';
 
@@ -16,16 +15,6 @@ describe('utilitários públicos', () => {
     );
     expect(formatPhone('+5581982177132')).toBe('(81) 98217-7132');
   });
-
-  it('filtra e projeta sem review', () => {
-    const values = [
-      { id: 'a', review: { status: 'approved' } },
-      { id: 'b', review: { status: 'observed' } },
-      { id: 'c', review: { status: 'draft' } },
-    ];
-    expect(projectVisible(values)).toEqual([{ id: 'a' }]);
-    expect(project(values[0]!)).not.toHaveProperty('review');
-  });
 });
 
 describe('getPublicSchool — projeção pública', () => {
@@ -39,7 +28,7 @@ describe('getPublicSchool — projeção pública', () => {
     expect(json).not.toContain('"status"');
   });
 
-  it('campos editorial são null ou valor string (flat)', () => {
+  it('contatos e informações são valores simples', () => {
     const school = getPublicSchool();
     expect(typeof school.name === 'string' || school.name === null).toBe(true);
     expect(typeof school.tagline === 'string' || school.tagline === null).toBe(

@@ -56,7 +56,7 @@ test('clique no backdrop fecha o menu', async ({ page }) => {
   const backdrop = page.locator('.backdrop');
   await expect(backdrop).toBeVisible();
   // Clica na faixa visível do backdrop acima do painel (top 80) e abaixo da
-  // faixa "Prévia" do preview (~36px): y=60 atinge backdrop nos dois modos.
+  // y=60 atinge o backdrop fora do painel.
   await backdrop.click({ position: { x: 5, y: 60 } });
   await expect(
     page.getByRole('dialog', { name: 'Menu principal' }),

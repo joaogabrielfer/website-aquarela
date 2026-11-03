@@ -1,27 +1,9 @@
-export type BuildMode = 'public' | 'editorial-preview' | 'release';
-const requestedMode = process.env.APP_BUILD_MODE;
-if (
-  requestedMode !== undefined &&
-  !['public', 'editorial-preview', 'release'].includes(requestedMode)
-) {
-  throw new Error(
-    `APP_BUILD_MODE inválido: "${requestedMode}". Use public, editorial-preview ou release.`,
-  );
-}
-export const BUILD_MODE: BuildMode =
-  requestedMode === 'editorial-preview' || requestedMode === 'release'
-    ? requestedMode
-    : 'public';
-const isCfPreview =
-  process.env.CF_PAGES_BRANCH && process.env.CF_PAGES_BRANCH !== 'main';
-export const SITE_URL = isCfPreview
-  ? (process.env.CF_PAGES_URL ?? process.env.SITE_URL ?? null)
-  : (process.env.SITE_URL ?? null);
+// O conteúdo é o mesmo em todas as branches; apenas URL e indexação variam.
 export const IS_CF_PREVIEW = Boolean(
   process.env.CF_PAGES_BRANCH && process.env.CF_PAGES_BRANCH !== 'main',
 );
-export const IS_PREVIEW = BUILD_MODE === 'editorial-preview' || IS_CF_PREVIEW;
-
-// Resolved during the build so disabled builds do not mount the island.
+export const SITE_URL = IS_CF_PREVIEW
+  ? (process.env.CF_PAGES_URL ?? process.env.SITE_URL ?? null)
+  : (process.env.SITE_URL ?? null);
 export const ENABLE_SMOOTH_SCROLL =
   process.env.ENABLE_SMOOTH_SCROLL !== 'false';

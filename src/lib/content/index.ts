@@ -1,87 +1,30 @@
-import { groupApprovalPeople, type ApprovalPerson } from '../approval-groups';
-import yaml from 'js-yaml';
 import fs from 'node:fs';
 import path from 'node:path';
-import { BUILD_MODE } from '../env';
+import yaml from 'js-yaml';
+import { z } from 'zod';
+import { groupApprovalPeople, type ApprovalPerson } from '../approval-groups';
 import { segmentSkeleton, type SegmentSkeleton } from '../segments';
 import {
-  Activity as ActivitySchema,
-  Approval as ApprovalSchema,
-  Environment as EnvironmentSchema,
-  Segment as SegmentSchema,
-  PageCopy as PageCopySchema,
-  HomePageCopy as HomePageCopySchema,
-  SeasonalBanner as SeasonalBannerSchema,
-  Album as AlbumSchema,
-  FAQ as FAQSchema,
-  Media as MediaSchema,
-  PrivacyFrontmatter,
+  Activity,
+  Approval,
+  Environment,
+  Segment,
+  PageCopy,
+  HomePageCopy,
+  SeasonalBanner,
+  Album,
+  FAQ,
+  Media,
 } from './schemas';
 
-/* ------------------------------------------------------------------ */
-/*  Infraestrutura de carregamento                                    */
-/* ------------------------------------------------------------------ */
-
 export const contentRoot = path.resolve('content');
+export const loadYaml = (file: string): unknown =>
+  yaml.load(fs.readFileSync(path.join(contentRoot, file), 'utf8'));
 
-export const loadYaml = (file: string) =>
-  yaml.load(fs.readFileSync(path.join(contentRoot, file), 'utf8')) as unknown;
+const collection = <T>(file: string, schema: z.ZodType<T>): T[] =>
+  z.array(schema).parse(loadYaml(file));
 
-/** Carrega todos os arquivos YAML de um diretório. */
-const loadYamlDir = (dir: string): unknown[] => {
-  const dirPath = path.join(contentRoot, dir);
-  if (!fs.existsSync(dirPath)) return [];
-  const files = fs
-    .readdirSync(dirPath)
-    .filter((f) => f.endsWith('.yaml') || f.endsWith('.yml'));
-  const results: unknown[] = [];
-  for (const file of files) {
-    const raw = yaml.load(
-      fs.readFileSync(path.join(dirPath, file), 'utf8'),
-    ) as unknown;
-    if (raw !== null && raw !== undefined) results.push(raw);
-  }
-  return results;
-};
-
-export const isVisible = (review: { status: string }) =>
-  BUILD_MODE === 'editorial-preview'
-    ? ['approved', 'observed', 'draft'].includes(review.status)
-    : review.status === 'approved';
-
-export type PublicProjection<T> = Omit<
-  T,
-  'review' | 'usageApproved' | 'publicationAuthorized'
->;
-
-/** Projeta somente campos seguros para o browser. */
-export const project = <T extends { review: unknown }>(
-  value: T,
-): PublicProjection<T> => {
-  const projected = { ...value } as T & {
-    review?: unknown;
-    usageApproved?: unknown;
-    publicationAuthorized?: unknown;
-  };
-  delete projected.review;
-  delete projected.usageApproved;
-  delete projected.publicationAuthorized;
-  return projected as PublicProjection<T>;
-};
-
-export const projectVisible = <T extends { review: { status: string } }>(
-  values: T[],
-) => values.filter((v) => isVisible(v.review)).map(project);
-
-/* ------------------------------------------------------------------ */
-/*  Tipos públicos                                                    */
-/* ------------------------------------------------------------------ */
-
-import type { z } from 'zod';
-import type { PublicMedia } from './schemas';
-
-export type { PublicMedia };
-
+export type { PublicMedia } from './schemas';
 export type PublicSegment = SegmentSkeleton & {
   summary: string | null;
   description: string | null;
@@ -91,134 +34,53 @@ export type PublicSegment = SegmentSkeleton & {
   experiences: string[];
   imageId: string | null;
 };
+export type PublicActivity = z.infer<typeof Activity>;
+export type PublicApproval = z.infer<typeof Approval>;
+export type PublicAlbum = z.infer<typeof Album>;
+export type PublicEnvironment = z.infer<typeof Environment>;
+export type PublicPageCopy = z.infer<typeof PageCopy>;
+export type PublicHomePageCopy = z.infer<typeof HomePageCopy>;
+export type PublicSeasonalBanner = z.infer<typeof SeasonalBanner>;
+export type PublicFAQ = z.infer<typeof FAQ>;
 
-export type PublicActivity = Omit<z.infer<typeof ActivitySchema>, 'review'>;
-export type PublicApproval = Omit<
-  z.infer<typeof ApprovalSchema>,
-  'review' | 'publicationAuthorized'
->;
-export type PublicAlbum = Omit<z.infer<typeof AlbumSchema>, 'review'>;
-export type PublicEnvironment = Omit<
-  z.infer<typeof EnvironmentSchema>,
-  'review'
->;
-export type PublicPageCopy = Omit<z.infer<typeof PageCopySchema>, 'review'>;
-export type PublicHomePageCopy = Omit<
-  z.infer<typeof HomePageCopySchema>,
-  'review'
->;
-export type PublicSeasonalBanner = Omit<
-  z.infer<typeof SeasonalBannerSchema>,
-  'review'
->;
-export type PublicFAQ = Omit<z.infer<typeof FAQSchema>, 'review'>;
-
-/* ------------------------------------------------------------------ */
-/*  Media helpers                                                     */
-/* ------------------------------------------------------------------ */
-
-const loadMedia = (): z.infer<typeof MediaSchema>[] => {
-  const raw = loadYaml('media.yaml') as unknown;
-  if (!Array.isArray(raw)) return [];
-  return raw.map((m) => MediaSchema.parse(m));
-};
-
-/** Busca mídia por ID — visível + usageApproved. */
-export const getMediaById = (id: string): PublicMedia | null => {
-  const all = loadMedia();
-  const found = all.find(
-    (m) => m.id === id && isVisible(m.review) && m.usageApproved,
-  );
-  return found ? project(found) : null;
-};
-
-/* ------------------------------------------------------------------ */
-/*  Segmentos (esqueleto + merge editorial)                           */
-/* ------------------------------------------------------------------ */
+export const getMediaById = (id: string) =>
+  collection('media.yaml', Media).find((media) => media.id === id) ?? null;
 
 export const getSegments = (): PublicSegment[] => {
-  const raw = loadYaml('segments.yaml') as unknown;
-  const editorial: z.infer<typeof SegmentSchema>[] = Array.isArray(raw)
-    ? raw.map((s) => SegmentSchema.parse(s))
-    : [];
-  const mediaAll = loadMedia();
-
-  return segmentSkeleton.map((sk) => {
-    const ed = editorial.find((e) => e.id === sk.id && e.slug === sk.slug);
-    if (!ed || !isVisible(ed.review)) {
-      return {
-        ...sk,
-        summary: null,
-        description: null,
-        grades: null,
-        ages: null,
-        shifts: [],
-        experiences: [],
-        imageId: null,
-      };
-    }
+  const segments = collection('segments.yaml', Segment);
+  return segmentSkeleton.map((skeleton) => {
+    const segment = segments.find(
+      (item) => item.id === skeleton.id && item.slug === skeleton.slug,
+    );
     return {
-      ...sk,
-      summary: ed.summary,
-      description: ed.description,
-      grades: ed.grades,
-      ages: ed.ages,
-      shifts: ed.shifts,
-      experiences: ed.experiences,
+      summary: null,
+      description: null,
+      grades: null,
+      ages: null,
+      shifts: [],
+      experiences: [],
+      ...segment,
+      ...skeleton,
       imageId:
-        ed.imageId !== null &&
-        mediaAll.some(
-          (media) =>
-            media.id === ed.imageId &&
-            isVisible(media.review) &&
-            media.usageApproved,
-        )
-          ? ed.imageId
+        segment?.imageId && getMediaById(segment.imageId)
+          ? segment.imageId
           : null,
     };
   });
 };
 
-/* ------------------------------------------------------------------ */
-/*  Atividades                                                        */
-/* ------------------------------------------------------------------ */
+export const getActivities = (): PublicActivity[] =>
+  collection('activities.yaml', Activity).sort(
+    (a, b) => a.order - b.order || a.id.localeCompare(b.id),
+  );
 
-export const getActivities = (): PublicActivity[] => {
-  const raw = loadYaml('activities.yaml') as unknown;
-  if (!Array.isArray(raw)) return [];
-  const all = raw.map((a) => ActivitySchema.parse(a));
-  return all
-    .filter((a) => isVisible(a.review))
-    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id))
-    .map(project);
-};
-
-export const getFeaturedActivities = (limit = 3): PublicActivity[] => {
-  return getActivities()
-    .filter((a) => a.featured)
-    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id))
+export const getFeaturedActivities = (limit = 3): PublicActivity[] =>
+  getActivities()
+    .filter((activity) => activity.featured)
     .slice(0, limit);
-};
 
-/* ------------------------------------------------------------------ */
-/*  Aprovações                                                        */
-/* ------------------------------------------------------------------ */
-
-export type ApprovalGroup = {
-  year: number;
-  items: ApprovalPerson[];
-};
-
-export const getApprovals = (): PublicApproval[] => {
-  const raw = loadYaml('approvals.yaml') as unknown;
-  if (!Array.isArray(raw)) return [];
-  const all = raw.map((a) => ApprovalSchema.parse(a));
-  return all
-    .filter(
-      (a) =>
-        isVisible(a.review) &&
-        (BUILD_MODE === 'editorial-preview' || a.publicationAuthorized),
-    )
+export const getApprovals = (): PublicApproval[] =>
+  collection('approvals.yaml', Approval)
     .sort(
       (a, b) =>
         b.year - a.year ||
@@ -226,215 +88,92 @@ export const getApprovals = (): PublicApproval[] => {
         a.id.localeCompare(b.id),
     )
     .map((approval) => ({
-      ...project(approval),
+      ...approval,
       portraitId:
         approval.portraitId && getMediaById(approval.portraitId)
           ? approval.portraitId
           : null,
     }));
-};
 
+export type ApprovalGroup = { year: number; items: ApprovalPerson[] };
 export const getApprovalsGrouped = (): ApprovalGroup[] => {
-  const approvals = groupApprovalPeople(getApprovals());
-  const grouped = new Map<number, ApprovalPerson[]>();
-  for (const a of approvals) {
-    const existing = grouped.get(a.year) ?? [];
-    existing.push(a);
-    grouped.set(a.year, existing);
+  const groups = new Map<number, ApprovalPerson[]>();
+  for (const person of groupApprovalPeople(getApprovals())) {
+    const items = groups.get(person.year) ?? [];
+    items.push(person);
+    groups.set(person.year, items);
   }
-  return Array.from(grouped.entries())
+  return [...groups]
     .sort(([a], [b]) => b - a)
     .map(([year, items]) => ({ year, items }));
 };
 
-export const getFeaturedApprovals = (limit = 3): PublicApproval[] => {
-  return getApprovals()
-    .filter((a) => a.featured)
+export const getFeaturedApprovals = (limit = 3): PublicApproval[] =>
+  getApprovals()
+    .filter((approval) => approval.featured)
     .slice(0, limit);
-};
 
 export const getFeaturedApprovalPeople = (limit = 3): ApprovalPerson[] =>
   groupApprovalPeople(
     getApprovals().filter((approval) => approval.featured),
   ).slice(0, limit);
 
-/* ------------------------------------------------------------------ */
-/*  Álbuns                                                            */
-/* ------------------------------------------------------------------ */
-
-const loadAlbumRaw = (): z.infer<typeof AlbumSchema>[] => {
-  const entries = loadYamlDir('albums');
-  return entries.map((e) => AlbumSchema.parse(e));
-};
-
-const albumHasApprovedPhoto = (
-  album: z.infer<typeof AlbumSchema>,
-  mediaAll: z.infer<typeof MediaSchema>[],
-): boolean => {
-  const cover = mediaAll.find((media) => media.id === album.coverId);
-  return (
-    album.photoIds.includes(album.coverId) &&
-    cover !== undefined &&
-    isVisible(cover.review) &&
-    cover.usageApproved &&
-    album.photoIds.some((pid) => {
-      const media = mediaAll.find((item) => item.id === pid);
-      return (
-        media !== undefined && isVisible(media.review) && media.usageApproved
-      );
-    })
-  );
-};
-
 export const getAlbums = (): PublicAlbum[] => {
-  const all = loadAlbumRaw();
-  const mediaAll = loadMedia();
-  return all
-    .filter((a) => isVisible(a.review) && albumHasApprovedPhoto(a, mediaAll))
-    .sort((a, b) => b.date.localeCompare(a.date) || a.id.localeCompare(b.id))
-    .map(project);
-};
-
-export const getAlbum = (slug: string): PublicAlbum | null => {
-  const albums = getAlbums();
-  return albums.find((a) => a.slug === slug) ?? null;
-};
-
-/** Retorna fotos publicáveis de um álbum (filter + project). */
-export const getAlbumPhotos = (slug: string): PublicMedia[] => {
-  const raw = loadAlbumRaw();
-  const album = raw.find(
-    (a) =>
-      a.slug === slug &&
-      isVisible(a.review) &&
-      albumHasApprovedPhoto(a, loadMedia()),
-  );
-  if (!album) return [];
-  const mediaAll = loadMedia();
-  return album.photoIds
-    .map((pid) => {
-      const m = mediaAll.find((mm) => mm.id === pid);
-      return m && isVisible(m.review) && m.usageApproved ? project(m) : null;
-    })
-    .filter((p): p is PublicMedia => p !== null);
-};
-
-/* ------------------------------------------------------------------ */
-/*  Ambientes                                                         */
-/* ------------------------------------------------------------------ */
-
-export const getEnvironments = (): PublicEnvironment[] => {
-  const raw = loadYaml('environments.yaml') as unknown;
-  if (!Array.isArray(raw)) return [];
-  const all = raw.map((e) => EnvironmentSchema.parse(e));
-  const mediaAll = loadMedia();
-  return all
+  const directory = path.join(contentRoot, 'albums');
+  if (!fs.existsSync(directory)) return [];
+  return fs
+    .readdirSync(directory)
+    .filter((file) => /\.ya?ml$/.test(file))
+    .map((file) => Album.parse(loadYaml(`albums/${file}`)))
     .filter(
-      (environment) =>
-        isVisible(environment.review) &&
-        environment.images.some((imageId) => {
-          const media = mediaAll.find((item) => item.id === imageId);
-          return (
-            media !== undefined &&
-            isVisible(media.review) &&
-            media.usageApproved
-          );
-        }),
+      (album) =>
+        album.photoIds.includes(album.coverId) && getMediaById(album.coverId),
     )
-    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id))
-    .map(project);
+    .sort((a, b) => b.date.localeCompare(a.date) || a.id.localeCompare(b.id));
 };
 
-/** Concatenação de fotos dos ambientes na ordem editorial, sem duplicar. */
-export const getEnvironmentPhotos = (): PublicMedia[] => {
-  const environments = getEnvironments();
-  const mediaAll = loadMedia();
-  const seen = new Set<string>();
-  const photos: PublicMedia[] = [];
-  for (const env of environments) {
-    for (const imgId of env.images) {
-      if (seen.has(imgId)) continue;
-      seen.add(imgId);
-      const m = mediaAll.find((mm) => mm.id === imgId);
-      if (m && isVisible(m.review) && m.usageApproved) {
-        photos.push(project(m));
-      }
-    }
-  }
-  return photos;
-};
+export const getAlbum = (slug: string): PublicAlbum | null =>
+  getAlbums().find((album) => album.slug === slug) ?? null;
 
-/* ------------------------------------------------------------------ */
-/*  PageCopy                                                          */
-/* ------------------------------------------------------------------ */
+export const getAlbumPhotos = (slug: string) =>
+  (getAlbum(slug)?.photoIds ?? [])
+    .map(getMediaById)
+    .filter((media) => media !== null);
+
+export const getEnvironments = (): PublicEnvironment[] =>
+  collection('environments.yaml', Environment)
+    .filter((environment) => environment.images.some((id) => getMediaById(id)))
+    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
+
+export const getEnvironmentPhotos = () =>
+  [...new Set(getEnvironments().flatMap((environment) => environment.images))]
+    .map(getMediaById)
+    .filter((media) => media !== null);
 
 export const getPageCopy = (id: string): PublicPageCopy | null => {
-  try {
-    const raw = loadYaml(`pages/${id}.yaml`) as unknown;
-    if (!raw) return null;
-    const parsed = (id === 'home' ? HomePageCopySchema : PageCopySchema).parse(
-      raw,
-    );
-    if (!isVisible(parsed.review)) return null;
-    return project(parsed);
-  } catch {
-    return null;
-  }
+  const file = `pages/${id}.yaml`;
+  if (!fs.existsSync(path.join(contentRoot, file))) return null;
+  return (id === 'home' ? HomePageCopy : PageCopy).parse(loadYaml(file));
 };
 
-/** Copy da home, incluindo a referência editorial opcional do Hero. */
-export const getHomePageCopy = (): PublicHomePageCopy | null => {
-  const copy = getPageCopy('home');
-  return copy as PublicHomePageCopy | null;
-};
+export const getHomePageCopy = (): PublicHomePageCopy | null =>
+  getPageCopy('home') as PublicHomePageCopy | null;
 
-/** Banners ativos, limitados a um por chamada e projetados sem metadados. */
-export const getSeasonalBanners = (): PublicSeasonalBanner[] => {
-  const raw = loadYaml('seasonal-banners.yaml') as unknown;
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .map((entry) => SeasonalBannerSchema.parse(entry))
-    .filter((banner) => banner.active && isVisible(banner.review))
-    .slice(0, 1)
-    .map(project);
-};
-
-/* ------------------------------------------------------------------ */
-/*  FAQ                                                               */
-/* ------------------------------------------------------------------ */
+export const getSeasonalBanners = (): PublicSeasonalBanner[] =>
+  collection('seasonal-banners.yaml', SeasonalBanner)
+    .filter((banner) => banner.active)
+    .slice(0, 1);
 
 export const getFaqs = (
   group: 'ensino' | 'atividades' | 'visita',
-): PublicFAQ[] => {
-  const raw = loadYaml('faqs.yaml') as unknown;
-  if (!Array.isArray(raw)) return [];
-  const all = raw.map((f) => FAQSchema.parse(f));
-  return all
-    .filter((f) => f.group === group && isVisible(f.review))
-    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id))
-    .map(project);
-};
+): PublicFAQ[] =>
+  collection('faqs.yaml', FAQ)
+    .filter((faq) => faq.group === group)
+    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
 
-/* ------------------------------------------------------------------ */
-/*  Privacidade                                                       */
-/* ------------------------------------------------------------------ */
-
-export type PrivacyDoc = {
-  body: string;
-};
-
-export const getPrivacyDoc = (): PrivacyDoc => {
-  const raw = fs.readFileSync(path.join(contentRoot, 'privacidade.md'), 'utf8');
-  // Frontmatter: ---\n...\n---\n
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
-  if (!match) {
-    return { body: '' };
-  }
-  const frontmatter = yaml.load(match[1]!);
-  const parsed = PrivacyFrontmatter.safeParse(frontmatter);
-  if (!parsed.success || !isVisible(parsed.data.review)) {
-    return { body: '' };
-  }
-  const body = (match[2] ?? '').trim();
-  return { body };
-};
+export type PrivacyDoc = { body: string };
+export const getPrivacyDoc = (): PrivacyDoc => ({
+  body: fs
+    .readFileSync(path.join(contentRoot, 'privacidade.md'), 'utf8')
+    .trim(),
+});

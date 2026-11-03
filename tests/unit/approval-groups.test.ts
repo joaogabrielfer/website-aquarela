@@ -66,19 +66,13 @@ describe('conquistas agrupadas por pessoa e ano', () => {
   });
 
   it('destaca até três cards sem acrescentar conquistas não selecionadas', () => {
-    const review = {
-      status: 'approved',
-      source: 'Fixture sintética de QA',
-      reviewedAt: '2026-10-30',
-      reviewedBy: 'qa-sintetico',
-    };
     const records = [
       result({ id: 'qa-a', featured: true }),
       result({ id: 'qa-b', featured: true }),
       result({ id: 'qa-c', featured: false }),
       result({ id: 'qa-d', personId: 'qa-pessoa-2', featured: true }),
       result({ id: 'qa-e', personId: 'qa-pessoa-3', featured: true }),
-    ].map((record) => ({ ...record, review, publicationAuthorized: true }));
+    ];
     const originalRead = fs.readFileSync;
     vi.spyOn(fs, 'readFileSync').mockImplementation((...args) => {
       if (String(args[0]).endsWith('/content/approvals.yaml'))
@@ -102,25 +96,11 @@ describe('conquistas agrupadas por pessoa e ano', () => {
     ).toHaveLength(2);
   });
 
-  it('filtra status e autorização antes de agrupar e contar no público', () => {
-    const review = {
-      status: 'approved',
-      source: 'Fixture sintética de QA',
-      reviewedAt: '2026-10-30',
-      reviewedBy: 'qa-sintetico',
-    };
+  it('agrupa todos os registros do arquivo, sem estados editoriais', () => {
     const records = [
-      { ...result({ id: 'qa-publica' }), publicationAuthorized: true, review },
-      {
-        ...result({ id: 'qa-observada' }),
-        publicationAuthorized: true,
-        review: { ...review, status: 'observed' },
-      },
-      {
-        ...result({ id: 'qa-sem-permissao' }),
-        publicationAuthorized: false,
-        review,
-      },
+      result({ id: 'qa-a' }),
+      result({ id: 'qa-b' }),
+      result({ id: 'qa-c' }),
     ];
     const originalRead = fs.readFileSync;
     vi.spyOn(fs, 'readFileSync').mockImplementation((...args) => {
@@ -131,10 +111,6 @@ describe('conquistas agrupadas por pessoa e ano', () => {
     const groups = getApprovalsGrouped();
     expect(groups).toHaveLength(1);
     expect(groups[0]?.items).toHaveLength(1);
-    expect(groups[0]?.items[0]?.achievements.map((item) => item.id)).toEqual([
-      'qa-publica',
-    ]);
-    expect(JSON.stringify(groups)).not.toContain('qa-observada');
-    expect(JSON.stringify(groups)).not.toContain('reviewedBy');
+    expect(groups[0]?.items[0]?.achievements).toHaveLength(3);
   });
 });

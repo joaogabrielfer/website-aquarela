@@ -66,9 +66,8 @@ test('wheel interpola o deslocamento em vez de saltar ao destino', async ({
 
 test('flag de build desativada não monta a ilha', async ({ page }) => {
   test.skip(
-    process.env.ENABLE_SMOOTH_SCROLL !== 'false' ||
-      test.info().project.name !== 'public',
-    'requer build público com ENABLE_SMOOTH_SCROLL=false',
+    process.env.ENABLE_SMOOTH_SCROLL !== 'false',
+    'requer ENABLE_SMOOTH_SCROLL=false',
   );
   await page.goto('/');
   await expect(page.locator('html')).not.toHaveAttribute(

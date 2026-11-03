@@ -38,8 +38,7 @@ body {
   flex: 1 0 auto;
 }
 .site-header,
-.site-footer,
-.preview-banner {
+.site-footer {
   flex-shrink: 0;
 }
 a {

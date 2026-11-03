@@ -1,12 +1,10 @@
 ---
 import { navigation } from '../lib/copy';
-import { BUILD_MODE } from '../lib/env';
 import { getPublicSchool } from '../lib/content/school';
 import { formatPhone, whatsappUrl } from '../lib/urls';
 
 const school = getPublicSchool();
-const isPreview = BUILD_MODE === 'editorial-preview';
-const hasApprovedContact = Boolean(
+const hasContact = Boolean(
   school.phoneE164 ||
   school.whatsappE164 ||
   school.mapUrl ||
@@ -33,7 +31,7 @@ const hasApprovedContact = Boolean(
     <div>
       <strong>Contato</strong>
       {
-        isPreview && !hasApprovedContact ? (
+        !hasContact ? (
           <p class="pending">Contato aguardando confirmação</p>
         ) : (
           <>

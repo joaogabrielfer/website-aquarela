@@ -1,9 +1,6 @@
 ---
-import EmptyState from './EmptyState.astro';
 import AssetPlaceholder from './AssetPlaceholder.astro';
 import Button from './Button.astro';
-import { BUILD_MODE } from '../lib/env';
-import { empty } from '../lib/copy';
 
 interface Props {
   slug: string;
@@ -31,96 +28,85 @@ const {
   tone = 'white',
 } = Astro.props;
 
-// Conteúdo publicado exige descrição aprovada e ao menos duas experiências.
-// Segmento incompleto mantém âncora/título com estado neutro (D06).
-const hasContent = Boolean(description && experiences.length >= 2);
-const isPreview = BUILD_MODE === 'editorial-preview';
-// Prévia demonstrativa (D10/C12): mesma composição, sem EmptyState.
-// Usa descrição real quando existir e exibe experiências reais quando
-// existirem; o texto sintético nunca conta como experiência.
-const showDemo = !hasContent && isPreview;
 const hasMeta = grades || ages || shifts.length > 0;
 const showImage = imageUrl !== null && imageUrl !== undefined;
-const showPlaceholder = isPreview && !showImage;
 const ctaHref = `/visite?interesse=${slug}`;
 const demoText =
   'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure dolor reprehenderit voluptate velit esse cillum fugiat nulla pariatur excepteur sint occaecat cupidatat non proident';
-const displayDescription = description ?? (showDemo ? demoText : null);
-const isDemoText = showDemo && !description;
+const displayDescription = description || demoText;
+const isDemoText = !description;
 ---
 
 <section id={slug} class:list={['segment-detail', `segment-detail--${tone}`]}>
   <div class="container segment-detail-inner">
-    {
-      hasContent || showDemo ? (
-        <div class="segment-detail-layout">
-          <h2 class="segment-detail-title">{name}</h2>
-          <div class="segment-detail-content">
-            {isDemoText && (
-              <p class="segment-detail-demo-label">
-                Texto demonstrativo — conteúdo em preparação
-              </p>
-            )}
-            {displayDescription && (
-              <p class="segment-detail-desc">{displayDescription}</p>
-            )}
-            {experiences.length > 0 && (
-              <ul class="segment-detail-experiences">
-                {experiences.map((exp) => (
-                  <li>{exp}</li>
-                ))}
-              </ul>
-            )}
-            {hasMeta && (
-              <div class="segment-detail-meta">
-                {grades && (
-                  <p>
-                    <strong>Séries:</strong> {grades}
-                  </p>
-                )}
-                {ages && (
-                  <p>
-                    <strong>Idades:</strong> {ages}
-                  </p>
-                )}
-                {shifts.length > 0 && (
-                  <p>
-                    <strong>Turnos:</strong> {shifts.join(', ')}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-          <div class="segment-detail-action">
-            <Button href={ctaHref} variant="primary">
-              Conversar sobre esta etapa
-            </Button>
-          </div>
-          <div class="segment-detail-media">
-            {showImage ? (
-              <img
-                class="segment-detail-photo"
-                src={imageUrl}
-                alt={imageAlt || name}
-                width="600"
-                height="450"
-                loading="lazy"
-              />
-            ) : showPlaceholder ? (
-              <AssetPlaceholder aspectRatio="4/3" />
-            ) : null}
-          </div>
-        </div>
-      ) : (
-        <div class="segment-detail-empty">
-          <h2 class="segment-detail-title">{name}</h2>
-          <EmptyState title={empty.segment[0]} headingLevel="h3" />
-          <Button href={ctaHref} variant="primary">
-            Conversar sobre esta etapa
-          </Button>
-        </div>
-      )
-    }
+    <div class="segment-detail-layout">
+      <h2 class="segment-detail-title">{name}</h2>
+      <div class="segment-detail-content">
+        {
+          isDemoText && (
+            <p class="segment-detail-demo-label">
+              Texto demonstrativo — conteúdo em preparação
+            </p>
+          )
+        }
+        {
+          displayDescription && (
+            <p class="segment-detail-desc">{displayDescription}</p>
+          )
+        }
+        {
+          experiences.length > 0 && (
+            <ul class="segment-detail-experiences">
+              {experiences.map((exp) => (
+                <li>{exp}</li>
+              ))}
+            </ul>
+          )
+        }
+        {
+          hasMeta && (
+            <div class="segment-detail-meta">
+              {grades && (
+                <p>
+                  <strong>Séries:</strong> {grades}
+                </p>
+              )}
+              {ages && (
+                <p>
+                  <strong>Idades:</strong> {ages}
+                </p>
+              )}
+              {shifts.length > 0 && (
+                <p>
+                  <strong>Turnos:</strong> {shifts.join(', ')}
+                </p>
+              )}
+            </div>
+          )
+        }
+      </div>
+      <div class="segment-detail-action">
+        <Button href={ctaHref} variant="primary">
+          Conversar sobre esta etapa
+        </Button>
+      </div>
+      <div class="segment-detail-media">
+        {
+          showImage ? (
+            <img
+              class="segment-detail-photo"
+              src={imageUrl}
+              alt={imageAlt || name}
+              width="600"
+              height="450"
+              loading="lazy"
+            />
+          ) : (
+            <AssetPlaceholder aspectRatio="4/3" />
+          )
+        }
+      </div>
+    </div>
   </div>
 </section>
 
@@ -215,13 +201,6 @@ const isDemoText = showDemo && !description;
     aspect-ratio: 4/3;
     border-radius: var(--radius-media);
   }
-  .segment-detail-empty {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-    align-items: flex-start;
-  }
-
   /* Tablet */
   @media (min-width: 768px) {
     .segment-detail {

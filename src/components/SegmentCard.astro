@@ -1,6 +1,5 @@
 ---
 import AssetPlaceholder from './AssetPlaceholder.astro';
-import { BUILD_MODE } from '../lib/env';
 
 interface Props {
   slug: string;
@@ -34,9 +33,9 @@ const href = `/ensino#${slug}`;
           loading="lazy"
         />
       </div>
-    ) : BUILD_MODE === 'editorial-preview' ? (
+    ) : (
       <AssetPlaceholder aspectRatio="4/3" />
-    ) : null
+    )
   }
   <div class="card-body">
     <h3 class="card-title">{name}</h3>
