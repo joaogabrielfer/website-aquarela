@@ -19,8 +19,14 @@ Hospedagem no Cloudflare Pages; produção na branch `main`.
   hashes de design, escolha de modo editorial ou aprovação por campo de conteúdo.
 - O site da branch deve ser o mesmo que chegará à `main`. Há um único build e
   uma única seleção de conteúdo. URLs de desenvolvimento recebem `noindex`.
-- Execute diretamente por padrão. Use ferramentas de coordenação ou subagentes
-  somente quando a tarefa justificar; não exija provider, modelo ou CLI específicos.
+- Use o T3 Code para implementar as próximas tarefas. O coordenador inspeciona o
+  repositório, prepara o objetivo e acompanha a execução em threads do projeto
+  pela CLI `~/.t3/bin/t3` (`thread list`, `start`, `send` e `show`).
+- Reutilize a thread responsável nas iterações da mesma tarefa. Para uma nova
+  tarefa, crie uma thread focada com caminho do projeto, objetivo, escopo e
+  critérios de aceite; mantenha a branch/worktree identificada.
+- O coordenador revisa o diff e os checks antes de entregar o PR e o preview.
+  Se o T3 estiver indisponível, informe o impedimento antes de substituir o fluxo.
 
 ## Implementação
 
