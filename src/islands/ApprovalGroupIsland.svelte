@@ -49,7 +49,8 @@
   .approval-grid {
     display: grid;
     grid-template-columns: 1fr;
-    align-items: start;
+    grid-auto-rows: 1fr;
+    align-items: stretch;
     gap: var(--space-4);
   }
   @media (min-width: 768px) {

@@ -154,7 +154,7 @@ const proposal = getProposal();
       <section class="section-conquistas" id="conquistas">
         <div class="container">
           <SectionHeading title="Histórias e conquistas" />
-          <div class="card-grid card-grid--3">
+          <div class="card-grid card-grid--3 approval-home-grid">
             {featuredApprovals.map((app) => (
               <ApprovalCard
                 displayName={app.displayName}
@@ -233,6 +233,10 @@ const proposal = getProposal();
     grid-template-columns: 1fr;
     gap: var(--space-4);
     margin-top: var(--space-6);
+  }
+  .approval-home-grid {
+    grid-auto-rows: 1fr;
+    align-items: stretch;
   }
   .home-gallery-preview {
     margin-top: var(--space-6);
