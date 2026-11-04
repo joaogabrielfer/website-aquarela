@@ -4,7 +4,6 @@ import TextLink from './TextLink.astro';
 import { getPublicSchool } from '../lib/content/school';
 import { whatsappUrl, telUrl } from '../lib/urls';
 import type { InterestOption } from '../lib/interest';
-import { BUILD_MODE } from '../lib/env';
 
 interface Props {
   segments?: InterestOption[];
@@ -19,7 +18,6 @@ const interestOptions = JSON.stringify({
 });
 
 const school = getPublicSchool();
-const isPreview = BUILD_MODE === 'editorial-preview';
 
 const hasPhone = school.phoneE164 !== null;
 const hasWhatsapp = school.whatsappE164 !== null;
@@ -44,7 +42,7 @@ const hasBothGroups = hasActions && hasInfo;
     </div>
 
     {
-      isPreview && !hasAnyContact ? (
+      !hasAnyContact ? (
         <div class="contact-panel-pending">
           <p>Contato aguardando confirmação</p>
         </div>

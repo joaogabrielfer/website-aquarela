@@ -1,80 +1,52 @@
-- {
-    id: educacao-infantil,
-    slug: educacao-infantil,
-    name: Educação Infantil,
-    order: 1,
-    summary: null,
-    description: null,
-    grades: null,
-    ages: null,
-    shifts: ['Manhã: 07:00 às 11:00', 'Tarde: 13:00 às 17:00'],
-    experiences: [],
-    imageId: null,
-    review:
-      {
-        status: observed,
-        source: 'Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026',
-        reviewedAt: null,
-        reviewedBy: null,
-      },
-  }
-- {
-    id: fundamental-anos-iniciais,
-    slug: fundamental-anos-iniciais,
-    name: 'Ensino Fundamental — Anos Iniciais',
-    order: 2,
-    summary: null,
-    description: null,
-    grades: null,
-    ages: null,
-    shifts: ['Manhã: 07:00 às 11:00', 'Tarde: 13:00 às 17:00'],
-    experiences: [],
-    imageId: null,
-    review:
-      {
-        status: observed,
-        source: 'Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026',
-        reviewedAt: null,
-        reviewedBy: null,
-      },
-  }
-- {
-    id: fundamental-anos-finais,
-    slug: fundamental-anos-finais,
-    name: 'Ensino Fundamental — Anos Finais',
-    order: 3,
-    summary: null,
-    description: null,
-    grades: null,
-    ages: null,
-    shifts: ['Manhã: 07:00 às 11:45', 'Tarde: 13:00 às 17:45'],
-    experiences: [],
-    imageId: null,
-    review:
-      {
-        status: observed,
-        source: 'Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026',
-        reviewedAt: null,
-        reviewedBy: null,
-      },
-  }
-- {
-    id: ensino-medio,
-    slug: ensino-medio,
-    name: Ensino Médio,
-    order: 4,
-    summary: null,
-    description: null,
-    grades: null,
-    ages: null,
-    shifts: ['Manhã: 07:00 às 12:45', 'Tarde: 13:00 às 17:45'],
-    experiences: [],
-    imageId: null,
-    review:
-      {
-        status: observed,
-        source: 'Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026',
-        reviewedAt: null,
-        reviewedBy: null,
-      },
-  }
+- id: educacao-infantil
+  slug: educacao-infantil
+  name: Educação Infantil
+  order: 1
+  summary: null
+  description: null
+  grades: null
+  ages: null
+  shifts:
+    - 'Manhã: 07:00 às 11:00'
+    - 'Tarde: 13:00 às 17:00'
+  experiences: []
+  imageId: null
+- id: fundamental-anos-iniciais
+  slug: fundamental-anos-iniciais
+  name: Ensino Fundamental — Anos Iniciais
+  order: 2
+  summary: null
+  description: null
+  grades: null
+  ages: null
+  shifts:
+    - 'Manhã: 07:00 às 11:00'
+    - 'Tarde: 13:00 às 17:00'
+  experiences: []
+  imageId: null
+- id: fundamental-anos-finais
+  slug: fundamental-anos-finais
+  name: Ensino Fundamental — Anos Finais
+  order: 3
+  summary: null
+  description: null
+  grades: null
+  ages: null
+  shifts:
+    - 'Manhã: 07:00 às 11:45'
+    - 'Tarde: 13:00 às 17:45'
+  experiences: []
+  imageId: null
+- id: ensino-medio
+  slug: ensino-medio
+  name: Ensino Médio
+  order: 4
+  summary: null
+  description: null
+  grades: null
+  ages: null
+  shifts:
+    - 'Manhã: 07:00 às 12:45'
+    - 'Tarde: 13:00 às 17:45'
+  experiences: []
+  imageId: null

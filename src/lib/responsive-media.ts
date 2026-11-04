@@ -1,11 +1,11 @@
-const variantWidths = [480, 768, 1200, 1600] as const;
+const variantWidths = [480, 768, 1200, 1600, 2400] as const;
 
 export const responsiveSrcset = (
   src: string | null | undefined,
   intrinsicWidth: number | null | undefined,
 ) => {
   if (!src || !intrinsicWidth) return undefined;
-  const match = src.match(/^(.*)-1600\.webp$/);
+  const match = src.match(/^(.*)-(1600|2400)\.webp$/);
   if (!match) return undefined;
   const prefix = match[1];
   return variantWidths

@@ -1,65 +1,51 @@
-# Website Aquarela
+# Aquarela Colégio e Curso
 
-Documentação para o site institucional do Aquarela Colégio e Curso.
+Site institucional estático em Astro, Svelte e TypeScript, hospedado no Cloudflare Pages.
 
 ## Desenvolvimento
 
-Pré-requisitos: Node.js >=22 e pnpm 11.3. Instale as dependências com `pnpm install`.
+O agente implementa em uma branch de tarefa e abre um PR contra `main`. A revisão
+visual acontece no preview do Cloudflare. Após o merge, o mesmo conteúdo e layout
+vão para produção. Não há branch de integração `preview` nem modo editorial.
+Instruções para agentes: [AGENTS.md](./AGENTS.md).
 
-- `pnpm dev` — servidor local
-- `pnpm build` / `pnpm preview` — build público e pré-visualização
-- `pnpm build:cloudflare` — escolhe o modo pelo nome da branch no Pages
-- `pnpm build:preview` — prévia editorial explícita
-- `pnpm build:release` — verifica bloqueios editoriais e tenta o build de release
-- `pnpm check` — verificação Astro/TypeScript
-- `pnpm check-content` — validação dos dados editoriais
-- `pnpm check-release` — bloqueios de lançamento
-- `pnpm test` — testes unitários
-- `pnpm lint` — ESLint
-- `pnpm format` / `pnpm format:check` — Prettier
+## Conteúdo e estrutura
 
-## Contrato congelado para implementação
+- `content/`: informações do colégio, textos das páginas, ambientes e aprovações.
+- `assets/`: imagens originais fornecidas.
+- `public/`: fontes locais, imagens otimizadas e demais arquivos servidos.
+- `src/`: páginas Astro, componentes, ilhas Svelte e estilos compartilhados.
+- `tests/`: testes unitários e de navegação/acessibilidade.
 
-**AQ-WEB-1.1.3**, de 09/09/2026. Começar por estes cinco arquivos, nesta ordem:
+Os arquivos em `content/` definem diretamente o conteúdo do site em qualquer
+branch. Não há estados de aprovação, campos de revisor nem filtros por ambiente.
+Use `null`, listas vazias ou textos claramente identificados quando faltar material;
+não invente informações. Acompanhe os insumos pendentes em [user-to-do.md](./user-to-do.md).
 
-1. [design/design-spec.md](./design/design-spec.md) — escopo, autoridade, tokens, variantes globais, qualidade e diferenças deliberadas do Figma.
-2. [design/routes.md](./design/routes.md) — rotas, ordem de seções, copy funcional e destinos de todas as ações.
-3. [design/components.md](./design/components.md) — anatomia, estados, teclado, foco, menu, cards e lightbox.
-4. [design/responsive.md](./design/responsive.md) — breakpoints, valores exatos e matriz de revisão visual.
-5. [design/content-model.md](./design/content-model.md) — schemas, origem/aprovação, preview, dados ausentes e bloqueios de publicação.
+## Comandos
 
-Os hashes da baseline estão em [design-contract.sha256](./design-contract.sha256). Verificar no diretório do projeto com `sha256sum -c design-contract.sha256`. O manifesto detecta alterações posteriores; não é certificação da implementação nem trava de filesystem. Revisões autorizadas precisam atualizar versão e manifesto.
+Requer Node.js 22+ e pnpm na versão de `package.json`. O agente prepara o ambiente;
+o usuário não precisa desenvolver localmente.
 
-## Arquitetura de agentes
+```sh
+pnpm install --frozen-lockfile
+pnpm dev
+pnpm build
+pnpm preview
+```
 
-O projeto usa GPT-5.6 Sol no Codex como lead de arquitetura, integração e revisão final. Implementações delegadas usam perfis Luna e Spark via Codex/OpenCode Go, com escolha de franquia para cada Luna, gestão de limites, nesting restrito e posse exclusiva de arquivos. Leads mantêm commits locais incrementais por fatia de feature, em inglês e no padrão Conventional Commit usado pelo T3 Code; `push` continua manual. O protocolo completo e os comandos `opencode run`/`serve` estão em [docs/agent-architecture.md](./docs/agent-architecture.md).
+Verificações: `pnpm lint`, `pnpm check`, `pnpm check-content`, `pnpm test`,
+`pnpm format:check` e `pnpm test:e2e`. Os testes de navegador usam um build isolado
+com fixtures próprias; essas rotas não entram no build normal.
 
-## Referências históricas e assets
+## Cloudflare Pages
 
-- [DESIGN.md](./DESIGN.md) — estudo anterior: pesquisa, crítica do protótipo, informações públicas e mapa expandido de referências Figma. Subordinado ao contrato congelado.
-- [prototipo-figma.md](./prototipo-figma.md) — registro histórico do que foi criado na primeira etapa; não substitui as recomendações posteriores do DESIGN.md.
-- [Logo original](./assets/logo-aquarela.PNG) — cópia sem alterações do arquivo fornecido; o original permanece em Downloads.
-- [Arquivo no Figma](https://www.figma.com/design/vj8pbFXTeMZiDMFQPRpwqA) — exploração visual parcial das cinco telas iniciais.
+- Produção: `main`, em [website-aquarela.pages.dev](https://website-aquarela.pages.dev).
+- Build: `pnpm build:cloudflare` (alias do build único); saída: `dist`.
+- Previews habilitados para branches de tarefa; obtenha a URL no check do PR.
+- `SITE_URL=https://website-aquarela.pages.dev` na produção; previews usam
+  `CF_PAGES_URL`. Branches diferentes de `main` recebem `noindex`.
+- `ENABLE_SMOOTH_SCROLL=false` desliga o scroll suave opcional.
 
-Fotos, oferta detalhada, dados de aprovações e informações complementares ainda precisam ser fornecidos ou confirmados pelo colégio. O contrato permite implementar e testar a estrutura sem inventar esses dados. O `build:release` permanece bloqueado até identidade/localidade, copy da home, quatro segmentos com mídia elegível, contato, privacidade e a referência elegível da foto principal do Hero serem aprovados. Sem `PageCopy` approved, o público usa H1 neutro e não recebe meta description; o preview editorial mostra copy pendente e a fixture sintética de SeasonalBanner.
-
-## Deploy e entregas do responsável
-
-O hosting planejado é Cloudflare Pages, com build estático em `dist`, sem
-Functions ou Workers. O checklist detalhado do dashboard, as decisões ainda
-abertas e o formato de entrega de textos, fotos e aprovações estão em
-[user-to-do.md](./user-to-do.md).
-
-O Pages executa `pnpm build:cloudflare`: `main` publica o modo normal;
-`preview`, `phase*` e `editorial*` publicam preview editorial; as demais
-branches geram preview técnico com conteúdo público. A branch `preview` mantém o
-link estável enviado ao cliente e recebe somente integrações escolhidas.
-
-Pull requests podem executar o workflow `quality`, que valida lint, tipos,
-conteúdo, testes, formatação e o build público. Esse workflow não publica o site.
-O deploy automático de produção deve permanecer desativado até os bloqueios de
-`pnpm build:release` serem resolvidos.
-
-## Prompt de entrega ao agente implementador
-
-> Implemente o site institucional Aquarela conforme o contrato AQ-WEB-1.1.3 nos cinco arquivos de `design/`. Leia todos antes de programar e verifique `design-contract.sha256`. O contrato é a fonte normativa; DESIGN.md é pesquisa histórica e o Figma é uma referência visual parcial. Preserve as divergências intencionais especificadas. Não invente dados nem implemente recursos P1 fora da baseline; SeasonalBanner V1 é a única revisão autorizada. Use os modelos e estados de preview/publicação previstos. Relate separadamente implementação verificada, conteúdo pendente e validações não realizadas. Não publique automaticamente.
+O planejamento antigo está em [docs/archive/](./docs/archive/). É referência
+histórica, sem contrato, verificação de hashes ou fases obrigatórias.

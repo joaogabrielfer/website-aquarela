@@ -1,27 +1,20 @@
 ---
-import { BUILD_MODE } from '../lib/env';
-
 interface Props {
   aspectRatio?: string;
   class?: string;
 }
 
 const { aspectRatio = '4/3', class: className } = Astro.props;
-const showPlaceholder = BUILD_MODE === 'editorial-preview';
 ---
 
-{
-  showPlaceholder && (
-    <div
-      class:list={['asset-placeholder', className]}
-      style={`aspect-ratio: ${aspectRatio}`}
-      role="img"
-      aria-label="Foto oficial pendente"
-    >
-      <span class="asset-placeholder-label">Foto oficial pendente</span>
-    </div>
-  )
-}
+<div
+  class:list={['asset-placeholder', className]}
+  style={`aspect-ratio: ${aspectRatio}`}
+  role="img"
+  aria-label="Foto oficial pendente"
+>
+  <span class="asset-placeholder-label">Foto oficial pendente</span>
+</div>
 
 <style>
   .asset-placeholder {

@@ -56,11 +56,41 @@ test('clique no backdrop fecha o menu', async ({ page }) => {
   const backdrop = page.locator('.backdrop');
   await expect(backdrop).toBeVisible();
   // Clica na faixa visível do backdrop acima do painel (top 80) e abaixo da
-  // faixa "Prévia" do preview (~36px): y=60 atinge backdrop nos dois modos.
+  // y=60 atinge o backdrop fora do painel.
   await backdrop.click({ position: { x: 5, y: 60 } });
   await expect(
     page.getByRole('dialog', { name: 'Menu principal' }),
   ).toHaveCount(0);
+});
+
+test('fechar pelo topo preserva scroll e foco após aberturas repetidas', async ({
+  page,
+}) => {
+  await page.goto('/ensino');
+  await page.evaluate(() => window.scrollTo({ top: 650, behavior: 'instant' }));
+  const before = await page.evaluate(() => window.scrollY);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const trigger = page.getByRole('button', { name: 'Abrir menu' });
+    const bounds = await trigger.boundingBox();
+    expect(bounds).not.toBeNull();
+    // Clique real no header sticky: locator.click pode rolar o documento
+    // para a posição original do botão antes de despachar o gesto.
+    await page.mouse.click(
+      bounds!.x + bounds!.width / 2,
+      bounds!.y + bounds!.height / 2,
+    );
+    await expect(
+      page.getByRole('dialog', { name: 'Menu principal' }),
+    ).toBeVisible();
+    await page.locator('.backdrop').click({ position: { x: 5, y: 20 } });
+    await expect(
+      page.getByRole('dialog', { name: 'Menu principal' }),
+    ).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+    expect(await page.evaluate(() => window.scrollY)).toBeCloseTo(before, 0);
+    await page.waitForTimeout(250);
+    expect(await page.evaluate(() => window.scrollY)).toBeCloseTo(before, 0);
+  }
 });
 
 test('redimensionar 1099→1100 com foco no painel mantém foco visível', async ({

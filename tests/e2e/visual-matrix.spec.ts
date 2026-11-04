@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-const output = 'qa/phase-3/final';
+const output = 'test-results/visual';
 const routes = [
   ['home', '/'],
   ['ensino', '/ensino'],
@@ -46,7 +46,6 @@ for (const viewport of [
     test(`evidência visual ${name} ${viewport.width}x${viewport.height}`, async ({
       page,
     }) => {
-      test.skip(test.info().project.name !== 'preview', 'matriz editorial');
       await page.setViewportSize(viewport);
       await page.goto(route);
       await waitForStablePage(page);
@@ -70,7 +69,6 @@ for (const viewport of [
     test(`evidência complementar ${name} ${viewport.width}x${viewport.height}`, async ({
       page,
     }) => {
-      test.skip(test.info().project.name !== 'preview', 'matriz editorial');
       await page.setViewportSize(viewport);
       await page.goto(route);
       await waitForStablePage(page);
@@ -90,7 +88,6 @@ for (const viewport of [
   test(`evidência extrema home ${viewport.width}x${viewport.height}`, async ({
     page,
   }) => {
-    test.skip(test.info().project.name !== 'preview', 'matriz editorial');
     await page.setViewportSize(viewport);
     await page.goto('/');
     await waitForStablePage(page);
@@ -103,7 +100,6 @@ for (const viewport of [
 }
 
 test('evidência do menu em 1099 e cabeçalho em 1100', async ({ page }) => {
-  test.skip(test.info().project.name !== 'preview', 'matriz editorial');
   await page.setViewportSize({ width: 1099, height: 800 });
   await page.goto('/ensino');
   await page.getByRole('button', { name: 'Abrir menu' }).click();
@@ -132,7 +128,6 @@ const svg = (width: number, height: number, color: string) =>
 test('evidência do lightbox sintético em retrato, paisagem e erro', async ({
   page,
 }) => {
-  test.skip(test.info().project.name !== 'preview', 'matriz editorial');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/nosso-espaco');
   await expect(page.locator('.lightbox-host')).toBeAttached();

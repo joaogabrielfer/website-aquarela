@@ -12,6 +12,27 @@ test('movimento reduzido mantém conteúdo e navegação operáveis', async ({
   await expect(dialog).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
+  await expect(page.locator('html')).not.toHaveAttribute(
+    'data-smooth-scroll',
+    'active',
+  );
+});
+
+test('ponteiro coarse mantém scroll nativo', async ({ page }) => {
+  await page.addInitScript(() => {
+    const original = window.matchMedia;
+    window.matchMedia = (query: string) => {
+      const result = original.call(window, query);
+      if (query === '(pointer: coarse)')
+        return Object.defineProperty(result, 'matches', { value: true });
+      return result;
+    };
+  });
+  await page.goto('/');
+  await expect(page.locator('html')).not.toHaveAttribute(
+    'data-smooth-scroll',
+    'active',
+  );
 });
 
 test('layout permanece utilizável na aproximação de zoom 200%', async ({

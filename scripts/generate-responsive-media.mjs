@@ -17,6 +17,19 @@ const sources = [
   ['sala-bancas-vermelhas.png', 'sala-bancas-vermelhas'],
   ['studio-danca.png', 'studio-danca'],
   ['sala-infantil.png', 'sala-infantil'],
+  ['piscina-angulo-principal.jpg', 'piscina-angulo-principal'],
+  ['piscina-angulo-complementar.jpg', 'piscina-angulo-complementar'],
+  ['quadra-coberta-angulo-principal.jpg', 'quadra-coberta-angulo-principal'],
+  [
+    'quadra-coberta-angulo-complementar.jpg',
+    'quadra-coberta-angulo-complementar',
+  ],
+  ['sala-infantil-criancas-estudo.png', 'sala-infantil-criancas-estudo'],
+  [
+    'sala-infantil-mesas-coloridas-tablets.png',
+    'sala-infantil-mesas-coloridas-tablets',
+  ],
+  ['sala-bancas-vermelhas-estudo.png', 'sala-bancas-vermelhas-estudo'],
 ];
 
 const sourceDir = path.resolve('assets/photos');
@@ -28,7 +41,8 @@ for (const [file, slug] of sources) {
   const metadata = await sharp(input).metadata();
   if (!metadata.width) throw new Error(`Largura ausente em ${file}`);
 
-  for (const width of widths.filter((value) => value <= metadata.width)) {
+  const outputWidths = slug === 'hero-colegio' ? [...widths, 2400] : widths;
+  for (const width of outputWidths.filter((value) => value <= metadata.width)) {
     const output = path.join(outputDir, `${slug}-${width}.webp`);
     await sharp(input)
       .rotate()

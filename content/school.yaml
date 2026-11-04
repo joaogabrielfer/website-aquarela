@@ -1,53 +1,15 @@
-name:
-  {
-    value: Aquarela Colégio e Curso,
-    review:
-      &review {
-        status: observed,
-        source: 'https://www.instagram.com/aquarelacolegioecurso/',
-        reviewedAt: null,
-        reviewedBy: null,
-      },
-  }
-tagline:
-  { value: 'Presente em todos os momentos da sua vida!', review: *review }
-phoneE164: { value: '+5581982177132', review: *review }
-whatsappE164:
-  {
-    value: '+5581982177132',
-    review:
-      {
-        status: observed,
-        source: 'Confirmação direta do responsável nesta conversa em 09/09/2026',
-        reviewedAt: null,
-        reviewedBy: null,
-      },
-  }
-locality: { value: Paulista/PE, review: *review }
+name: Aquarela Colégio e Curso
+tagline: Presente em todos os momentos da sua vida!
+phoneE164: '+5581982177132'
+whatsappE164: '+5581982177132'
+locality: Paulista/PE
 address:
-  {
-    value:
-      {
-        street: Rua Araxá,
-        neighborhood: Loteamento Conceição,
-        city: Paulista,
-        state: PE,
-        number: null,
-        postalCode: null,
-      },
-    review: *review,
-  }
+  street: Rua Araxá
+  neighborhood: Loteamento Conceição
+  city: Paulista
+  state: PE
+  number: null
+  postalCode: null
 mapUrl: null
-officeHours:
-  {
-    value: 'Das 07:30 às 11:30 e das 13:00 às 17:30',
-    review:
-      {
-        status: observed,
-        source: 'Regimento Escolar Interno 2027 fornecido pelo cliente em 14/09/2026',
-        reviewedAt: null,
-        reviewedBy: null,
-      },
-  }
-instagramUrl:
-  { value: 'https://www.instagram.com/aquarelacolegioecurso/', review: *review }
+officeHours: Das 07:30 às 11:30 e das 13:00 às 17:30
+instagramUrl: https://www.instagram.com/aquarelacolegioecurso/

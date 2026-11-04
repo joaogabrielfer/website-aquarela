@@ -4,7 +4,6 @@ import PageIntro from '../components/PageIntro.astro';
 import ActivityCard from '../components/ActivityCard.astro';
 import FAQ from '../components/FAQ.astro';
 import EmptyState from '../components/EmptyState.astro';
-import VisitCTA from '../components/VisitCTA.astro';
 import { h1, pageTitles, empty } from '../lib/copy';
 import {
   getActivities,
@@ -70,8 +69,6 @@ const hasActivities = activities.length > 0;
   }
 
   {faqs.length > 0 && <FAQ items={faqs} />}
-
-  <VisitCTA />
 </PageShell>
 
 <style>

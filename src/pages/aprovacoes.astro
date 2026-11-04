@@ -2,7 +2,6 @@
 import PageShell from '../layouts/PageShell.astro';
 import PageIntro from '../components/PageIntro.astro';
 import EmptyState from '../components/EmptyState.astro';
-import VisitCTA from '../components/VisitCTA.astro';
 import ApprovalGroupIsland from '../islands/ApprovalGroupIsland.svelte';
 import { h1, pageTitles, empty } from '../lib/copy';
 import { getApprovalsGrouped, getMediaById, getPageCopy } from '../lib/content';
@@ -35,9 +34,7 @@ const hasApprovals = groups.length > 0;
                 approvals={group.items.map((a) => ({
                   id: a.id,
                   displayName: a.displayName,
-                  course: a.course,
-                  institution: a.institution,
-                  selectionProcess: a.selectionProcess,
+                  achievements: a.achievements,
                   year: a.year,
                   portraitUrl: a.portraitId
                     ? (getMediaById(a.portraitId)?.src ?? null)
@@ -70,8 +67,6 @@ const hasApprovals = groups.length > 0;
       </section>
     )
   }
-
-  <VisitCTA />
 </PageShell>
 
 <style>

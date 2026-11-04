@@ -1,1 +1,90 @@
-[]
+- id: jose-kaua-cpaeam-2027
+  personId: jose-kaua
+  displayName: José Kauã
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-jose-kaua
+  featured: false
+- id: ricardo-cesar-cpaeam-2027
+  personId: ricardo-cesar
+  displayName: Ricardo Cesar
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-ricardo-cesar
+  featured: false
+- id: pedro-henrique-cpaeam-2027
+  personId: pedro-henrique
+  displayName: Pedro Henrique
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-pedro-henrique
+  featured: false
+- id: miguel-vasconcelos-cpaeam-2027
+  personId: miguel-vasconcelos
+  displayName: Miguel Vasconcelos
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-miguel-vasconcelos
+  featured: false
+- id: richarlyson-augusto-cfn-2027
+  personId: richarlyson-augusto
+  displayName: Richarlyson Augusto
+  course: Fuzileiro Naval
+  institution: Marinha do Brasil
+  selectionProcess: CFN 2026/2027
+  year: 2027
+  portraitId: retrato-richarlyson-augusto
+  featured: false
+- id: jose-caua-cfn-2027
+  personId: jose-kaua
+  displayName: José Cauã
+  course: Fuzileiro Naval
+  institution: Marinha do Brasil
+  selectionProcess: CFN 2026/2027
+  year: 2027
+  portraitId: retrato-jose-kaua
+  featured: false
+- id: gabriele-goncalves-cfn-2027
+  personId: gabriele-goncalves
+  displayName: Gabriele Gonçalves
+  course: Fuzileiro Naval
+  institution: Marinha do Brasil
+  selectionProcess: CFN 2026/2027
+  year: 2027
+  portraitId: retrato-gabriele-goncalves
+  featured: false
+- id: breno-alexandre-cfn-2027
+  personId: breno-alexandre
+  displayName: Breno Alexandre
+  course: Fuzileiro Naval
+  institution: Marinha do Brasil
+  selectionProcess: CFN 2026/2027
+  year: 2027
+  portraitId: retrato-breno-alexandre
+  featured: false
+- id: pedro-vasconcelos-cpaeam-2027
+  personId: pedro-vasconcelos
+  displayName: Pedro Vasconcelos
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-pedro-vasconcelos
+  featured: false
+- id: breno-alexandre-cpaeam-2027
+  personId: breno-alexandre
+  displayName: Breno Alexandre
+  course: Aprendizes-Marinheiros
+  institution: Marinha do Brasil
+  selectionProcess: CPAEAM 2027
+  year: 2027
+  portraitId: retrato-breno-alexandre
+  featured: false

@@ -2,7 +2,6 @@
 import PageShell from '../layouts/PageShell.astro';
 import PageIntro from '../components/PageIntro.astro';
 import EmptyState from '../components/EmptyState.astro';
-import VisitCTA from '../components/VisitCTA.astro';
 import AlbumGridIsland from '../islands/AlbumGridIsland.svelte';
 import { h1, pageTitles, empty } from '../lib/copy';
 import { getAlbums, getMediaById, getPageCopy } from '../lib/content';
@@ -68,8 +67,6 @@ const hasInstagram = school.instagramUrl !== null;
       </section>
     )
   }
-
-  <VisitCTA />
 </PageShell>
 
 <style>

@@ -85,7 +85,7 @@
     document.body.style.top = saved?.top ?? '';
     document.body.style.width = saved?.width ?? '';
     bodyStyles = null;
-    window.scrollTo(0, scrollY);
+    window.scrollTo({ top: scrollY, behavior: 'instant' });
   };
 
   const releaseOverlay = () => {
@@ -121,7 +121,8 @@
     open = false;
     focusWasInPanel = false;
     releaseOverlay();
-    if (restore && !navigate) setTimeout(() => trigger?.focus(), 0);
+    if (restore && !navigate)
+      setTimeout(() => trigger?.focus({ preventScroll: true }), 0);
   };
 
   const handleDesktopCrossover = async () => {
@@ -180,15 +181,18 @@
       return;
     focusWasInPanel = false;
     open = true;
-    lockBody();
-    setBackgroundInert(true);
     updatePanelTop();
     window.dispatchEvent(
       new CustomEvent('aquarela:overlay-change', {
         detail: { type: 'menu', open: true },
       }),
     );
-    setTimeout(() => panel?.querySelector('button')?.focus(), 0);
+    lockBody();
+    setBackgroundInert(true);
+    setTimeout(
+      () => panel?.querySelector('button')?.focus({ preventScroll: true }),
+      0,
+    );
   };
 
   onMount(() => {
@@ -213,16 +217,12 @@
     mql = window.matchMedia('(min-width: 1100px)');
     mql.addEventListener('change', handleDesktopCrossover);
     window.addEventListener('resize', schedulePanelTopUpdate);
-    window.addEventListener('scroll', schedulePanelTopUpdate, {
-      passive: true,
-    });
     return () => {
       document.removeEventListener('keydown', keydown);
       document.removeEventListener('focusin', trackPanelFocus);
       window.removeEventListener('aquarela:overlay-change', overlayChange);
       mql?.removeEventListener('change', handleDesktopCrossover);
       window.removeEventListener('resize', schedulePanelTopUpdate);
-      window.removeEventListener('scroll', schedulePanelTopUpdate);
       if (panelTopFrame) cancelAnimationFrame(panelTopFrame);
     };
   });
@@ -285,6 +285,7 @@
     inset: 0;
     background: rgb(0 0 0 / 0.4);
     z-index: var(--z-menu);
+    touch-action: none;
   }
   .menu-panel {
     position: fixed;
@@ -294,9 +295,12 @@
     bottom: 0;
     width: min(100%, 420px);
     overflow: auto;
+    overscroll-behavior: contain;
     background: white;
     padding: var(--space-6);
     padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+    border-radius: var(--radius-card) 0 0 0;
+    box-shadow: -8px 0 32px rgb(18 55 71 / 0.12);
   }
   .close {
     min-height: 44px;
@@ -305,6 +309,9 @@
     text-decoration: underline;
     color: var(--brand-navy);
     font-size: 1rem;
+    font-family: inherit;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-control);
   }
   .menu-panel nav {
     display: flex;
@@ -316,6 +323,10 @@
     padding: var(--space-3);
     color: var(--text-ink);
     font-size: 1.125rem;
+    border-radius: var(--radius-control);
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border-subtle);
   }
   .menu-panel .cta {
     background: var(--action-primary);
@@ -323,6 +334,7 @@
     text-align: center;
     text-decoration: none;
     margin-top: var(--space-4);
+    border-radius: var(--radius-pill);
   }
   .menu-panel .cta:active {
     background: var(--action-pressed);
