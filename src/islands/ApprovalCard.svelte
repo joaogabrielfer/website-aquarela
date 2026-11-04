@@ -5,27 +5,15 @@
     achievements,
     portraitUrl = null,
     portraitAlt,
-    portraitSizes,
-    portraitVariant = 'reference',
     class: className = '',
   }: {
-    portraitVariant?:
-      'reference' | 'rosto-e-ombros' | 'avatar' | 'retrato-inteiro';
     displayName: string;
     achievements: ApprovalAchievement[];
     portraitUrl?: string | null;
     portraitAlt?: string | undefined;
-    portraitSizes?: string;
     class?: string;
   } = $props();
 
-  // 144px × 1.8 cobre a maior largura do recorte no mobile.
-  const effectivePortraitSizes = $derived(
-    portraitSizes ??
-      `${portraitVariant === 'rosto-e-ombros' ? '(max-width: 767px) 260px, ' : ''}(min-width: 1392px) 306px, (min-width: 1100px) calc((100vw - 168px) / 4), (min-width: 768px) calc((100vw - 84px) / 2), (max-width: 340px) 96px, 32vw`,
-  );
-
-  // Somente os retratos controlados deste lote têm variantes 400/800.
   const portraitSrcset = $derived(
     portraitUrl?.match(/^\/media\/approvals\/[a-z-]+-800\.webp$/)
       ? `${portraitUrl.replace('-800.webp', '-400.webp')} 400w, ${portraitUrl} 800w`
@@ -33,31 +21,71 @@
   );
 </script>
 
-<article
-  class={`approval-card ${className}`}
-  class:has-portrait={portraitUrl}
-  data-portrait-variant={portraitVariant}
->
-  {#if portraitUrl}
-    <div class="card-media">
-      <img
-        src={portraitUrl}
-        srcset={portraitSrcset}
-        sizes={effectivePortraitSizes}
-        alt={portraitAlt || displayName}
-        width="800"
-        height="1000"
-        loading="lazy"
-        decoding="async"
-      />
-    </div>
-  {/if}
-  <div class="card-body">
-    {#if achievements.length > 1}
-      <p class="approval-count">{achievements.length} aprovações</p>
+<details class={`approval-card ${className}`} class:has-portrait={portraitUrl}>
+  <summary>
+    {#if portraitUrl}
+      <span class="card-avatar" aria-hidden="true">
+        <img
+          src={portraitUrl}
+          srcset={portraitSrcset}
+          sizes="120px"
+          alt=""
+          width="800"
+          height="1000"
+          loading="lazy"
+          decoding="async"
+        />
+      </span>
     {/if}
-    <h3 class="card-title">{displayName}</h3>
-    <ul class="achievement-list">
+    <div class="card-summary">
+      <h3 class="card-title">{displayName}</h3>
+      {#if achievements.length > 1}
+        <span class="approval-count">{achievements.length} aprovações</span>
+      {/if}
+      <ul class="course-summary">
+        {#each achievements as achievement (achievement.id)}
+          <li>{achievement.course}</li>
+        {/each}
+      </ul>
+      <span class="details-control">
+        <span class="when-closed">Ver detalhes</span>
+        <span class="when-open">Fechar detalhes</span>
+        <svg
+          aria-hidden="true"
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          ><path
+            d="m5 7.5 5 5 5-5"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          /></svg
+        >
+      </span>
+    </div>
+  </summary>
+  <div class="card-body">
+    {#if portraitUrl}
+      <div class="card-media">
+        <img
+          src={portraitUrl}
+          srcset={portraitSrcset}
+          sizes="320px"
+          alt={portraitAlt || displayName}
+          width="800"
+          height="1000"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    {/if}
+    <ul
+      class="achievement-list"
+      aria-label={`Todas as aprovações de ${displayName}`}
+    >
       {#each achievements as achievement (achievement.id)}
         <li class="achievement">
           <p class="card-course">{achievement.course}</p>
@@ -76,65 +104,132 @@
       {/each}
     </ul>
   </div>
-</article>
+</details>
 
 <style>
   .approval-card {
-    display: flex;
-    flex-direction: column;
     min-width: 0;
+    align-self: start;
     background: var(--surface-base);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     overflow: hidden;
   }
-  .card-media {
-    position: relative;
-    flex: none;
-    aspect-ratio: 4 / 5;
+  summary {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    cursor: pointer;
+    list-style: none;
+    color: var(--brand-navy);
+    min-height: 48px;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .has-portrait > summary {
+    grid-template-columns: 80px minmax(0, 1fr);
+  }
+  summary:hover {
     background: var(--surface-paper);
-    border-bottom: 4px solid var(--brand-yellow);
   }
-  .card-media img {
+  summary:focus-visible {
+    outline: 3px solid var(--brand-navy);
+    outline-offset: -4px;
+  }
+  .card-avatar {
+    position: relative;
+    width: 80px;
+    aspect-ratio: 1;
+    background: var(--surface-paper);
+    border: 1px solid var(--border-subtle);
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .card-avatar img {
     position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center bottom;
+    inset: 6px auto auto -25%;
+    width: 150%;
+    max-width: none;
+    height: auto;
+    aspect-ratio: 4 / 5;
   }
-  .card-body {
-    padding: var(--space-6);
+  .card-summary {
+    min-width: 0;
     display: flex;
-    flex: 1;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-3);
-  }
-  .approval-count {
-    margin: 0;
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-pill);
-    background: var(--brand-yellow);
-    color: var(--brand-navy);
-    font-size: 0.875rem;
-    line-height: 1.4;
-    font-weight: 500;
+    gap: var(--space-2);
   }
   .card-title {
     margin: 0;
-    color: var(--brand-navy);
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     line-height: 1.2;
     overflow-wrap: anywhere;
+  }
+  .approval-count {
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--brand-yellow);
+    font-size: 0.875rem;
+  }
+  .course-summary {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.875rem;
+  }
+  .course-summary li + li {
+    margin-top: var(--space-1);
+  }
+  .details-control {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    font-weight: 500;
+    text-decoration: underline;
+  }
+  .when-open {
+    display: none;
+  }
+  [open] .when-closed,
+  [open] .card-avatar {
+    display: none;
+  }
+  [open] .when-open {
+    display: inline;
+  }
+  .has-portrait[open] > summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  [open] .details-control svg {
+    transform: rotate(180deg);
+  }
+  .card-body {
+    padding: var(--space-4);
+    border-top: 1px solid var(--border-subtle);
+  }
+  .card-media {
+    display: flex;
+    justify-content: center;
+    background: var(--surface-paper);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    margin-bottom: var(--space-4);
+  }
+  .card-media img {
+    display: block;
+    width: min(100%, 320px, 48svh);
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: contain;
   }
   .achievement-list {
     display: flex;
     flex-direction: column;
-    width: 100%;
     gap: var(--space-4);
-    margin: var(--space-1) 0 0;
+    margin: 0;
     padding: 0;
     list-style: none;
   }
@@ -156,13 +251,12 @@
     margin: 0;
     color: var(--text-muted);
     font-size: 0.875rem;
-    line-height: 1.4;
   }
   .card-facts {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-3) var(--space-6);
-    margin: var(--space-1) 0 0;
+    gap: var(--space-3);
+    margin: 0;
   }
   .card-facts div {
     display: flex;
@@ -172,107 +266,15 @@
   dt {
     color: var(--text-muted);
     font-size: 0.875rem;
-    line-height: 1.4;
   }
   dd {
     margin: 0;
-    color: var(--text-ink);
     font-size: 0.875rem;
-    line-height: 1.4;
-    font-weight: 500;
   }
-  @media (max-width: 767px) {
-    .approval-card.has-portrait {
-      display: grid;
-      grid-template-columns: minmax(96px, 32%) minmax(0, 1fr);
-    }
-    .card-media {
-      display: flex;
-      align-items: center;
-      aspect-ratio: auto;
-      border-bottom: 0;
-      border-right: 4px solid var(--brand-yellow);
-    }
-    .card-media img {
-      position: static;
-      height: auto;
-      aspect-ratio: 4 / 5;
-    }
-    .card-body {
-      min-width: 0;
-      padding: var(--space-4);
-    }
-    .card-course,
-    dd {
-      overflow-wrap: anywhere;
-    }
-    .card-facts {
-      column-gap: var(--space-3);
-    }
-  }
-  @media (max-width: 767px) {
-    [data-portrait-variant='retrato-inteiro'] .card-media,
-    [data-portrait-variant='rosto-e-ombros'] .card-media,
-    [data-portrait-variant='avatar'] .card-media {
-      align-items: flex-start;
-    }
-    .approval-card.has-portrait[data-portrait-variant='rosto-e-ombros'] {
-      grid-template-columns: minmax(96px, min(32%, 144px)) minmax(0, 1fr);
-    }
-    [data-portrait-variant='rosto-e-ombros'] .card-media {
-      height: 190px;
-      overflow: hidden;
-    }
-    [data-portrait-variant='rosto-e-ombros'] .card-media img {
-      position: absolute;
-      inset: 8px auto auto -40%;
-      width: 180%;
-      max-width: none;
-      height: auto;
-    }
-    .approval-card.has-portrait[data-portrait-variant='avatar'] {
-      grid-template-columns: 96px minmax(0, 1fr);
-    }
-    [data-portrait-variant='avatar'] .card-media {
-      margin: 16px 8px 0;
-      width: calc(100% - 16px);
-      max-width: 104px;
-      aspect-ratio: 1;
-      border: 1px solid var(--border-subtle);
-      border-radius: 50%;
-      overflow: hidden;
-    }
-    [data-portrait-variant='avatar'] .card-media img {
-      position: absolute;
-      inset: 6px auto auto -25%;
-      width: 150%;
-      max-width: none;
-      height: auto;
-    }
-  }
-  @media (min-width: 1100px) {
-    .card-media {
-      aspect-ratio: 4 / 3;
-    }
-    .card-body {
-      padding: var(--space-5);
-    }
-  }
-  @media (min-width: 1100px) and (hover: hover) {
-    .approval-card:hover {
-      box-shadow: var(--shadow);
-      border-color: var(--brand-navy);
-    }
-  }
-  @media (min-width: 1100px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .approval-card {
-      transition:
-        transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1),
-        box-shadow 200ms ease-out,
-        border-color 200ms ease-out;
-    }
-    .approval-card:hover {
-      transform: scale(1.02);
-    }
+  .course-summary,
+  .card-course,
+  .card-institution,
+  dd {
+    overflow-wrap: anywhere;
   }
 </style>

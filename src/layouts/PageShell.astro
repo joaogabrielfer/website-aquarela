@@ -10,11 +10,10 @@ interface Props {
   title: string;
   description?: string | undefined;
   ogImage?: string;
-  noindex?: boolean;
 }
 
 const { title, description, ogImage } = Astro.props;
-const noindex = IS_CF_PREVIEW || Astro.props.noindex;
+const noindex = IS_CF_PREVIEW;
 const fullTitle =
   title === 'Aquarela Colégio e Curso | Paulista/PE'
     ? title

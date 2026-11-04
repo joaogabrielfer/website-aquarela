@@ -1,4 +1,7 @@
 ---
+import ApprovalCard from '../../components/ApprovalCard.astro';
+import { getApprovalsGrouped, getMediaById } from '../../lib/content';
+const person = getApprovalsGrouped()[0]!.items[0]!;
 import PageShell from '../../layouts/PageShell.astro';
 import LoadMoreHarness from '../../../tests/fixtures/load-more/LoadMoreHarness.svelte';
 ---
@@ -7,6 +10,19 @@ import LoadMoreHarness from '../../../tests/fixtures/load-more/LoadMoreHarness.s
   <section class="qa-fixture container" aria-labelledby="fixture-title">
     <h1 id="fixture-title">Fixture sintética de paginação</h1>
     <LoadMoreHarness client:load />
+    <section aria-label="Fixture do wrapper Astro de aprovações">
+      <ApprovalCard
+        displayName={person.displayName}
+        achievements={person.achievements}
+        portraitUrl={person.portraitId
+          ? (getMediaById(person.portraitId)?.src ?? null)
+          : null}
+      />
+      <ApprovalCard
+        displayName="Exemplo de teste sem retrato"
+        achievements={person.achievements}
+      />
+    </section>
   </section>
 </PageShell>
 
