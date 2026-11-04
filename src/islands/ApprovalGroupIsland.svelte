@@ -20,10 +20,13 @@
     approvals = [],
     initialCount = 12,
     batchSize = 12,
+    portraitVariant = 'reference',
   }: {
     approvals: Approval[];
     initialCount?: number;
     batchSize?: number;
+    portraitVariant?:
+      'reference' | 'rosto-e-ombros' | 'avatar' | 'retrato-inteiro';
   } = $props();
 
   const year = $derived(approvals[0]?.year);
@@ -40,7 +43,7 @@
 >
   <div class="approval-grid">
     {#each items as approval (approval.id)}
-      <ApprovalCard {...approval} />
+      <ApprovalCard {...approval} {portraitVariant} />
     {/each}
   </div>
 </LoadMore>

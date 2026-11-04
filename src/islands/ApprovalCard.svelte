@@ -5,9 +5,12 @@
     achievements,
     portraitUrl = null,
     portraitAlt,
-    portraitSizes = '(min-width: 1392px) 306px, (min-width: 1100px) calc((100vw - 168px) / 4), (min-width: 768px) calc((100vw - 84px) / 2), (max-width: 340px) 96px, 32vw',
+    portraitSizes,
+    portraitVariant = 'reference',
     class: className = '',
   }: {
+    portraitVariant?:
+      'reference' | 'rosto-e-ombros' | 'avatar' | 'retrato-inteiro';
     displayName: string;
     achievements: ApprovalAchievement[];
     portraitUrl?: string | null;
@@ -15,6 +18,12 @@
     portraitSizes?: string;
     class?: string;
   } = $props();
+
+  // 144px × 1.8 cobre a maior largura do recorte no mobile.
+  const effectivePortraitSizes = $derived(
+    portraitSizes ??
+      `${portraitVariant === 'rosto-e-ombros' ? '(max-width: 767px) 260px, ' : ''}(min-width: 1392px) 306px, (min-width: 1100px) calc((100vw - 168px) / 4), (min-width: 768px) calc((100vw - 84px) / 2), (max-width: 340px) 96px, 32vw`,
+  );
 
   // Somente os retratos controlados deste lote têm variantes 400/800.
   const portraitSrcset = $derived(
@@ -24,13 +33,17 @@
   );
 </script>
 
-<article class={`approval-card ${className}`} class:has-portrait={portraitUrl}>
+<article
+  class={`approval-card ${className}`}
+  class:has-portrait={portraitUrl}
+  data-portrait-variant={portraitVariant}
+>
   {#if portraitUrl}
     <div class="card-media">
       <img
         src={portraitUrl}
         srcset={portraitSrcset}
-        sizes={portraitSizes}
+        sizes={effectivePortraitSizes}
         alt={portraitAlt || displayName}
         width="800"
         height="1000"
@@ -195,6 +208,46 @@
     }
     .card-facts {
       column-gap: var(--space-3);
+    }
+  }
+  @media (max-width: 767px) {
+    [data-portrait-variant='retrato-inteiro'] .card-media,
+    [data-portrait-variant='rosto-e-ombros'] .card-media,
+    [data-portrait-variant='avatar'] .card-media {
+      align-items: flex-start;
+    }
+    .approval-card.has-portrait[data-portrait-variant='rosto-e-ombros'] {
+      grid-template-columns: minmax(96px, min(32%, 144px)) minmax(0, 1fr);
+    }
+    [data-portrait-variant='rosto-e-ombros'] .card-media {
+      height: 190px;
+      overflow: hidden;
+    }
+    [data-portrait-variant='rosto-e-ombros'] .card-media img {
+      position: absolute;
+      inset: 8px auto auto -40%;
+      width: 180%;
+      max-width: none;
+      height: auto;
+    }
+    .approval-card.has-portrait[data-portrait-variant='avatar'] {
+      grid-template-columns: 96px minmax(0, 1fr);
+    }
+    [data-portrait-variant='avatar'] .card-media {
+      margin: 16px 8px 0;
+      width: calc(100% - 16px);
+      max-width: 104px;
+      aspect-ratio: 1;
+      border: 1px solid var(--border-subtle);
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    [data-portrait-variant='avatar'] .card-media img {
+      position: absolute;
+      inset: 6px auto auto -25%;
+      width: 150%;
+      max-width: none;
+      height: auto;
     }
   }
   @media (min-width: 1100px) {

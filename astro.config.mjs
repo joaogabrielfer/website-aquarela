@@ -11,7 +11,13 @@ export default defineConfig({
   integrations: [
     svelte(),
     ...(SITE_URL && !IS_CF_PREVIEW
-      ? [sitemap({ filter: (page) => !page.endsWith('/404') })]
+      ? [
+          sitemap({
+            filter: (page) =>
+              !page.endsWith('/404') &&
+              !new URL(page).pathname.startsWith('/comparar-aprovacoes/'),
+          }),
+        ]
       : []),
   ],
 });

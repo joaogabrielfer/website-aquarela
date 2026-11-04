@@ -190,3 +190,133 @@ test('ponteiro de toque não amplia os cards mesmo em largura desktop', async ({
   await expect(card).toHaveCSS('transform', 'none');
   await context.close();
 });
+
+for (const width of [320, 390, 767, 768, 1440]) {
+  test(`comparação de retratos preserva conteúdo e layout em ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/aprovacoes');
+    const reference = await page.locator('.approval-card').allTextContents();
+    const geometry = await page.locator('.approval-card').evaluateAll((cards) =>
+      cards.map((card) => {
+        const media = card
+          .querySelector('.card-media')!
+          .getBoundingClientRect();
+        const image = card.querySelector('img')!.getBoundingClientRect();
+        return [media.width, media.height, image.width, image.height];
+      }),
+    );
+    if (width < 768) {
+      for (const card of await page.locator('.approval-card').all()) {
+        const media = card.locator('.card-media');
+        await expect(media).toHaveCSS('align-items', 'center');
+        const panel = await media.boundingBox();
+        const image = await media.locator('img').boundingBox();
+        expect(
+          Math.abs(image!.y - panel!.y - (panel!.height - image!.height) / 2),
+        ).toBeLessThanOrEqual(1);
+      }
+    }
+    for (const variant of ['rosto-e-ombros', 'avatar', 'retrato-inteiro']) {
+      await page.goto(`/comparar-aprovacoes/${variant}`);
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+        'content',
+        'noindex',
+      );
+      const navigation = page.getByRole('navigation', {
+        name: 'Opções de retrato',
+      });
+      await expect(navigation.locator('a')).toHaveCount(4);
+      await expect(navigation.locator('[aria-current="page"]')).toHaveAttribute(
+        'href',
+        `/comparar-aprovacoes/${variant}`,
+      );
+      const cards = page.locator('.approval-card');
+      await expect(cards).toHaveCount(8);
+      await expect(cards.locator('.achievement')).toHaveCount(10);
+      expect(await cards.allTextContents()).toEqual(reference);
+      for (const image of await cards.locator('img').all()) {
+        await image.scrollIntoViewIfNeeded();
+        await expect(image).toHaveJSProperty('complete', true);
+        expect(
+          await image.evaluate((img: HTMLImageElement) => img.naturalWidth),
+        ).toBeGreaterThan(0);
+      }
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      for (const achievement of await cards.locator('.achievement').all()) {
+        const bounds = await achievement.evaluate((el) => ({
+          width: el.clientWidth,
+          scroll: el.scrollWidth,
+        }));
+        expect(bounds.scroll).toBeLessThanOrEqual(bounds.width);
+      }
+      const actual = await cards.evaluateAll((cards) =>
+        cards.map((card) => {
+          const media = card
+            .querySelector('.card-media')!
+            .getBoundingClientRect();
+          const image = card.querySelector('img')!.getBoundingClientRect();
+          const body = card
+            .querySelector('.card-body')!
+            .getBoundingClientRect();
+          return {
+            sizes: [
+              media.width,
+              media.height,
+              image.width,
+              image.height,
+            ] as const,
+            imageTop: image.y - media.y,
+            imageBottom: image.bottom - media.bottom,
+            imageRatio: image.width / image.height,
+            fit: getComputedStyle(card.querySelector('img')!).objectFit,
+            top: media.y - body.y,
+            right: media.right - body.x,
+          };
+        }),
+      );
+      if (width >= 768)
+        expect(actual.map((item) => item.sizes)).toEqual(geometry);
+      else {
+        for (const item of actual) {
+          expect(item.right).toBeLessThanOrEqual(1);
+          expect(item.top).toBe(variant === 'avatar' ? 16 : 0);
+          if (variant === 'retrato-inteiro') {
+            expect(Math.abs(item.imageTop)).toBeLessThanOrEqual(1);
+            expect(item.imageBottom).toBeLessThanOrEqual(1);
+            expect(item.imageRatio).toBeCloseTo(4 / 5, 2);
+            expect(item.fit).toBe('contain');
+            expect(item.sizes[2]).toBeCloseTo(item.sizes[0] - 4, 1);
+          }
+        }
+        if (variant === 'rosto-e-ombros')
+          expect(new Set(actual.map((item) => item.sizes[1]))).toEqual(
+            new Set([190]),
+          );
+      }
+      if ([320, 390, 767, 768, 1440].includes(width)) {
+        await page.evaluate(async () => {
+          await document.fonts.ready;
+          document.documentElement.style.scrollBehavior = 'auto';
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        });
+        await page.waitForFunction(() => window.scrollY === 0);
+        await page.screenshot({
+          path: `test-results/approvals/comparison-${variant}-${width}.png`,
+          fullPage: true,
+          animations: 'disabled',
+        });
+      }
+    }
+    await page
+      .getByRole('navigation', { name: 'Opções de retrato' })
+      .getByRole('link', { name: 'Avatar', exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/comparar-aprovacoes\/avatar$/);
+  });
+}

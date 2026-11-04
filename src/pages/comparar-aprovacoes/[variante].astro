@@ -1,0 +1,115 @@
+---
+import PageShell from '../../layouts/PageShell.astro';
+import ApprovalGroupIsland from '../../islands/ApprovalGroupIsland.svelte';
+import { getApprovalsGrouped, getMediaById } from '../../lib/content';
+
+const options = [
+  {
+    id: 'rosto-e-ombros',
+    label: 'Rosto e ombros',
+    description:
+      'Enquadramento próximo, alinhado ao topo, em uma janela de altura fixa. Parte dos braços fica fora do recorte.',
+  },
+  {
+    id: 'avatar',
+    label: 'Avatar',
+    description:
+      'Retrato circular compacto junto ao início do texto, com destaque para o rosto.',
+  },
+  {
+    id: 'retrato-inteiro',
+    label: 'Retrato inteiro',
+    description:
+      'Imagem completa alinhada ao topo da coluna, preservando braços e uniforme.',
+  },
+] as const;
+export function getStaticPaths() {
+  return ['rosto-e-ombros', 'avatar', 'retrato-inteiro'].map((variante) => ({
+    params: { variante },
+  }));
+}
+const option = options.find((option) => option.id === Astro.params.variante)!;
+const groups = getApprovalsGrouped();
+---
+
+<PageShell title={`Comparar aprovações: ${option.label}`} noindex>
+  <section class="comparison container">
+    <h1>Retratos no mobile: {option.label}</h1>
+    <p>
+      Experimento temporário para escolher o enquadramento dos retratos. As três
+      opções mantêm os mesmos alunos e conquistas. A partir de 768px, o visual é
+      o atual.
+    </p>
+    <nav aria-label="Opções de retrato">
+      {
+        options.map((item) => (
+          <a
+            href={`/comparar-aprovacoes/${item.id}`}
+            aria-current={item.id === option.id ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <a href="/aprovacoes">Ver referência atual</a>
+    </nav>
+    <p>{option.description}</p>
+    {
+      groups.map((group) => (
+        <section
+          class="approval-group"
+          aria-label={`Aprovações de ${group.year}`}
+        >
+          <h2>{group.year}</h2>
+          <ApprovalGroupIsland
+            client:load
+            portraitVariant={option.id}
+            approvals={group.items.map((a) => ({
+              id: a.id,
+              displayName: a.displayName,
+              achievements: a.achievements,
+              year: a.year,
+              portraitUrl: a.portraitId
+                ? (getMediaById(a.portraitId)?.src ?? null)
+                : null,
+              portraitAlt: a.portraitId
+                ? (getMediaById(a.portraitId)?.alt ?? a.displayName)
+                : a.displayName,
+            }))}
+          />
+        </section>
+      ))
+    }
+  </section>
+</PageShell>
+<style>
+  .comparison {
+    padding-block: var(--space-10);
+  }
+  h1 {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    line-height: 1.2;
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block: var(--space-6);
+  }
+  nav a {
+    padding: var(--space-3);
+    border: 1px solid var(--brand-navy);
+    border-radius: var(--radius-pill);
+    color: var(--brand-navy);
+  }
+  nav a[aria-current='page'] {
+    background: var(--brand-navy);
+    color: var(--surface-base);
+  }
+  .approval-group {
+    margin-top: var(--space-10);
+  }
+  h2 {
+    margin-bottom: var(--space-6);
+  }
+</style>
