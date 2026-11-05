@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy, tick } from 'svelte';
   import type { ApprovalAchievement } from '../lib/approval-groups';
   let {
     displayName,
@@ -16,117 +16,119 @@
   } = $props();
 
   const uid = $props.id();
-  let card: HTMLElement;
-  let panel: HTMLDivElement;
-  let closeButton: HTMLButtonElement;
+  let panel: HTMLDialogElement;
   let trigger: HTMLButtonElement;
-  let pinned = false;
-  let suppressed = false;
-  let opening: ReturnType<typeof setTimeout>;
-  let closing: ReturnType<typeof setTimeout>;
-  const desktopHover = () =>
-    matchMedia('(min-width: 1100px) and (hover: hover) and (pointer: fine)')
-      .matches;
-  const isOpen = () => panel?.matches(':popover-open');
-  function position() {
-    if (!desktopHover()) {
-      panel.style.removeProperty('left');
-      panel.style.removeProperty('top');
-      panel.style.removeProperty('margin');
+  let closing = $state(false);
+  let restoreScroll: (() => void) | undefined;
+  let backdropStart: { x: number; y: number; id: number } | undefined;
+  let backdropTap = false;
+  const outside = (x: number, y: number) => {
+    const box = panel.getBoundingClientRect();
+    return x < box.left || x > box.right || y < box.top || y > box.bottom;
+  };
+  function release() {
+    restoreScroll?.();
+    restoreScroll = undefined;
+  }
+  function open(event: MouseEvent) {
+    event.preventDefault();
+    if (panel.open || document.querySelector('dialog[open], [role="dialog"]'))
       return;
-    }
-    const rect = card.getBoundingClientRect();
-    const width = Math.min(420, innerWidth - 32);
-    panel.style.margin = '0';
-    panel.style.left = `${Math.max(16, Math.min(rect.left + rect.width / 2 - width / 2, innerWidth - width - 16))}px`;
-    panel.style.top = `${Math.max(16, Math.min(rect.top, innerHeight - panel.offsetHeight - 16))}px`;
+    const y = window.scrollY;
+    const body = document.body;
+    const root = document.documentElement;
+    const saved = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow,
+      paddingRight: body.style.paddingRight,
+      rootOverflow: root.style.overflow,
+    };
+    const scrollbar = innerWidth - root.clientWidth;
+    window.dispatchEvent(
+      new CustomEvent('aquarela:overlay-change', {
+        detail: { type: 'approval', open: true },
+      }),
+    );
+    root.style.overflow = 'hidden';
+    body.style.position = 'fixed';
+    body.style.top = `-${y}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+    if (scrollbar)
+      body.style.paddingRight = `${parseFloat(getComputedStyle(body).paddingRight) + scrollbar}px`;
+    restoreScroll = () => {
+      body.style.position = saved.position;
+      body.style.top = saved.top;
+      body.style.width = saved.width;
+      body.style.overflow = saved.overflow;
+      body.style.paddingRight = saved.paddingRight;
+      root.style.overflow = saved.rootOverflow;
+      window.scrollTo({ top: y, behavior: 'instant' });
+      window.dispatchEvent(
+        new CustomEvent('aquarela:overlay-change', {
+          detail: { type: 'approval', open: false },
+        }),
+      );
+    };
+    closing = false;
+    panel.scrollTop = 0;
+    panel.showModal();
   }
-  function enter() {
-    clearTimeout(closing);
-    if (
-      !desktopHover() ||
-      suppressed ||
-      document.querySelector('[role="dialog"]')
-    )
-      return;
-    opening = setTimeout(() => {
-      const current = document.querySelector('.approval-panel:popover-open');
-      if (
-        current === panel ||
-        current?.getAttribute('data-pinned') === 'true' ||
-        current?.contains(document.activeElement)
-      )
-        return;
-      pinned = false;
-      panel.showPopover();
-      position();
-    }, 180);
-  }
-  function leave() {
-    clearTimeout(opening);
-    if (!isOpen()) suppressed = false;
-    clearTimeout(closing);
-    closing = setTimeout(() => {
-      if (
-        !pinned &&
-        !card.matches(':hover') &&
-        !panel.matches(':hover') &&
-        !panel.contains(document.activeElement) &&
-        isOpen()
-      )
-        panel.hidePopover();
-    }, 300);
-  }
-  function click(event: MouseEvent) {
-    clearTimeout(opening);
-    clearTimeout(closing);
-    pinned = true;
-    panel.dataset.pinned = 'true';
-    if (isOpen()) event.preventDefault();
-    requestAnimationFrame(() => {
-      if (isOpen()) {
-        position();
-        closeButton.focus({ preventScroll: true });
-      }
-    });
-  }
-  function toggled(event: ToggleEvent) {
-    if (event.newState === 'open') position();
-    else {
-      pinned = false;
-      delete panel.dataset.pinned;
-      suppressed = card.matches(':hover');
-      clearTimeout(opening);
-      clearTimeout(closing);
-    }
+  async function close(event?: Event) {
+    event?.preventDefault();
+    event?.stopPropagation();
+    if (!panel.open || closing) return;
+    closing = true;
+    await tick();
+    await Promise.allSettled(
+      panel.getAnimations().map((animation) => animation.finished),
+    );
+    panel.close();
+    release();
+    closing = false;
+    trigger.focus({ preventScroll: true });
   }
   onMount(() => {
-    const dismiss = () => {
-      clearTimeout(opening);
-      if (isOpen()) panel.hidePopover();
+    let touchY = 0;
+    const start = (event: TouchEvent) => {
+      touchY = event.touches[0]?.clientY ?? 0;
     };
-    const outsideFocus = (event: FocusEvent) => {
+    const move = (event: TouchEvent) => {
+      if (event.touches.length !== 1) return;
+      const touch = event.touches[0]!;
+      const delta = touchY - touch.clientY;
+      touchY = touch.clientY;
       if (
-        event.target instanceof Node &&
-        !card.contains(event.target) &&
-        !panel.contains(event.target)
+        outside(touch.clientX, touch.clientY) ||
+        panel.scrollHeight <= panel.clientHeight ||
+        (delta < 0 && panel.scrollTop <= 0) ||
+        (delta > 0 &&
+          panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 1)
       )
-        dismiss();
+        event.preventDefault();
     };
-    const reposition = () => {
-      if (isOpen()) position();
+    const wheel = (event: WheelEvent) => {
+      if (
+        outside(event.clientX, event.clientY) ||
+        panel.scrollHeight <= panel.clientHeight ||
+        (event.deltaY < 0 && panel.scrollTop <= 0) ||
+        (event.deltaY > 0 &&
+          panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 1)
+      )
+        event.preventDefault();
     };
-    window.addEventListener('resize', dismiss);
-    window.addEventListener('scroll', reposition);
-    document.addEventListener('focusin', outsideFocus);
+    panel.addEventListener('touchstart', start, { passive: true });
+    panel.addEventListener('touchmove', move, { passive: false });
+    panel.addEventListener('wheel', wheel, { passive: false });
     return () => {
-      clearTimeout(opening);
-      clearTimeout(closing);
-      window.removeEventListener('resize', dismiss);
-      window.removeEventListener('scroll', reposition);
-      document.removeEventListener('focusin', outsideFocus);
+      panel.removeEventListener('touchstart', start);
+      panel.removeEventListener('touchmove', move);
+      panel.removeEventListener('wheel', wheel);
     };
   });
+  onDestroy(release);
 
   const portraitSrcset = $derived(
     portraitUrl?.match(/^\/media\/approvals\/[a-z-]+-800\.webp$/)
@@ -135,13 +137,7 @@
   );
 </script>
 
-<article
-  bind:this={card}
-  class={`approval-card ${className}`}
-  class:has-portrait={portraitUrl}
-  onpointerenter={enter}
-  onpointerleave={leave}
->
+<article class={`approval-card ${className}`} class:has-portrait={portraitUrl}>
   <div class="card-front">
     {#if portraitUrl}
       <span class="card-avatar" aria-hidden="true">
@@ -170,9 +166,10 @@
       <button
         bind:this={trigger}
         class="details-control"
-        popovertarget={`${uid}-panel`}
+        commandfor={`${uid}-panel`}
+        command="show-modal"
         aria-label={`Ver detalhes de ${displayName}`}
-        onclick={click}
+        onclick={open}
       >
         Ver detalhes <svg
           aria-hidden="true"
@@ -191,34 +188,62 @@
       </button>
     </div>
   </div>
-  <div
+  <dialog
     bind:this={panel}
     class="approval-panel"
+    class:is-closing={closing}
     id={`${uid}-panel`}
-    popover="auto"
     data-lenis-prevent
-    role="region"
     aria-labelledby={`${uid}-panel-name`}
-    onbeforetoggle={(event) => {
-      if (event.newState === 'closed') {
-        suppressed = card.matches(':hover');
-        if (panel.contains(document.activeElement))
-          trigger.focus({ preventScroll: true });
-      }
+    oncancel={close}
+    onclose={() => {
+      if (!panel.open) release();
     }}
-    ontoggle={toggled}
-    onpointerenter={() => clearTimeout(closing)}
-    onpointerleave={leave}
-    onfocusout={leave}
+    onpointerdown={(event) => {
+      backdropTap = false;
+      backdropStart = outside(event.clientX, event.clientY)
+        ? { x: event.clientX, y: event.clientY, id: event.pointerId }
+        : undefined;
+    }}
+    onpointermove={(event) => {
+      if (
+        backdropStart &&
+        Math.hypot(
+          event.clientX - backdropStart.x,
+          event.clientY - backdropStart.y,
+        ) > 8
+      )
+        backdropStart = undefined;
+    }}
+    onpointerup={(event) => {
+      backdropTap =
+        !!backdropStart &&
+        event.pointerId === backdropStart.id &&
+        outside(event.clientX, event.clientY);
+      backdropStart = undefined;
+    }}
+    onpointercancel={() => {
+      backdropStart = undefined;
+      backdropTap = false;
+    }}
+    onclick={(event) => {
+      if (
+        event.target === panel &&
+        backdropTap &&
+        outside(event.clientX, event.clientY)
+      )
+        void close(event);
+      backdropTap = false;
+    }}
   >
     <div class="panel-header">
       <h3 id={`${uid}-panel-name`}>{displayName}</h3>
       <button
-        bind:this={closeButton}
         class="close-details"
-        popovertarget={`${uid}-panel`}
-        popovertargetaction="hide"
-        >Fechar detalhes <span aria-hidden="true">×</span></button
+        commandfor={`${uid}-panel`}
+        command="close"
+        onclick={close}
+        autofocus>Fechar detalhes <span aria-hidden="true">×</span></button
       >
     </div>
     <div class="card-body">
@@ -258,7 +283,7 @@
         {/each}
       </ul>
     </div>
-  </div>
+  </dialog>
 </article>
 
 <style>
@@ -368,8 +393,8 @@
     position: fixed;
     inset: 0;
     margin: auto;
-    width: min(420px, calc(100vw - 32px));
-    max-height: calc(100dvh - 32px);
+    width: min(420px, calc(100vw - 40px));
+    max-height: calc(100dvh - 48px);
     height: fit-content;
     padding: 0;
     overflow: auto;
@@ -397,13 +422,42 @@
     font-size: 1.25rem;
     overflow-wrap: anywhere;
   }
-  .approval-panel:popover-open {
-    animation: approval-arrive 200ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  .approval-panel[open] {
+    animation: approval-arrive 150ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .approval-panel.is-closing {
+    animation: approval-depart 110ms ease-in forwards;
+  }
+  .approval-panel::backdrop {
+    background: rgb(0 30 50 / 34%);
+    animation: backdrop-arrive 150ms ease-out;
+  }
+  .approval-panel.is-closing::backdrop {
+    animation: backdrop-depart 110ms ease-in forwards;
+  }
+  :global(html:has(.approval-panel[open])) {
+    overflow: hidden;
+  }
+  @keyframes approval-depart {
+    to {
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+  }
+  @keyframes backdrop-arrive {
+    from {
+      background: rgb(0 30 50 / 0%);
+    }
+  }
+  @keyframes backdrop-depart {
+    to {
+      background: rgb(0 30 50 / 0%);
+    }
   }
   @keyframes approval-arrive {
     from {
       opacity: 0;
-      transform: translateY(12px) scale(0.94);
+      transform: translateY(8px) scale(0.97);
     }
     to {
       opacity: 1;
@@ -428,7 +482,10 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .approval-panel:popover-open {
+    .approval-panel[open],
+    .approval-panel.is-closing,
+    .approval-panel::backdrop,
+    .approval-panel.is-closing::backdrop {
       animation: none;
     }
   }
@@ -446,10 +503,26 @@
   }
   .card-media img {
     display: block;
-    width: min(100%, 320px, 48svh);
+    width: min(100%, 260px, 32svh);
     height: auto;
     aspect-ratio: 4 / 5;
     object-fit: contain;
+  }
+  @media (min-width: 1100px) {
+    .approval-panel {
+      width: min(760px, calc(100vw - 64px));
+      height: min(560px, calc(100dvh - 64px));
+      max-height: calc(100dvh - 64px);
+    }
+    .card-body {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: var(--space-5);
+      align-items: start;
+    }
+    .card-media img {
+      width: min(100%, 320px);
+    }
   }
   .achievement-list {
     display: flex;
