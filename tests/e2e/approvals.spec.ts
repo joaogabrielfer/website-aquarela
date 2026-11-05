@@ -51,9 +51,7 @@ for (const width of [320, 390, 1440]) {
       await panel.evaluate(async (el) => {
         await Promise.allSettled(el.getAnimations().map((a) => a.finished));
       });
-      await expect(
-        panel.getByRole('button', { name: 'Fechar detalhes' }),
-      ).toBeFocused();
+      await expect(panel).toBeFocused();
       const img = panel.locator('.card-media img');
       await expect(img).toHaveJSProperty('complete', true);
       await expect(img).toHaveCSS('object-fit', 'contain');
@@ -315,11 +313,15 @@ test('entrada e saída em quadros, teclado, reduced-motion e axe modal', async (
   await trigger.focus();
   await page.keyboard.press('Space');
   await expect(card.locator('dialog')).toBeVisible();
+  await expect(card.locator('.close-details')).toBeFocused();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.keyboard.press('Escape');
   await expect(card.locator('dialog')).not.toBeVisible();
   await page.keyboard.press('Enter');
   await expect(card.locator('dialog')).toBeVisible();
+  await card.locator('dialog').evaluate(async (el) => {
+    await Promise.allSettled(el.getAnimations().map((a) => a.finished));
+  });
   await page.keyboard.press('Escape');
   await expect(card.locator('dialog')).not.toBeVisible();
   const frames = await trigger.evaluate(async (button) => {
@@ -396,4 +398,94 @@ test('wrapper Astro com/sem JS e sem retrato', async ({ browser, baseURL }) => {
     }
     await context.close();
   }
+});
+
+test('toque não deixa contornos; teclado mantém foco visível e header compacto', async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({
+    hasTouch: true,
+    viewport: { width: 390, height: 844 },
+    ...(baseURL ? { baseURL } : {}),
+  });
+  const page = await context.newPage();
+  await page.goto('/aprovacoes');
+  const card = page.locator('.approval-card').nth(1);
+  const trigger = card.locator('.details-control');
+  const panel = card.locator('dialog');
+  const close = panel.locator('.close-details');
+  for (let i = 0; i < 3; i++) {
+    await trigger.tap();
+    await expect(panel).toBeVisible();
+    await expect(panel).toBeFocused();
+    await panel.evaluate(async (el) => {
+      await Promise.allSettled(el.getAnimations().map((a) => a.finished));
+    });
+    await expect(panel).toHaveCSS('outline-style', 'none');
+    await expect(panel).toHaveCSS('border-top-width', '0px');
+    await expect(card).toHaveCSS('outline-style', 'none');
+    await expect(close).toHaveCSS('outline-style', 'none');
+    await expect(close).toHaveText('Fechar');
+    const header = (await panel.locator('.panel-header').boundingBox())!;
+    const button = (await close.boundingBox())!;
+    expect(button.height).toBeGreaterThanOrEqual(44);
+    expect(header.height).toBeLessThanOrEqual(90);
+    if (i === 0)
+      await page.screenshot({
+        path: 'test-results/approvals/modal-touch-focus-390.png',
+        animations: 'disabled',
+      });
+    await close.tap();
+    await expect(panel).not.toBeVisible();
+    await expect(trigger).toBeFocused();
+    await expect(card).toHaveCSS('outline-style', 'none');
+    if (i === 0)
+      await page.screenshot({
+        path: 'test-results/approvals/cards-after-touch-close-390.png',
+        animations: 'disabled',
+      });
+  }
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Shift+Tab');
+  await expect(trigger).toBeFocused();
+  expect(await trigger.evaluate((el) => el.matches(':focus-visible'))).toBe(
+    true,
+  );
+  await expect(card).toHaveCSS('outline-style', 'solid');
+  await page.keyboard.press('Enter');
+  await expect(close).toBeFocused();
+  expect(await close.evaluate((el) => el.matches(':focus-visible'))).toBe(true);
+  await expect(close).toHaveCSS('outline-style', 'solid');
+  await page.keyboard.press('Escape');
+  await expect(panel).not.toBeVisible();
+  await expect(trigger).toBeFocused();
+  await expect(card).toHaveCSS('outline-style', 'solid');
+  await context.close();
+});
+
+test('fechar durante a entrada mantém continuidade sem salto ou bloqueio residual', async ({
+  page,
+}) => {
+  await page.goto('/aprovacoes');
+  const continuity = await page
+    .locator('.details-control')
+    .first()
+    .evaluate(async (button) => {
+      const panel = button.closest('.approval-card')!.querySelector('dialog')!;
+      (button as HTMLButtonElement).click();
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+      const before = Number(getComputedStyle(panel).opacity);
+      panel.querySelector<HTMLButtonElement>('.close-details')!.click();
+      await new Promise(requestAnimationFrame);
+      const after = Number(getComputedStyle(panel).opacity);
+      await Promise.allSettled(panel.getAnimations().map((a) => a.finished));
+      return { before, after };
+    });
+  expect(continuity.after).toBeLessThanOrEqual(continuity.before + 0.12);
+  await expect(page.locator('dialog[open]')).toHaveCount(0);
+  expect(await page.evaluate(() => document.body.style.position)).not.toBe(
+    'fixed',
+  );
 });

@@ -74,7 +74,13 @@
     };
     closing = false;
     panel.scrollTop = 0;
+    const keyboardFocus = trigger.matches(':focus-visible');
     panel.showModal();
+    if (keyboardFocus)
+      panel
+        .querySelector<HTMLButtonElement>('.close-details')
+        ?.focus({ preventScroll: true });
+    else panel.focus({ preventScroll: true });
   }
   async function close(event?: Event) {
     event?.preventDefault();
@@ -194,6 +200,8 @@
     class:is-closing={closing}
     id={`${uid}-panel`}
     data-lenis-prevent
+    tabindex="-1"
+    autofocus
     aria-labelledby={`${uid}-panel-name`}
     oncancel={close}
     onclose={() => {
@@ -243,7 +251,22 @@
         commandfor={`${uid}-panel`}
         command="close"
         onclick={close}
-        autofocus>Fechar detalhes <span aria-hidden="true">×</span></button
+        aria-label={`Fechar detalhes de ${displayName}`}
+      >
+        <svg
+          aria-hidden="true"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          ><path
+            d="m4 4 8 8m0-8-8 8"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+          /></svg
+        >
+        Fechar</button
       >
     </div>
     <div class="card-body">
@@ -308,7 +331,7 @@
   .approval-card:hover {
     background: var(--surface-paper);
   }
-  .approval-card:focus-within {
+  .approval-card:has(.details-control:focus-visible) {
     outline: 3px solid var(--brand-navy);
     outline-offset: -4px;
   }
@@ -382,12 +405,23 @@
     outline: none;
   }
   .close-details {
-    padding: 8px;
-    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface-paper);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+  .close-details:focus {
+    outline: none;
   }
   .close-details:focus-visible {
-    outline: 3px solid var(--brand-navy);
-    outline-offset: 2px;
+    outline: 2px solid var(--brand-navy);
+    outline-offset: 3px;
   }
   .approval-panel {
     position: fixed;
@@ -401,7 +435,7 @@
     overscroll-behavior: contain;
     background: var(--surface-base);
     color: var(--text-ink);
-    border: 1px solid var(--brand-navy);
+    border: 0;
     border-radius: var(--radius-card);
     box-shadow: 0 20px 64px rgb(0 40 60 / 28%);
   }
@@ -410,59 +444,57 @@
     top: 0;
     z-index: 1;
     background: var(--surface-base);
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+    gap: 12px;
     padding: var(--space-4);
   }
   .panel-header h3 {
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
+    line-height: 1.3;
     overflow-wrap: anywhere;
   }
+  .approval-panel {
+    opacity: 0;
+    transform: translateY(6px) scale(0.985);
+    transition:
+      opacity 160ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .approval-panel:focus {
+    outline: none;
+  }
   .approval-panel[open] {
-    animation: approval-arrive 150ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
   .approval-panel.is-closing {
-    animation: approval-depart 110ms ease-in forwards;
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+    transition-duration: 120ms, 140ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.8, 1);
   }
   .approval-panel::backdrop {
     background: rgb(0 30 50 / 34%);
-    animation: backdrop-arrive 150ms ease-out;
+    transition: background-color 160ms ease-out;
   }
   .approval-panel.is-closing::backdrop {
-    animation: backdrop-depart 110ms ease-in forwards;
+    background: rgb(0 30 50 / 0%);
+    transition-duration: 120ms;
+  }
+  @starting-style {
+    .approval-panel[open] {
+      opacity: 0;
+      transform: translateY(6px) scale(0.985);
+    }
+    .approval-panel[open]::backdrop {
+      background: rgb(0 30 50 / 0%);
+    }
   }
   :global(html:has(.approval-panel[open])) {
     overflow: hidden;
-  }
-  @keyframes approval-depart {
-    to {
-      opacity: 0;
-      transform: translateY(6px) scale(0.98);
-    }
-  }
-  @keyframes backdrop-arrive {
-    from {
-      background: rgb(0 30 50 / 0%);
-    }
-  }
-  @keyframes backdrop-depart {
-    to {
-      background: rgb(0 30 50 / 0%);
-    }
-  }
-  @keyframes approval-arrive {
-    from {
-      opacity: 0;
-      transform: translateY(8px) scale(0.97);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
   }
   @media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
     .approval-card:hover {
@@ -486,7 +518,7 @@
     .approval-panel.is-closing,
     .approval-panel::backdrop,
     .approval-panel.is-closing::backdrop {
-      animation: none;
+      transition: none;
     }
   }
   .card-body {
