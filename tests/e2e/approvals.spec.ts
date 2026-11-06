@@ -406,6 +406,7 @@ test('toque não deixa contornos; teclado mantém foco visível e header compact
 }) => {
   const context = await browser.newContext({
     hasTouch: true,
+    deviceScaleFactor: 3,
     viewport: { width: 390, height: 844 },
     ...(baseURL ? { baseURL } : {}),
   });
@@ -446,6 +447,27 @@ test('toque não deixa contornos; teclado mantém foco visível e header compact
         animations: 'disabled',
       });
   }
+  // Simula a heurística de foco visível persistente vista no Safari após toque.
+  const session = await context.newCDPSession(page);
+  await session.send('DOM.enable');
+  await session.send('CSS.enable');
+  const doc = await session.send('DOM.getDocument');
+  const commandFor = await trigger.getAttribute('commandfor');
+  const node = await session.send('DOM.querySelector', {
+    nodeId: doc.root.nodeId,
+    selector: `.details-control[commandfor="${commandFor}"]`,
+  });
+  await session.send('CSS.forcePseudoState', {
+    nodeId: node.nodeId,
+    forcedPseudoClasses: ['focus', 'focus-visible'],
+  });
+  await expect(card).toHaveCSS('outline-style', 'none');
+  await expect(trigger).toHaveCSS('box-shadow', 'none');
+  await session.send('CSS.forcePseudoState', {
+    nodeId: node.nodeId,
+    forcedPseudoClasses: [],
+  });
+  await session.detach();
   await page.keyboard.press('Tab');
   await page.keyboard.press('Shift+Tab');
   await expect(trigger).toBeFocused();
@@ -488,4 +510,182 @@ test('fechar durante a entrada mantém continuidade sem salto ou bloqueio residu
   expect(await page.evaluate(() => document.body.style.position)).not.toBe(
     'fixed',
   );
+});
+
+for (const width of [390, 1440]) {
+  for (const scroll of [0, 250]) {
+    test(`fundo invariável ao abrir/fechar ${width}px scroll ${scroll}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/aprovacoes');
+      await page.evaluate(async (y) => {
+        await document.fonts.ready;
+        scrollTo({ top: y, behavior: 'instant' });
+      }, scroll);
+      await page.waitForTimeout(100);
+      const evidence = await page
+        .locator('.details-control')
+        .first()
+        .evaluate(async (button) => {
+          const panel = button
+            .closest('.approval-card')!
+            .querySelector('dialog')!;
+          const selectors = [
+            '#site-header',
+            '.page-intro',
+            '.page-intro h1',
+            '.approval-grid',
+            '.approval-card',
+          ];
+          const snap = () =>
+            selectors.map((selector) => {
+              const el = document.querySelector(selector)!;
+              const box = el.getBoundingClientRect();
+              return {
+                selector,
+                x: box.x,
+                y: box.y,
+                width: box.width,
+                height: box.height,
+              };
+            });
+          const before = snap();
+          (button as HTMLButtonElement).click();
+          while (!panel.open) await new Promise(requestAnimationFrame);
+          const during = [];
+          const visual: {
+            complete: boolean;
+            naturalWidth: number;
+            width: number;
+            height: number;
+            time: number;
+          }[] = [];
+          const start = performance.now();
+          const visualSnap = () => {
+            if (!panel.open) return;
+            const image =
+              panel.querySelector<HTMLImageElement>('.card-media img')!;
+            visual.push({
+              complete: image.complete,
+              naturalWidth: image.naturalWidth,
+              width: panel.clientWidth,
+              height: panel.clientHeight,
+              time: performance.now() - start,
+            });
+          };
+          for (let i = 0; i < 18; i++) {
+            await new Promise(requestAnimationFrame);
+            during.push(snap());
+            visualSnap();
+          }
+          panel.querySelector<HTMLButtonElement>('.close-details')!.click();
+          while (panel.open) {
+            await new Promise(requestAnimationFrame);
+            during.push(snap());
+            visualSnap();
+          }
+          await new Promise(requestAnimationFrame);
+          return { before, during, after: snap(), visual, scrollY };
+        });
+      for (const sample of [...evidence.during, evidence.after])
+        for (let i = 0; i < sample.length; i++) {
+          for (const key of ['x', 'y', 'width', 'height'] as const)
+            expect(
+              sample[i]![key],
+              `${sample[i]!.selector} ${key}`,
+            ).toBeCloseTo(evidence.before[i]![key], 1);
+        }
+      expect(
+        new Set(
+          evidence.visual.map((frame) => `${frame.width}:${frame.height}`),
+        ).size,
+      ).toBe(1);
+      expect(evidence.scrollY).toBeCloseTo(scroll, 1);
+      await mkdir('test-results/diagnostics', { recursive: true });
+      await writeFile(
+        `test-results/diagnostics/background-after-${width}-${scroll}.json`,
+        JSON.stringify(evidence, null, 2),
+      );
+    });
+  }
+}
+
+test('rede lenta não bloqueia modal nem altera geometria; srcset proporcional', async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({
+    deviceScaleFactor: 3,
+    viewport: { width: 390, height: 844 },
+    ...(baseURL ? { baseURL } : {}),
+  });
+  const page = await context.newPage();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route('**/media/approvals/*-800.webp', async (route) => {
+    await gate;
+    await route.continue();
+  });
+  try {
+    await page.goto('/aprovacoes');
+    const card = page.locator('.approval-card').first();
+    await card.locator('.details-control').click();
+    const panel = card.locator('dialog');
+    await expect(panel).toBeVisible({ timeout: 750 });
+    const image = panel.locator('.card-media img');
+    expect(await image.evaluate((el: HTMLImageElement) => el.complete)).toBe(
+      false,
+    );
+    await panel.evaluate(async (el) => {
+      await Promise.allSettled(el.getAnimations().map((a) => a.finished));
+    });
+    const before = await panel.evaluate((el) => ({
+      w: el.clientWidth,
+      h: el.clientHeight,
+      imageW: el.querySelector('img')!.clientWidth,
+      imageH: el.querySelector('img')!.clientHeight,
+    }));
+    expect(before.imageW / before.imageH).toBeCloseTo(0.8, 2);
+    release();
+    await image.evaluate((el: HTMLImageElement) => el.decode());
+    expect(
+      await image.evaluate((el: HTMLImageElement) => el.currentSrc),
+    ).toMatch(/-800\.webp$/);
+    expect(
+      await panel.evaluate((el) => ({
+        w: el.clientWidth,
+        h: el.clientHeight,
+        imageW: el.querySelector('img')!.clientWidth,
+        imageH: el.querySelector('img')!.clientHeight,
+      })),
+    ).toEqual(before);
+    await panel.locator('.close-details').click();
+    await expect(panel).not.toBeVisible();
+  } finally {
+    release();
+    await context.close();
+  }
+  const short = await browser.newContext({
+    deviceScaleFactor: 2,
+    viewport: { width: 390, height: 440 },
+    ...(baseURL ? { baseURL } : {}),
+  });
+  const shortPage = await short.newPage();
+  const requests: string[] = [];
+  shortPage.on('request', (request) => {
+    if (request.url().includes('/media/approvals/'))
+      requests.push(request.url());
+  });
+  await shortPage.goto('/aprovacoes');
+  await shortPage.locator('.details-control').first().click();
+  const image = shortPage.locator('dialog[open] .card-media img');
+  await image.evaluate((el: HTMLImageElement) => el.decode());
+  expect(await image.evaluate((el: HTMLImageElement) => el.currentSrc)).toMatch(
+    /-400\.webp$/,
+  );
+  expect(requests.some((url) => url.endsWith('-800.webp'))).toBe(false);
+  await short.close();
 });

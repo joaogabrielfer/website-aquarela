@@ -19,6 +19,7 @@
   let panel: HTMLDialogElement;
   let trigger: HTMLButtonElement;
   let closing = $state(false);
+  let keyboardInput = $state(false);
   let restoreScroll: (() => void) | undefined;
   let backdropStart: { x: number; y: number; id: number } | undefined;
   let backdropTap = false;
@@ -34,6 +35,10 @@
     event.preventDefault();
     if (panel.open || document.querySelector('dialog[open], [role="dialog"]'))
       return;
+    const image = panel.querySelector<HTMLImageElement>('.card-media img');
+    // A abertura nunca aguarda rede ou decode; o tamanho já está reservado no CSS.
+    if (image?.complete && image.naturalWidth > 0)
+      void image.decode().catch(() => {});
     const y = window.scrollY;
     const body = document.body;
     const root = document.documentElement;
@@ -45,6 +50,12 @@
       paddingRight: body.style.paddingRight,
       rootOverflow: root.style.overflow,
     };
+    const header = document.querySelector<HTMLElement>('#site-header');
+    const headerBox = header?.getBoundingClientRect();
+    const headerStyle = header
+      ? { position: header.style.position, top: header.style.top }
+      : undefined;
+    root.dataset.approvalOverlay = 'open';
     const scrollbar = innerWidth - root.clientWidth;
     window.dispatchEvent(
       new CustomEvent('aquarela:overlay-change', {
@@ -56,6 +67,10 @@
     body.style.top = `-${y}px`;
     body.style.width = '100%';
     body.style.overflow = 'hidden';
+    if (header && headerBox) {
+      header.style.position = 'relative';
+      header.style.top = `${y + headerBox.top}px`;
+    }
     if (scrollbar)
       body.style.paddingRight = `${parseFloat(getComputedStyle(body).paddingRight) + scrollbar}px`;
     restoreScroll = () => {
@@ -65,7 +80,12 @@
       body.style.overflow = saved.overflow;
       body.style.paddingRight = saved.paddingRight;
       root.style.overflow = saved.rootOverflow;
+      if (header && headerStyle) {
+        header.style.position = headerStyle.position;
+        header.style.top = headerStyle.top;
+      }
       window.scrollTo({ top: y, behavior: 'instant' });
+      delete root.dataset.approvalOverlay;
       window.dispatchEvent(
         new CustomEvent('aquarela:overlay-change', {
           detail: { type: 'approval', open: false },
@@ -74,7 +94,7 @@
     };
     closing = false;
     panel.scrollTop = 0;
-    const keyboardFocus = trigger.matches(':focus-visible');
+    const keyboardFocus = keyboardInput;
     panel.showModal();
     if (keyboardFocus)
       panel
@@ -143,7 +163,19 @@
   );
 </script>
 
-<article class={`approval-card ${className}`} class:has-portrait={portraitUrl}>
+<svelte:window
+  onpointerdown={() => {
+    keyboardInput = false;
+  }}
+  onkeydown={(event) => {
+    if (!event.altKey && !event.metaKey && !event.ctrlKey) keyboardInput = true;
+  }}
+/>
+<article
+  class={`approval-card ${className}`}
+  class:has-portrait={portraitUrl}
+  class:keyboard-input={keyboardInput}
+>
   <div class="card-front">
     {#if portraitUrl}
       <span class="card-avatar" aria-hidden="true">
@@ -275,7 +307,7 @@
           <img
             src={portraitUrl}
             srcset={portraitSrcset}
-            sizes="320px"
+            sizes="(min-width: 1100px) 320px, min(260px, 32svh, calc(100vw - 72px))"
             alt={portraitAlt || displayName}
             width="800"
             height="1000"
@@ -328,10 +360,7 @@
   .has-portrait > .card-front {
     grid-template-columns: 80px minmax(0, 1fr);
   }
-  .approval-card:hover {
-    background: var(--surface-paper);
-  }
-  .approval-card:has(.details-control:focus-visible) {
+  .approval-card.keyboard-input:has(.details-control:focus-visible) {
     outline: 3px solid var(--brand-navy);
     outline-offset: -4px;
   }
@@ -401,8 +430,9 @@
     inset: 0;
     border-radius: var(--radius-card);
   }
-  .details-control:focus-visible {
+  .details-control:focus {
     outline: none;
+    box-shadow: none;
   }
   .close-details {
     display: inline-flex;
@@ -418,17 +448,34 @@
   }
   .close-details:focus {
     outline: none;
+    box-shadow: none;
   }
-  .close-details:focus-visible {
+  .keyboard-input .close-details:focus-visible {
     outline: 2px solid var(--brand-navy);
     outline-offset: 3px;
   }
   .approval-panel {
     position: fixed;
-    inset: 0;
+    inset: max(24px, env(safe-area-inset-top, 0px))
+      max(20px, env(safe-area-inset-right, 0px))
+      max(24px, env(safe-area-inset-bottom, 0px))
+      max(20px, env(safe-area-inset-left, 0px));
     margin: auto;
-    width: min(420px, calc(100vw - 40px));
-    max-height: calc(100dvh - 48px);
+    width: min(
+      420px,
+      calc(
+        100vw - 2 *
+          max(
+            20px,
+            env(safe-area-inset-left, 0px),
+            env(safe-area-inset-right, 0px)
+          )
+      )
+    );
+    max-height: calc(
+      100dvh - max(24px, env(safe-area-inset-top, 0px)) -
+        max(24px, env(safe-area-inset-bottom, 0px))
+    );
     height: fit-content;
     padding: 0;
     overflow: auto;
@@ -458,10 +505,10 @@
   }
   .approval-panel {
     opacity: 0;
-    transform: translateY(6px) scale(0.985);
+    transform: translateY(4px) scale(0.99);
     transition:
-      opacity 160ms cubic-bezier(0.16, 1, 0.3, 1),
-      transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+      opacity 180ms ease-out,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .approval-panel:focus {
     outline: none;
@@ -473,7 +520,7 @@
   .approval-panel.is-closing {
     opacity: 0;
     transform: translateY(4px) scale(0.99);
-    transition-duration: 120ms, 140ms;
+    transition-duration: 140ms, 160ms;
     transition-timing-function: cubic-bezier(0.4, 0, 0.8, 1);
   }
   .approval-panel::backdrop {
@@ -487,17 +534,19 @@
   @starting-style {
     .approval-panel[open] {
       opacity: 0;
-      transform: translateY(6px) scale(0.985);
+      transform: translateY(4px) scale(0.99);
     }
     .approval-panel[open]::backdrop {
       background: rgb(0 30 50 / 0%);
     }
   }
   :global(html:has(.approval-panel[open])) {
+    overscroll-behavior: none;
     overflow: hidden;
   }
   @media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
     .approval-card:hover {
+      background: var(--surface-paper);
       box-shadow: var(--shadow);
       border-color: var(--brand-navy);
     }
@@ -543,8 +592,17 @@
   @media (min-width: 1100px) {
     .approval-panel {
       width: min(760px, calc(100vw - 64px));
-      height: min(560px, calc(100dvh - 64px));
-      max-height: calc(100dvh - 64px);
+      height: min(
+        560px,
+        calc(
+          100dvh - max(32px, env(safe-area-inset-top, 0px)) -
+            max(32px, env(safe-area-inset-bottom, 0px))
+        )
+      );
+      max-height: calc(
+        100dvh - max(32px, env(safe-area-inset-top, 0px)) -
+          max(32px, env(safe-area-inset-bottom, 0px))
+      );
     }
     .card-body {
       display: grid;

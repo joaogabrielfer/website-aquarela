@@ -47,19 +47,20 @@ const proposal = getProposal();
 ---
 
 <PageShell title={pageTitles.home} description={pageCopy?.metaDescription}>
-  {/* 1. HeroHome — fundo paper */}
-  <HeroHome
-    title={pageCopy?.title ?? h1.home}
-    support={support}
-    imageSrc={heroMedia?.src ?? null}
-    imageAlt={heroMedia?.alt}
-    imageWidth={heroMedia?.width}
-    imageHeight={heroMedia?.height}
-    imageFocalPoint={heroMedia?.focalPoint}
-  />
-  {/* 2. Banner sazonal — opcional, após o Hero */}
-  {seasonalBanner && <SeasonalBanner banner={seasonalBanner} />}
-
+  <div class="home-first-screen">
+    {/* 1. HeroHome — fundo paper */}
+    <HeroHome
+      title={pageCopy?.title ?? h1.home}
+      support={support}
+      imageSrc={heroMedia?.src ?? null}
+      imageAlt={heroMedia?.alt}
+      imageWidth={heroMedia?.width}
+      imageHeight={heroMedia?.height}
+      imageFocalPoint={heroMedia?.focalPoint}
+    />
+    {/* 2. Banner sazonal — opcional, após o Hero */}
+    {seasonalBanner && <SeasonalBanner banner={seasonalBanner} />}
+  </div>
   {/* 3. Etapas — fundo branco */}
   <section class="section-etas" id="etapas">
     <div class="container">
@@ -210,6 +211,14 @@ const proposal = getProposal();
 </PageShell>
 
 <style>
+  .home-first-screen {
+    min-height: calc(100dvh - var(--site-header-height));
+    display: flex;
+    flex-direction: column;
+  }
+  .home-first-screen :global(.hero-home) {
+    flex: 1;
+  }
   .section-etas,
   .section-espacos,
   .section-conquistas {

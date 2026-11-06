@@ -44,8 +44,10 @@ const active = (href: string) =>
 </header>
 <script is:inline>
   const header = document.querySelector('#site-header');
-  const update = () =>
+  const update = () => {
+    if (document.documentElement.hasAttribute('data-approval-overlay')) return;
     header?.classList.toggle('scrolled', window.scrollY > 16);
+  };
   window.addEventListener('scroll', update, { passive: true });
   update();
 </script>
@@ -54,11 +56,12 @@ const active = (href: string) =>
     position: sticky;
     top: 0;
     z-index: var(--z-header);
-    height: 80px;
+    height: var(--site-header-height);
     background: var(--surface-base);
     border-bottom: 1px solid var(--border-subtle);
   }
   .header-inner {
+    padding-top: env(safe-area-inset-top, 0px);
     height: 100%;
     display: flex;
     align-items: center;
@@ -118,9 +121,6 @@ const active = (href: string) =>
     }
   }
   @media (min-width: 1100px) {
-    .site-header {
-      height: 96px;
-    }
     .logo-link img {
       width: 220px;
     }
