@@ -1,22 +1,161 @@
 <script lang="ts">
+  import { onMount, onDestroy, tick } from 'svelte';
   import type { ApprovalAchievement } from '../lib/approval-groups';
   let {
     displayName,
     achievements,
     portraitUrl = null,
     portraitAlt,
-    portraitSizes = '(min-width: 1392px) 306px, (min-width: 1100px) calc((100vw - 168px) / 4), (min-width: 768px) calc((100vw - 84px) / 2), (max-width: 340px) 96px, 32vw',
     class: className = '',
   }: {
     displayName: string;
     achievements: ApprovalAchievement[];
     portraitUrl?: string | null;
     portraitAlt?: string | undefined;
-    portraitSizes?: string;
     class?: string;
   } = $props();
 
-  // Somente os retratos controlados deste lote têm variantes 400/800.
+  const uid = $props.id();
+  let panel: HTMLDialogElement;
+  let trigger: HTMLButtonElement;
+  let closing = $state(false);
+  let keyboardInput = $state(false);
+  let restoreScroll: (() => void) | undefined;
+  let backdropStart: { x: number; y: number; id: number } | undefined;
+  let backdropTap = false;
+  const outside = (x: number, y: number) => {
+    const box = panel.getBoundingClientRect();
+    return x < box.left || x > box.right || y < box.top || y > box.bottom;
+  };
+  function release() {
+    restoreScroll?.();
+    restoreScroll = undefined;
+  }
+  function open(event: MouseEvent) {
+    event.preventDefault();
+    if (panel.open || document.querySelector('dialog[open], [role="dialog"]'))
+      return;
+    const image = panel.querySelector<HTMLImageElement>('.card-media img');
+    // A abertura nunca aguarda rede ou decode; o tamanho já está reservado no CSS.
+    if (image?.complete && image.naturalWidth > 0)
+      void image.decode().catch(() => {});
+    const y = window.scrollY;
+    const body = document.body;
+    const root = document.documentElement;
+    const saved = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow,
+      paddingRight: body.style.paddingRight,
+      rootOverflow: root.style.overflow,
+    };
+    const header = document.querySelector<HTMLElement>('#site-header');
+    const headerBox = header?.getBoundingClientRect();
+    const headerStyle = header
+      ? { position: header.style.position, top: header.style.top }
+      : undefined;
+    root.dataset.approvalOverlay = 'open';
+    const scrollbar = innerWidth - root.clientWidth;
+    window.dispatchEvent(
+      new CustomEvent('aquarela:overlay-change', {
+        detail: { type: 'approval', open: true },
+      }),
+    );
+    root.style.overflow = 'hidden';
+    body.style.position = 'fixed';
+    body.style.top = `-${y}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+    if (header && headerBox) {
+      header.style.position = 'relative';
+      header.style.top = `${y + headerBox.top}px`;
+    }
+    if (scrollbar)
+      body.style.paddingRight = `${parseFloat(getComputedStyle(body).paddingRight) + scrollbar}px`;
+    restoreScroll = () => {
+      body.style.position = saved.position;
+      body.style.top = saved.top;
+      body.style.width = saved.width;
+      body.style.overflow = saved.overflow;
+      body.style.paddingRight = saved.paddingRight;
+      root.style.overflow = saved.rootOverflow;
+      if (header && headerStyle) {
+        header.style.position = headerStyle.position;
+        header.style.top = headerStyle.top;
+      }
+      window.scrollTo({ top: y, behavior: 'instant' });
+      delete root.dataset.approvalOverlay;
+      window.dispatchEvent(
+        new CustomEvent('aquarela:overlay-change', {
+          detail: { type: 'approval', open: false },
+        }),
+      );
+    };
+    closing = false;
+    panel.scrollTop = 0;
+    const keyboardFocus = keyboardInput;
+    panel.showModal();
+    if (keyboardFocus)
+      panel
+        .querySelector<HTMLButtonElement>('.close-details')
+        ?.focus({ preventScroll: true });
+    else panel.focus({ preventScroll: true });
+  }
+  async function close(event?: Event) {
+    event?.preventDefault();
+    event?.stopPropagation();
+    if (!panel.open || closing) return;
+    closing = true;
+    await tick();
+    await Promise.allSettled(
+      panel.getAnimations().map((animation) => animation.finished),
+    );
+    panel.close();
+    release();
+    closing = false;
+    trigger.focus({ preventScroll: true });
+  }
+  onMount(() => {
+    let touchY = 0;
+    const start = (event: TouchEvent) => {
+      touchY = event.touches[0]?.clientY ?? 0;
+    };
+    const move = (event: TouchEvent) => {
+      if (event.touches.length !== 1) return;
+      const touch = event.touches[0]!;
+      const delta = touchY - touch.clientY;
+      touchY = touch.clientY;
+      if (
+        outside(touch.clientX, touch.clientY) ||
+        panel.scrollHeight <= panel.clientHeight ||
+        (delta < 0 && panel.scrollTop <= 0) ||
+        (delta > 0 &&
+          panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 1)
+      )
+        event.preventDefault();
+    };
+    const wheel = (event: WheelEvent) => {
+      if (
+        outside(event.clientX, event.clientY) ||
+        panel.scrollHeight <= panel.clientHeight ||
+        (event.deltaY < 0 && panel.scrollTop <= 0) ||
+        (event.deltaY > 0 &&
+          panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 1)
+      )
+        event.preventDefault();
+    };
+    panel.addEventListener('touchstart', start, { passive: true });
+    panel.addEventListener('touchmove', move, { passive: false });
+    panel.addEventListener('wheel', wheel, { passive: false });
+    return () => {
+      panel.removeEventListener('touchstart', start);
+      panel.removeEventListener('touchmove', move);
+      panel.removeEventListener('wheel', wheel);
+    };
+  });
+  onDestroy(release);
+
   const portraitSrcset = $derived(
     portraitUrl?.match(/^\/media\/approvals\/[a-z-]+-800\.webp$/)
       ? `${portraitUrl.replace('-800.webp', '-400.webp')} 400w, ${portraitUrl} 800w`
@@ -24,104 +163,462 @@
   );
 </script>
 
-<article class={`approval-card ${className}`} class:has-portrait={portraitUrl}>
-  {#if portraitUrl}
-    <div class="card-media">
-      <img
-        src={portraitUrl}
-        srcset={portraitSrcset}
-        sizes={portraitSizes}
-        alt={portraitAlt || displayName}
-        width="800"
-        height="1000"
-        loading="lazy"
-        decoding="async"
-      />
-    </div>
-  {/if}
-  <div class="card-body">
-    {#if achievements.length > 1}
-      <p class="approval-count">{achievements.length} aprovações</p>
+<svelte:window
+  onpointerdown={() => {
+    keyboardInput = false;
+  }}
+  onkeydown={(event) => {
+    if (!event.altKey && !event.metaKey && !event.ctrlKey) keyboardInput = true;
+  }}
+/>
+<article
+  class={`approval-card ${className}`}
+  class:has-portrait={portraitUrl}
+  class:keyboard-input={keyboardInput}
+>
+  <div class="card-front">
+    {#if portraitUrl}
+      <span class="card-avatar" aria-hidden="true">
+        <img
+          src={portraitUrl}
+          srcset={portraitSrcset}
+          sizes="120px"
+          alt=""
+          width="800"
+          height="1000"
+          loading="lazy"
+          decoding="async"
+        />
+      </span>
     {/if}
-    <h3 class="card-title">{displayName}</h3>
-    <ul class="achievement-list">
-      {#each achievements as achievement (achievement.id)}
-        <li class="achievement">
-          <p class="card-course">{achievement.course}</p>
-          <p class="card-institution">{achievement.institution}</p>
-          <dl class="card-facts">
-            <div>
-              <dt>Processo</dt>
-              <dd>{achievement.selectionProcess}</dd>
-            </div>
-            <div>
-              <dt>Ano</dt>
-              <dd>{achievement.year}</dd>
-            </div>
-          </dl>
-        </li>
-      {/each}
-    </ul>
+    <div class="card-summary">
+      <h3 class="card-title" id={`${uid}-name`}>{displayName}</h3>
+      {#if achievements.length > 1}
+        <span class="approval-count">{achievements.length} aprovações</span>
+      {/if}
+      <ul class="course-summary">
+        {#each achievements as achievement (achievement.id)}
+          <li>{achievement.course}</li>
+        {/each}
+      </ul>
+      <button
+        bind:this={trigger}
+        class="details-control"
+        commandfor={`${uid}-panel`}
+        command="show-modal"
+        aria-label={`Ver detalhes de ${displayName}`}
+        onclick={open}
+      >
+        Ver detalhes <svg
+          aria-hidden="true"
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          ><path
+            d="m5 7.5 5 5 5-5"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          /></svg
+        >
+      </button>
+    </div>
   </div>
+  <dialog
+    bind:this={panel}
+    class="approval-panel"
+    class:is-closing={closing}
+    id={`${uid}-panel`}
+    data-lenis-prevent
+    tabindex="-1"
+    autofocus
+    aria-labelledby={`${uid}-panel-name`}
+    oncancel={close}
+    onclose={() => {
+      if (!panel.open) release();
+    }}
+    onpointerdown={(event) => {
+      backdropTap = false;
+      backdropStart = outside(event.clientX, event.clientY)
+        ? { x: event.clientX, y: event.clientY, id: event.pointerId }
+        : undefined;
+    }}
+    onpointermove={(event) => {
+      if (
+        backdropStart &&
+        Math.hypot(
+          event.clientX - backdropStart.x,
+          event.clientY - backdropStart.y,
+        ) > 8
+      )
+        backdropStart = undefined;
+    }}
+    onpointerup={(event) => {
+      backdropTap =
+        !!backdropStart &&
+        event.pointerId === backdropStart.id &&
+        outside(event.clientX, event.clientY);
+      backdropStart = undefined;
+    }}
+    onpointercancel={() => {
+      backdropStart = undefined;
+      backdropTap = false;
+    }}
+    onclick={(event) => {
+      if (
+        event.target === panel &&
+        backdropTap &&
+        outside(event.clientX, event.clientY)
+      )
+        void close(event);
+      backdropTap = false;
+    }}
+  >
+    <div class="panel-header">
+      <h3 id={`${uid}-panel-name`}>{displayName}</h3>
+      <button
+        class="close-details"
+        commandfor={`${uid}-panel`}
+        command="close"
+        onclick={close}
+        aria-label={`Fechar detalhes de ${displayName}`}
+      >
+        <svg
+          aria-hidden="true"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          ><path
+            d="m4 4 8 8m0-8-8 8"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+          /></svg
+        >
+        Fechar</button
+      >
+    </div>
+    <div class="card-body">
+      {#if portraitUrl}
+        <div class="card-media">
+          <img
+            src={portraitUrl}
+            srcset={portraitSrcset}
+            sizes="(min-width: 1100px) 320px, min(260px, 32svh, calc(100vw - 72px))"
+            alt={portraitAlt || displayName}
+            width="800"
+            height="1000"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      {/if}
+      <ul
+        class="achievement-list"
+        aria-label={`Todas as aprovações de ${displayName}`}
+      >
+        {#each achievements as achievement (achievement.id)}
+          <li class="achievement">
+            <p class="card-course">{achievement.course}</p>
+            <p class="card-institution">{achievement.institution}</p>
+            <dl class="card-facts">
+              <div>
+                <dt>Processo</dt>
+                <dd>{achievement.selectionProcess}</dd>
+              </div>
+              <div>
+                <dt>Ano</dt>
+                <dd>{achievement.year}</dd>
+              </div>
+            </dl>
+          </li>
+        {/each}
+      </ul>
+    </div>
+  </dialog>
 </article>
 
 <style>
   .approval-card {
-    display: flex;
-    flex-direction: column;
     min-width: 0;
+    position: relative;
+    height: 100%;
     background: var(--surface-base);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
+  }
+  .card-front {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    color: var(--brand-navy);
+    min-height: 48px;
+  }
+  .has-portrait > .card-front {
+    grid-template-columns: 80px minmax(0, 1fr);
+  }
+  .approval-card.keyboard-input:has(.details-control:focus-visible) {
+    outline: 3px solid var(--brand-navy);
+    outline-offset: -4px;
+  }
+  .card-avatar {
+    position: relative;
+    width: 80px;
+    aspect-ratio: 1;
+    background: var(--surface-paper);
+    border: 1px solid var(--border-subtle);
+    border-radius: 50%;
     overflow: hidden;
   }
-  .card-media {
-    position: relative;
-    flex: none;
-    aspect-ratio: 4 / 5;
-    background: var(--surface-paper);
-    border-bottom: 4px solid var(--brand-yellow);
-  }
-  .card-media img {
+  .card-avatar img {
     position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center bottom;
+    inset: 6px auto auto -25%;
+    width: 150%;
+    max-width: none;
+    height: auto;
+    aspect-ratio: 4 / 5;
   }
-  .card-body {
-    padding: var(--space-6);
+  .card-summary {
+    min-width: 0;
     display: flex;
-    flex: 1;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-3);
-  }
-  .approval-count {
-    margin: 0;
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-pill);
-    background: var(--brand-yellow);
-    color: var(--brand-navy);
-    font-size: 0.875rem;
-    line-height: 1.4;
-    font-weight: 500;
+    gap: var(--space-2);
   }
   .card-title {
     margin: 0;
-    color: var(--brand-navy);
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     line-height: 1.2;
     overflow-wrap: anywhere;
+  }
+  .approval-count {
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--brand-yellow);
+    font-size: 0.875rem;
+  }
+  .course-summary {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.875rem;
+  }
+  .course-summary li + li {
+    margin-top: var(--space-1);
+  }
+  .details-control {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .details-control,
+  .close-details {
+    min-height: 44px;
+    text-decoration: underline;
+    border: 0;
+    background: none;
+    color: var(--brand-navy);
+    font: inherit;
+    cursor: pointer;
+  }
+  .details-control::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+  }
+  .details-control:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  .close-details {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface-paper);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+  .close-details:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  .keyboard-input .close-details:focus-visible {
+    outline: 2px solid var(--brand-navy);
+    outline-offset: 3px;
+  }
+  .approval-panel {
+    position: fixed;
+    inset: max(24px, env(safe-area-inset-top, 0px))
+      max(20px, env(safe-area-inset-right, 0px))
+      max(24px, env(safe-area-inset-bottom, 0px))
+      max(20px, env(safe-area-inset-left, 0px));
+    margin: auto;
+    width: min(
+      420px,
+      calc(
+        100vw - 2 *
+          max(
+            20px,
+            env(safe-area-inset-left, 0px),
+            env(safe-area-inset-right, 0px)
+          )
+      )
+    );
+    max-height: calc(
+      100dvh - max(24px, env(safe-area-inset-top, 0px)) -
+        max(24px, env(safe-area-inset-bottom, 0px))
+    );
+    height: fit-content;
+    padding: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background: var(--surface-base);
+    color: var(--text-ink);
+    border: 0;
+    border-radius: var(--radius-card);
+    box-shadow: 0 20px 64px rgb(0 40 60 / 28%);
+  }
+  .panel-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--surface-base);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: var(--space-4);
+  }
+  .panel-header h3 {
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+  .approval-panel {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+    transition:
+      opacity 180ms ease-out,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .approval-panel:focus {
+    outline: none;
+  }
+  .approval-panel[open] {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .approval-panel.is-closing {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+    transition-duration: 140ms, 160ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.8, 1);
+  }
+  .approval-panel::backdrop {
+    background: rgb(0 30 50 / 34%);
+    transition: background-color 160ms ease-out;
+  }
+  .approval-panel.is-closing::backdrop {
+    background: rgb(0 30 50 / 0%);
+    transition-duration: 120ms;
+  }
+  @starting-style {
+    .approval-panel[open] {
+      opacity: 0;
+      transform: translateY(4px) scale(0.99);
+    }
+    .approval-panel[open]::backdrop {
+      background: rgb(0 30 50 / 0%);
+    }
+  }
+  :global(html:has(.approval-panel[open])) {
+    overscroll-behavior: none;
+    overflow: hidden;
+  }
+  @media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
+    .approval-card:hover {
+      background: var(--surface-paper);
+      box-shadow: var(--shadow);
+      border-color: var(--brand-navy);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .approval-card {
+        transition:
+          transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1),
+          box-shadow 200ms ease-out,
+          border-color 200ms ease-out;
+      }
+      .approval-card:hover {
+        transform: scale(1.02);
+      }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .approval-panel[open],
+    .approval-panel.is-closing,
+    .approval-panel::backdrop,
+    .approval-panel.is-closing::backdrop {
+      transition: none;
+    }
+  }
+  .card-body {
+    padding: var(--space-4);
+    border-top: 1px solid var(--border-subtle);
+  }
+  .card-media {
+    display: flex;
+    justify-content: center;
+    background: var(--surface-paper);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    margin-bottom: var(--space-4);
+  }
+  .card-media img {
+    display: block;
+    width: min(100%, 260px, 32svh);
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: contain;
+  }
+  @media (min-width: 1100px) {
+    .approval-panel {
+      width: min(760px, calc(100vw - 64px));
+      height: min(
+        560px,
+        calc(
+          100dvh - max(32px, env(safe-area-inset-top, 0px)) -
+            max(32px, env(safe-area-inset-bottom, 0px))
+        )
+      );
+      max-height: calc(
+        100dvh - max(32px, env(safe-area-inset-top, 0px)) -
+          max(32px, env(safe-area-inset-bottom, 0px))
+      );
+    }
+    .card-body {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: var(--space-5);
+      align-items: start;
+    }
+    .card-media img {
+      width: min(100%, 320px);
+    }
   }
   .achievement-list {
     display: flex;
     flex-direction: column;
-    width: 100%;
     gap: var(--space-4);
-    margin: var(--space-1) 0 0;
+    margin: 0;
     padding: 0;
     list-style: none;
   }
@@ -143,13 +640,12 @@
     margin: 0;
     color: var(--text-muted);
     font-size: 0.875rem;
-    line-height: 1.4;
   }
   .card-facts {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-3) var(--space-6);
-    margin: var(--space-1) 0 0;
+    gap: var(--space-3);
+    margin: 0;
   }
   .card-facts div {
     display: flex;
@@ -159,67 +655,15 @@
   dt {
     color: var(--text-muted);
     font-size: 0.875rem;
-    line-height: 1.4;
   }
   dd {
     margin: 0;
-    color: var(--text-ink);
     font-size: 0.875rem;
-    line-height: 1.4;
-    font-weight: 500;
   }
-  @media (max-width: 767px) {
-    .approval-card.has-portrait {
-      display: grid;
-      grid-template-columns: minmax(96px, 32%) minmax(0, 1fr);
-    }
-    .card-media {
-      display: flex;
-      align-items: center;
-      aspect-ratio: auto;
-      border-bottom: 0;
-      border-right: 4px solid var(--brand-yellow);
-    }
-    .card-media img {
-      position: static;
-      height: auto;
-      aspect-ratio: 4 / 5;
-    }
-    .card-body {
-      min-width: 0;
-      padding: var(--space-4);
-    }
-    .card-course,
-    dd {
-      overflow-wrap: anywhere;
-    }
-    .card-facts {
-      column-gap: var(--space-3);
-    }
-  }
-  @media (min-width: 1100px) {
-    .card-media {
-      aspect-ratio: 4 / 3;
-    }
-    .card-body {
-      padding: var(--space-5);
-    }
-  }
-  @media (min-width: 1100px) and (hover: hover) {
-    .approval-card:hover {
-      box-shadow: var(--shadow);
-      border-color: var(--brand-navy);
-    }
-  }
-  @media (min-width: 1100px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    .approval-card {
-      transition:
-        transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1),
-        box-shadow 200ms ease-out,
-        border-color 200ms ease-out;
-    }
-    .approval-card:hover {
-      transform: scale(1.02);
-    }
+  .course-summary,
+  .card-course,
+  .card-institution,
+  dd {
+    overflow-wrap: anywhere;
   }
 </style>

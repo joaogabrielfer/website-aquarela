@@ -112,6 +112,12 @@ const { banner } = Astro.props;
     }
   }
   @media (max-width: 767px) {
+    .seasonal-banner {
+      padding-block: 20px max(20px, env(safe-area-inset-bottom, 0px));
+    }
+    h2 {
+      font-size: 1.5rem;
+    }
     .seasonal-banner__inner {
       flex-direction: column;
     }

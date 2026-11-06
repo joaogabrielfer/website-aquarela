@@ -23,14 +23,17 @@ const waitForStablePage = async (page: Page) => {
       );
     }
     await Promise.all(
-      [...document.images].map(
-        (image) =>
-          image.complete ||
-          new Promise<void>((resolve) => {
-            image.addEventListener('load', () => resolve(), { once: true });
-            image.addEventListener('error', () => resolve(), { once: true });
-          }),
-      ),
+      // Retratos lazy em dialogs fechados só carregam quando o usuário abre.
+      [...document.images]
+        .filter((image) => image.getClientRects().length > 0)
+        .map(
+          (image) =>
+            image.complete ||
+            new Promise<void>((resolve) => {
+              image.addEventListener('load', () => resolve(), { once: true });
+              image.addEventListener('error', () => resolve(), { once: true });
+            }),
+        ),
     );
     window.scrollTo(0, 0);
   });
