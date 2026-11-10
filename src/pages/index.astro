@@ -47,19 +47,20 @@ const proposal = getProposal();
 ---
 
 <PageShell title={pageTitles.home} description={pageCopy?.metaDescription}>
-  {/* 1. HeroHome — fundo paper */}
-  <HeroHome
-    title={pageCopy?.title ?? h1.home}
-    support={support}
-    imageSrc={heroMedia?.src ?? null}
-    imageAlt={heroMedia?.alt}
-    imageWidth={heroMedia?.width}
-    imageHeight={heroMedia?.height}
-    imageFocalPoint={heroMedia?.focalPoint}
-  />
-  {/* 2. Banner sazonal — opcional, após o Hero */}
-  {seasonalBanner && <SeasonalBanner banner={seasonalBanner} />}
-
+  <div class="home-first-screen">
+    {/* 1. HeroHome — fundo paper */}
+    <HeroHome
+      title={pageCopy?.title ?? h1.home}
+      support={support}
+      imageSrc={heroMedia?.src ?? null}
+      imageAlt={heroMedia?.alt}
+      imageWidth={heroMedia?.width}
+      imageHeight={heroMedia?.height}
+      imageFocalPoint={heroMedia?.focalPoint}
+    />
+    {/* 2. Banner sazonal — opcional, após o Hero */}
+    {seasonalBanner && <SeasonalBanner banner={seasonalBanner} />}
+  </div>
   {/* 3. Etapas — fundo branco */}
   <section class="section-etas" id="etapas">
     <div class="container">
@@ -154,12 +155,11 @@ const proposal = getProposal();
       <section class="section-conquistas" id="conquistas">
         <div class="container">
           <SectionHeading title="Histórias e conquistas" />
-          <div class="card-grid card-grid--3">
+          <div class="card-grid card-grid--3 approval-home-grid">
             {featuredApprovals.map((app) => (
               <ApprovalCard
                 displayName={app.displayName}
                 achievements={app.achievements}
-                portraitSizes="(min-width: 1392px) 416px, (min-width: 1100px) calc((100vw - 144px) / 3), (min-width: 768px) calc((100vw - 84px) / 2), (max-width: 340px) 96px, 32vw"
                 portraitUrl={
                   app.portraitId
                     ? (getMediaById(app.portraitId)?.src ?? null)
@@ -211,6 +211,14 @@ const proposal = getProposal();
 </PageShell>
 
 <style>
+  .home-first-screen {
+    min-height: calc(100dvh - var(--site-header-height));
+    display: flex;
+    flex-direction: column;
+  }
+  .home-first-screen :global(.hero-home) {
+    flex: 1;
+  }
   .section-etas,
   .section-espacos,
   .section-conquistas {
@@ -234,6 +242,10 @@ const proposal = getProposal();
     grid-template-columns: 1fr;
     gap: var(--space-4);
     margin-top: var(--space-6);
+  }
+  .approval-home-grid {
+    grid-auto-rows: 1fr;
+    align-items: stretch;
   }
   .home-gallery-preview {
     margin-top: var(--space-6);
