@@ -43,8 +43,7 @@ const tones: Array<'white' | 'paper'> = ['white', 'paper', 'white', 'paper'];
           grades={seg.grades}
           ages={seg.ages}
           shifts={seg.shifts}
-          imageUrl={media?.src ?? null}
-          imageAlt={media?.alt ?? seg.name}
+          image={media}
           tone={tones[i] ?? 'white'}
         />
       );

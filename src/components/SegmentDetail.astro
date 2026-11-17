@@ -1,4 +1,6 @@
 ---
+import type { PublicMedia } from '../lib/content';
+import { focalPointStyle, responsiveSrcset } from '../lib/responsive-media';
 import AssetPlaceholder from './AssetPlaceholder.astro';
 import Button from './Button.astro';
 
@@ -10,8 +12,7 @@ interface Props {
   grades?: string | null;
   ages?: string | null;
   shifts?: string[];
-  imageUrl?: string | null;
-  imageAlt?: string | undefined;
+  image?: PublicMedia | null;
   tone?: 'white' | 'paper';
 }
 
@@ -23,13 +24,11 @@ const {
   grades,
   ages,
   shifts = [],
-  imageUrl,
-  imageAlt,
+  image,
   tone = 'white',
 } = Astro.props;
 
 const hasMeta = grades || ages || shifts.length > 0;
-const showImage = imageUrl !== null && imageUrl !== undefined;
 const ctaHref = `/visite?interesse=${slug}`;
 const demoText =
   'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure dolor reprehenderit voluptate velit esse cillum fugiat nulla pariatur excepteur sint occaecat cupidatat non proident';
@@ -92,13 +91,16 @@ const isDemoText = !description;
       </div>
       <div class="segment-detail-media">
         {
-          showImage ? (
+          image ? (
             <img
               class="segment-detail-photo"
-              src={imageUrl}
-              alt={imageAlt || name}
-              width="600"
-              height="450"
+              src={image.src}
+              srcset={responsiveSrcset(image.src, image.width)}
+              sizes="(min-width: 1100px) 320px, 100vw"
+              alt={image.alt}
+              width={image.width}
+              height={image.height}
+              style={focalPointStyle(image.focalPoint)}
               loading="lazy"
             />
           ) : (

@@ -72,14 +72,7 @@ const proposal = getProposal();
               slug={seg.slug}
               name={seg.name}
               summary={seg.summary}
-              imageUrl={
-                seg.imageId ? (getMediaById(seg.imageId)?.src ?? null) : null
-              }
-              imageAlt={
-                seg.imageId
-                  ? (getMediaById(seg.imageId)?.alt ?? seg.name)
-                  : seg.name
-              }
+              image={seg.imageId ? getMediaById(seg.imageId) : null}
             />
           ))
         }

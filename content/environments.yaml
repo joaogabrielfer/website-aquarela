@@ -47,6 +47,7 @@
   purpose: Sala de aula com bancas individuais e quadro branco.
   images:
     - sala-bancas-azuis
+    - sala-bancas-azuis-aula
   accessInfo: null
   order: 7
 - id: sala-bancas-vermelhas
@@ -83,3 +84,10 @@
     - quadra-coberta-angulo-complementar
   accessInfo: null
   order: 11
+- id: espaco-de-leitura
+  name: Espaço de leitura
+  purpose: Espaço com estantes de livros para leitura.
+  images:
+    - espaco-de-leitura
+  accessInfo: null
+  order: 12

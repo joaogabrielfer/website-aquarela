@@ -250,3 +250,57 @@
   focalPoint:
     x: 0.5
     'y': 0.35
+- id: infantil-atividade-com-pecas
+  src: /media/infantil-atividade-com-pecas-1600.webp
+  width: 1600
+  height: 900
+  alt: Professora e criança brincam com peças coloridas à mesa
+  caption: null
+  focalPoint:
+    x: 0.52
+    'y': 0.5
+- id: ensino-atividade-no-caderno
+  src: /media/ensino-atividade-no-caderno-1600.webp
+  width: 1600
+  height: 900
+  alt: Professora acompanha uma estudante que escreve no caderno
+  caption: null
+  focalPoint:
+    x: 0.46
+    'y': 0.5
+- id: ensino-participacao-em-sala
+  src: /media/ensino-participacao-em-sala-1600.webp
+  width: 1600
+  height: 900
+  alt: Estudantes levantam a mão durante uma aula
+  caption: null
+  focalPoint:
+    x: 0.57
+    'y': 0.5
+- id: ensino-estudantes-na-escada
+  src: /media/ensino-estudantes-na-escada-1600.webp
+  width: 1600
+  height: 900
+  alt: Três estudantes com mochilas sentados na escada
+  caption: null
+  focalPoint:
+    x: 0.52
+    'y': 0.5
+- id: espaco-de-leitura
+  src: /media/espaco-de-leitura-1600.webp
+  width: 1600
+  height: 900
+  alt: Estudante escolhe um livro em uma estante
+  caption: null
+  focalPoint:
+    x: 0.6
+    'y': 0.5
+- id: sala-bancas-azuis-aula
+  src: /media/sala-bancas-azuis-aula-1600.webp
+  width: 1600
+  height: 900
+  alt: Estudantes em sala de aula com bancas azuis e professor junto ao quadro
+  caption: null
+  focalPoint:
+    x: 0.61
+    'y': 0.5

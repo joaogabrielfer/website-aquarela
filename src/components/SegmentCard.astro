@@ -1,35 +1,32 @@
 ---
+import type { PublicMedia } from '../lib/content';
+import { focalPointStyle, responsiveSrcset } from '../lib/responsive-media';
 import AssetPlaceholder from './AssetPlaceholder.astro';
 
 interface Props {
   slug: string;
   name: string;
   summary?: string | null;
-  imageUrl?: string | null;
-  imageAlt?: string | undefined;
+  image?: PublicMedia | null;
   class?: string;
 }
 
-const {
-  slug,
-  name,
-  summary,
-  imageUrl,
-  imageAlt,
-  class: className,
-} = Astro.props;
+const { slug, name, summary, image, class: className } = Astro.props;
 const href = `/ensino#${slug}`;
 ---
 
 <a {href} class:list={['segment-card', className]}>
   {
-    imageUrl ? (
+    image ? (
       <div class="card-media">
         <img
-          src={imageUrl}
-          alt={imageAlt || name}
-          width="400"
-          height="300"
+          src={image.src}
+          srcset={responsiveSrcset(image.src, image.width)}
+          sizes="(min-width: 1100px) 25vw, (min-width: 768px) 50vw, 100vw"
+          alt={image.alt}
+          width={image.width}
+          height={image.height}
+          style={focalPointStyle(image.focalPoint)}
           loading="lazy"
         />
       </div>

@@ -14,6 +14,7 @@ const sources = [
   ['laboratorio-ciencias.png', 'laboratorio-ciencias'],
   ['patio.png', 'patio'],
   ['sala-bancas-azuis.png', 'sala-bancas-azuis'],
+  ['sala-bancas-azuis-aula.jpeg', 'sala-bancas-azuis-aula'],
   ['sala-bancas-vermelhas.png', 'sala-bancas-vermelhas'],
   ['studio-danca.png', 'studio-danca'],
   ['sala-infantil.png', 'sala-infantil'],
@@ -30,6 +31,11 @@ const sources = [
     'sala-infantil-mesas-coloridas-tablets',
   ],
   ['sala-bancas-vermelhas-estudo.png', 'sala-bancas-vermelhas-estudo'],
+  ['infantil-atividade-com-pecas.jpeg', 'infantil-atividade-com-pecas'],
+  ['ensino-atividade-no-caderno.jpeg', 'ensino-atividade-no-caderno'],
+  ['ensino-participacao-em-sala.jpeg', 'ensino-participacao-em-sala'],
+  ['ensino-estudantes-na-escada.jpeg', 'ensino-estudantes-na-escada'],
+  ['espaco-de-leitura.jpeg', 'espaco-de-leitura'],
 ];
 
 const sourceDir = path.resolve('assets/photos');

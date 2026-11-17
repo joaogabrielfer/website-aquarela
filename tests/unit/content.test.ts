@@ -20,7 +20,7 @@ import { renderPrivacyMarkdown } from '../../src/lib/privacy';
 import { HomePageCopy, SeasonalBanner } from '../../src/lib/content/schemas';
 
 describe('conteúdo único do site', () => {
-  it('mantém as quatro etapas, seus turnos e os campos ainda sem material', () => {
+  it('mantém as quatro etapas, seus turnos, textos e fotos', () => {
     const segments = getSegments();
     expect(segments.map((segment) => segment.slug)).toEqual([
       'educacao-infantil',
@@ -33,8 +33,9 @@ describe('conteúdo único do site', () => {
       'Tarde: 13:00 às 17:00',
     ]);
     for (const segment of segments) {
-      expect(segment.description).toBeNull();
-      expect(segment.imageId).toBeNull();
+      expect(segment.summary).toBeTruthy();
+      expect(segment.description).toBeTruthy();
+      expect(segment.imageId && getMediaById(segment.imageId)).toBeTruthy();
     }
   });
 
@@ -61,7 +62,9 @@ describe('conteúdo único do site', () => {
   });
 
   it('mostra ambientes com fotos e não duplica as imagens da galeria', () => {
-    expect(getEnvironments()).toHaveLength(11);
+    expect(getEnvironments()).toContainEqual(
+      expect.objectContaining({ id: 'espaco-de-leitura' }),
+    );
     const photos = getEnvironmentPhotos();
     expect(photos.length).toBeGreaterThan(0);
     expect(new Set(photos.map((photo) => photo.id)).size).toBe(photos.length);
