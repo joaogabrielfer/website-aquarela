@@ -58,7 +58,7 @@ describe('conteúdo único do site', () => {
     ).toHaveLength(10);
     for (const approval of getApprovals())
       expect(getMediaById(approval.portraitId!)).not.toBeNull();
-    expect(getFeaturedApprovals()).toEqual([]);
+    expect(getFeaturedApprovals()).toHaveLength(3);
   });
 
   it('mostra ambientes com fotos e não duplica as imagens da galeria', () => {

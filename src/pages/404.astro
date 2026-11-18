@@ -1,5 +1,6 @@
 ---
 import PageShell from '../layouts/PageShell.astro';
+import Button from '../components/Button.astro';
 import { h1 } from '../lib/copy';
 ---
 
@@ -9,8 +10,13 @@ import { h1 } from '../lib/copy';
     <p>Não encontramos a página que você procura.</p>
     <nav class="not-found-actions" aria-label="Ações">
       <ul>
-        <li><a href="/">Voltar ao início</a></li>
-        <li><a href="/visite">Falar com o colégio</a></li>
+        <li>
+          <Button href="/" variant="primary">Voltar ao início</Button>
+        </li>
+        <li>
+          <Button href="/visite" variant="secondary">Falar com o colégio</Button
+          >
+        </li>
       </ul>
     </nav>
   </section>
@@ -32,14 +38,6 @@ import { h1 } from '../lib/copy';
     margin: 0;
     padding: 0;
     list-style: none;
-  }
-  .not-found-actions a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    color: var(--brand-navy);
-    font-weight: 500;
-    text-decoration: underline;
   }
   @media (min-width: 768px) {
     .not-found {

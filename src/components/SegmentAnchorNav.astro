@@ -27,8 +27,12 @@ const anchors = [
 
 <style>
   .segment-anchor-nav {
+    position: sticky;
+    top: var(--site-header-height);
+    z-index: calc(var(--z-header) - 1);
     background: var(--surface-base);
-    padding: var(--space-4) 0;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border-subtle);
   }
   .segment-anchor-nav__inner {
     display: flex;

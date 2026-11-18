@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy, tick } from 'svelte';
   export let items: readonly { label: string; href: string }[] = [];
+  export let current = '/';
   let open = false;
   let trigger: HTMLButtonElement | undefined;
   let panel: HTMLElement | undefined;
@@ -9,6 +10,9 @@
   let focusWasInPanel = false;
   let panelTop = 80;
   let panelTopFrame = 0;
+
+  const isActive = (href: string) =>
+    href === '/galeria' ? current.startsWith('/galeria') : current === href;
 
   // The island is rendered inside the header, so inert only its background
   // siblings; inerting #site-header would also inert this open panel.
@@ -256,14 +260,32 @@
     aria-label="Menu principal"
     on:click|stopPropagation
   >
-    <button class="close" on:click={() => close()}>Fechar menu</button>
+    <div class="menu-header">
+      <span class="menu-title">Navegação</span>
+      <button class="close" type="button" on:click={() => close()}>
+        Fechar menu <span aria-hidden="true">✕</span>
+      </button>
+    </div>
     <nav aria-label="Navegação principal">
-      <a href="/" on:click={() => close(false, true)}>Início</a>
+      <a
+        href="/"
+        class:active={isActive('/')}
+        aria-current={isActive('/') ? 'page' : undefined}
+        on:click={() => close(false, true)}>Início</a
+      >
       {#each items as item (item.href)}
-        <a href={item.href} on:click={() => close(false, true)}>{item.label}</a>
+        <a
+          href={item.href}
+          class:active={isActive(item.href)}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+          on:click={() => close(false, true)}>{item.label}</a
+        >
       {/each}
-      <a class="cta" href="/visite" on:click={() => close(false, true)}
-        >Quero conhecer</a
+      <a
+        class="cta"
+        href="/visite"
+        aria-current={isActive('/visite') ? 'page' : undefined}
+        on:click={() => close(false, true)}>Quero conhecer</a
       >
     </nav>
   </div>
@@ -279,6 +301,7 @@
     background: white;
     color: var(--text-ink);
     font-size: 1.25rem;
+    cursor: pointer;
   }
   .backdrop {
     position: fixed;
@@ -302,25 +325,45 @@
     border-radius: var(--radius-card) 0 0 0;
     box-shadow: -8px 0 32px rgb(18 55 71 / 0.12);
   }
+  .menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .menu-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
   .close {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
     min-height: 44px;
-    border: 0;
-    background: none;
-    text-decoration: underline;
+    border: 1px solid var(--border-subtle);
+    background: var(--surface-paper);
     color: var(--brand-navy);
-    font-size: 1rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
     font-family: inherit;
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-control);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
   }
   .menu-panel nav {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
-    margin-top: var(--space-6);
+    gap: var(--space-2);
+    margin-top: var(--space-5);
   }
   .menu-panel nav a {
-    padding: var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
     color: var(--text-ink);
     font-size: 1.125rem;
     border-radius: var(--radius-control);
@@ -328,13 +371,21 @@
     font-weight: 500;
     border-bottom: 1px solid var(--border-subtle);
   }
+  .menu-panel nav a.active {
+    background: var(--surface-paper);
+    color: var(--brand-navy);
+    font-weight: 700;
+    border-color: var(--brand-navy);
+  }
   .menu-panel .cta {
+    justify-content: center;
     background: var(--action-primary);
     color: white;
     text-align: center;
     text-decoration: none;
     margin-top: var(--space-4);
     border-radius: var(--radius-pill);
+    border-bottom: none;
   }
   .menu-panel .cta:active {
     background: var(--action-pressed);
