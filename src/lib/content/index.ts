@@ -43,8 +43,10 @@ export type PublicHomePageCopy = z.infer<typeof HomePageCopy>;
 export type PublicSeasonalBanner = z.infer<typeof SeasonalBanner>;
 export type PublicFAQ = z.infer<typeof FAQ>;
 
+export const getMedia = () => collection('media.yaml', Media);
+
 export const getMediaById = (id: string) =>
-  collection('media.yaml', Media).find((media) => media.id === id) ?? null;
+  getMedia().find((media) => media.id === id) ?? null;
 
 export const getSegments = (): PublicSegment[] => {
   const segments = collection('segments.yaml', Segment);

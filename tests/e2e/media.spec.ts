@@ -56,3 +56,25 @@ test('cards de Ensino carregam fotos responsivas e levam à etapa correspondente
     page.locator('#educacao-infantil .segment-detail-photo'),
   ).toHaveAttribute('src', /infantil-atividade-com-pecas-1600\.webp$/);
 });
+
+test('Galeria pagina as fotos e permite navegar por todo o acervo', async ({
+  page,
+}) => {
+  await page.goto('/galeria');
+  const thumbnails = page.locator('.photo-thumb');
+  await expect(thumbnails).toHaveCount(12);
+
+  const more = page.getByRole('button', { name: 'Carregar mais fotos' });
+  await more.click();
+  await expect(thumbnails).toHaveCount(24);
+  await expect(thumbnails.last()).toHaveAccessibleName(/foto 24 de \d+/);
+
+  const lastLoaded = thumbnails.last();
+  await lastLoaded.click();
+  const dialog = page.getByRole('dialog', { name: 'Visualização de fotos' });
+  await expect(dialog.getByText(/24 de \d+/)).toBeVisible();
+  await page.keyboard.press('ArrowRight');
+  await expect(dialog.getByText(/25 de \d+/)).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(lastLoaded).toBeFocused();
+});

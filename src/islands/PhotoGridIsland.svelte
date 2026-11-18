@@ -4,6 +4,7 @@
   (não apenas o slice visível), conforme R02.
 -->
 <script lang="ts">
+  import { focalPointStyle, responsiveSrcset } from '../lib/responsive-media';
   import LoadMore from './LoadMore.svelte';
 
   interface Photo {
@@ -12,6 +13,7 @@
     caption?: string | null;
     width?: number;
     height?: number;
+    focalPoint?: { x: number; y: number };
   }
 
   let {
@@ -51,6 +53,9 @@
       >
         <img
           src={photo.src}
+          srcset={responsiveSrcset(photo.src, photo.width)}
+          sizes="(min-width: 1100px) 33vw, (min-width: 768px) 50vw, 100vw"
+          style={focalPointStyle(photo.focalPoint)}
           alt={photo.alt}
           width={photo.width ?? 400}
           height={photo.height ?? 300}
