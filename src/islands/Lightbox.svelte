@@ -235,6 +235,38 @@
     retryToken += 1;
   };
 
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let swiped = false;
+
+  const handleTouchStart = (e: TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    touchStartX = e.touches[0]!.clientX;
+    touchStartY = e.touches[0]!.clientY;
+    swiped = false;
+  };
+
+  const handleTouchEnd = (e: TouchEvent) => {
+    if (e.changedTouches.length !== 1) return;
+    const dx = e.changedTouches[0]!.clientX - touchStartX;
+    const dy = e.changedTouches[0]!.clientY - touchStartY;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      swiped = true;
+      if (dx < 0) next();
+      else prev();
+    }
+  };
+
+  const handleBackdropClick = (e: MouseEvent) => {
+    if (swiped) {
+      swiped = false;
+      return;
+    }
+    if (e.target === e.currentTarget) {
+      closeLightbox();
+    }
+  };
+
   onMount(() => {
     const handler = ((e: CustomEvent) => {
       const detail = e.detail;
@@ -273,15 +305,17 @@
   {#if open}
     <div
       class="lightbox-backdrop"
-      on:click|self={closeLightbox}
+      on:click={handleBackdropClick}
       role="presentation"
     >
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
       <div
         class="lightbox-dialog"
         role="dialog"
         aria-modal="true"
         aria-label="Visualização de fotos"
         bind:this={dialogEl}
+        on:click={handleBackdropClick}
       >
         <!-- Top bar -->
         <div class="lightbox-topbar">
@@ -299,7 +333,13 @@
         </div>
 
         <!-- Media area -->
-        <div class="lightbox-media">
+        <div
+          class="lightbox-media"
+          role="presentation"
+          on:click={handleBackdropClick}
+          on:touchstart|passive={handleTouchStart}
+          on:touchend|passive={handleTouchEnd}
+        >
           {#if !imgError}
             {#key `${currentIndex}-${retryToken}`}
               <img

@@ -104,6 +104,16 @@ test('Escape fecha o lightbox e devolve foco ao acionador', async ({
   await expect(trigger).toBeFocused();
 });
 
+test('clicar na área escura ao redor da foto fecha o lightbox', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const { dialog, trigger } = await openLightbox(page);
+  await page.locator('.lightbox-media').click({ position: { x: 10, y: 10 } });
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
 test('Tab permanece no lightbox e o menu não sobrepõe o diálogo', async ({
   page,
 }) => {

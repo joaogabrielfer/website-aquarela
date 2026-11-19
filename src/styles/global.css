@@ -157,10 +157,13 @@ h3 {
   html[data-smooth-scroll='active'] {
     scroll-behavior: auto;
   }
-  * {
+  a,
+  button,
+  summary {
     transition:
       color 160ms ease-out,
       background-color 160ms ease-out,
+      border-color 160ms ease-out,
       box-shadow 160ms ease-out;
   }
 }

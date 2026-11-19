@@ -107,6 +107,13 @@ const envData = environments.map((env, i) => {
       grid-template-columns: repeat(2, 1fr);
       gap: var(--space-5);
     }
+    .env-grid > :global(.environment-card:last-child:nth-child(even)) {
+      grid-column: 1 / -1;
+    }
+    .env-grid
+      > :global(.environment-card:last-child:nth-child(even) .card-media img) {
+      aspect-ratio: 16 / 9;
+    }
   }
   @media (min-width: 1100px) {
     .section-environments {
@@ -114,6 +121,9 @@ const envData = environments.map((env, i) => {
     }
     .section-empty {
       padding: var(--space-12) 0;
+    }
+    .env-grid {
+      gap: var(--space-6);
     }
   }
 </style>

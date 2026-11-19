@@ -2,7 +2,7 @@
 import Button from './Button.astro';
 import TextLink from './TextLink.astro';
 import { getPublicSchool } from '../lib/content/school';
-import { whatsappUrl, telUrl } from '../lib/urls';
+import { formatPhone, whatsappUrl, telUrl } from '../lib/urls';
 import type { InterestOption } from '../lib/interest';
 
 interface Props {
@@ -25,7 +25,7 @@ const hasMap = school.mapUrl !== null;
 const hasHours = school.officeHours !== null && school.officeHours !== '';
 const hasAddress = school.address !== null;
 const hasActions = hasPhone || hasWhatsapp;
-const hasInfo = hasMap || hasHours || hasAddress;
+const hasInfo = hasMap || hasHours || hasAddress || hasPhone;
 const hasAnyContact = hasActions || hasInfo;
 const hasBothGroups = hasActions && hasInfo;
 ---
@@ -83,6 +83,13 @@ const hasBothGroups = hasActions && hasInfo;
                 <TextLink href={school.mapUrl}>Como chegar</TextLink>
               )}
 
+              {hasPhone && school.phoneE164 && (
+                <div class="contact-panel-detail">
+                  <strong>Telefone e WhatsApp:</strong>{' '}
+                  {formatPhone(school.phoneE164)}
+                </div>
+              )}
+
               {school.officeHours && (
                 <div class="contact-panel-detail">
                   <strong>Horário:</strong> {school.officeHours}
@@ -93,8 +100,8 @@ const hasBothGroups = hasActions && hasInfo;
                 <div class="contact-panel-detail">
                   <strong>Endereço:</strong> {school.address.street}
                   {school.address.number && `, ${school.address.number}`} —{' '}
-                  {school.address.neighborhood}, {school.address.city}/
-                  {school.address.state}
+                  {school.address.neighborhood},{' '}
+                  {`${school.address.city}/${school.address.state}`}
                   {school.address.postalCode &&
                     ` — ${school.address.postalCode}`}
                 </div>

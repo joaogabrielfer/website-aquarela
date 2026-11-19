@@ -1,4 +1,7 @@
 ---
+import type { PublicMedia } from '../lib/content';
+import { empty } from '../lib/copy';
+import { focalPointStyle, responsiveSrcset } from '../lib/responsive-media';
 import AssetPlaceholder from './AssetPlaceholder.astro';
 import Button from './Button.astro';
 
@@ -10,8 +13,7 @@ interface Props {
   grades?: string | null;
   ages?: string | null;
   shifts?: string[];
-  imageUrl?: string | null;
-  imageAlt?: string | undefined;
+  image?: PublicMedia | null;
   tone?: 'white' | 'paper';
 }
 
@@ -23,18 +25,13 @@ const {
   grades,
   ages,
   shifts = [],
-  imageUrl,
-  imageAlt,
+  image,
   tone = 'white',
 } = Astro.props;
 
 const hasMeta = grades || ages || shifts.length > 0;
-const showImage = imageUrl !== null && imageUrl !== undefined;
 const ctaHref = `/visite?interesse=${slug}`;
-const demoText =
-  'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure dolor reprehenderit voluptate velit esse cillum fugiat nulla pariatur excepteur sint occaecat cupidatat non proident';
-const displayDescription = description || demoText;
-const isDemoText = !description;
+const displayDescription = description || empty.segment[0];
 ---
 
 <section id={slug} class:list={['segment-detail', `segment-detail--${tone}`]}>
@@ -42,13 +39,6 @@ const isDemoText = !description;
     <div class="segment-detail-layout">
       <h2 class="segment-detail-title">{name}</h2>
       <div class="segment-detail-content">
-        {
-          isDemoText && (
-            <p class="segment-detail-demo-label">
-              Texto demonstrativo — conteúdo em preparação
-            </p>
-          )
-        }
         {
           displayDescription && (
             <p class="segment-detail-desc">{displayDescription}</p>
@@ -92,13 +82,16 @@ const isDemoText = !description;
       </div>
       <div class="segment-detail-media">
         {
-          showImage ? (
+          image ? (
             <img
               class="segment-detail-photo"
-              src={imageUrl}
-              alt={imageAlt || name}
-              width="600"
-              height="450"
+              src={image.src}
+              srcset={responsiveSrcset(image.src, image.width)}
+              sizes="(min-width: 1100px) 420px, 100vw"
+              alt={image.alt}
+              width={image.width}
+              height={image.height}
+              style={focalPointStyle(image.focalPoint)}
               loading="lazy"
             />
           ) : (
@@ -113,6 +106,7 @@ const isDemoText = !description;
 <style>
   .segment-detail {
     padding: var(--space-12) 0;
+    scroll-margin-top: 160px;
   }
   .segment-detail--white {
     background: var(--surface-base);
@@ -150,12 +144,6 @@ const isDemoText = !description;
     flex-direction: column;
     gap: var(--space-4);
     min-width: 0;
-  }
-  .segment-detail-demo-label {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: 0.875rem;
-    font-weight: 500;
   }
   .segment-detail-desc {
     margin: 0;
@@ -217,11 +205,13 @@ const isDemoText = !description;
   /* Desktop */
   @media (min-width: 1100px) {
     .segment-detail-layout {
-      grid-template-columns: 320px minmax(0, 1fr) 240px;
+      grid-template-columns: 420px minmax(0, 1fr);
       grid-template-areas:
-        'media title title'
-        'media content action';
-      gap: var(--space-6);
+        'media title'
+        'media content'
+        'media action';
+      column-gap: var(--space-10);
+      row-gap: var(--space-5);
     }
     .segment-detail-title {
       font-size: 2.5rem;

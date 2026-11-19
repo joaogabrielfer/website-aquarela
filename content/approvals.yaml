@@ -6,7 +6,7 @@
   selectionProcess: CPAEAM 2027
   year: 2027
   portraitId: retrato-jose-kaua
-  featured: false
+  featured: true
 - id: ricardo-cesar-cpaeam-2027
   personId: ricardo-cesar
   displayName: Ricardo Cesar
@@ -15,7 +15,7 @@
   selectionProcess: CPAEAM 2027
   year: 2027
   portraitId: retrato-ricardo-cesar
-  featured: false
+  featured: true
 - id: pedro-henrique-cpaeam-2027
   personId: pedro-henrique
   displayName: Pedro Henrique
@@ -24,7 +24,7 @@
   selectionProcess: CPAEAM 2027
   year: 2027
   portraitId: retrato-pedro-henrique
-  featured: false
+  featured: true
 - id: miguel-vasconcelos-cpaeam-2027
   personId: miguel-vasconcelos
   displayName: Miguel Vasconcelos
@@ -51,7 +51,7 @@
   selectionProcess: CFN 2026/2027
   year: 2027
   portraitId: retrato-jose-kaua
-  featured: false
+  featured: true
 - id: gabriele-goncalves-cfn-2027
   personId: gabriele-goncalves
   displayName: Gabriele Gonçalves

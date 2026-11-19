@@ -22,10 +22,12 @@ const hasContact = Boolean(
         >
       </div>
       {school.tagline && <p class="tagline">{school.tagline}</p>}
+      <a class="footer-cta" href="/visite">Quero conhecer</a>
     </div>
     <nav aria-label="Navegação do rodapé">
       <strong>Navegação</strong>
       {navigation.map((item) => <a href={item.href}>{item.label}</a>)}
+      <a href="/visite">Visite</a>
       <a href="/privacidade">Privacidade</a>
     </nav>
     <div>
@@ -35,20 +37,34 @@ const hasContact = Boolean(
           <p class="pending">Contato aguardando confirmação</p>
         ) : (
           <>
-            {school.locality && <p>{school.locality}</p>}
-            {school.whatsappE164 && (
-              <a href={whatsappUrl(school.whatsappE164)}>WhatsApp</a>
+            {school.address ? (
+              <p class="footer-info">
+                {school.address.street}
+                {school.address.number && `, ${school.address.number}`} —{' '}
+                {school.address.neighborhood},{' '}
+                {`${school.address.city}/${school.address.state}`}
+              </p>
+            ) : (
+              school.locality && <p class="footer-info">{school.locality}</p>
             )}
-            {school.phoneE164 && (
-              <a href={`tel:${school.phoneE164}`}>
-                {formatPhone(school.phoneE164)}
-              </a>
+            {school.officeHours && (
+              <p class="footer-info">Horário: {school.officeHours}</p>
             )}
-            {school.instagramUrl && (
-              <a href={school.instagramUrl} target="_blank" rel="noopener">
-                Instagram
-              </a>
-            )}
+            <div class="footer-links">
+              {school.whatsappE164 && (
+                <a href={whatsappUrl(school.whatsappE164)}>WhatsApp</a>
+              )}
+              {school.phoneE164 && (
+                <a href={`tel:${school.phoneE164}`}>
+                  {formatPhone(school.phoneE164)}
+                </a>
+              )}
+              {school.instagramUrl && (
+                <a href={school.instagramUrl} target="_blank" rel="noopener">
+                  Instagram
+                </a>
+              )}
+            </div>
           </>
         )
       }
@@ -96,13 +112,43 @@ const hasContact = Boolean(
   .tagline {
     color: white;
     font-size: 0.875rem;
-    margin-top: var(--space-2);
+    margin: var(--space-2) 0 0;
+  }
+  .footer-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    margin-top: var(--space-4);
+    padding: 8px 20px;
+    background: white;
+    color: var(--brand-navy) !important;
+    border-radius: var(--radius-pill);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  @media (hover: hover) {
+    .footer-cta:hover {
+      background: var(--surface-paper);
+    }
   }
   .footer-grid > div:last-child {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-1);
+    gap: var(--space-2);
+  }
+  .footer-info {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-5);
+    row-gap: var(--space-1);
   }
   .footer-grid nav {
     display: grid;

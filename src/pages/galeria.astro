@@ -2,14 +2,17 @@
 import PageShell from '../layouts/PageShell.astro';
 import PageIntro from '../components/PageIntro.astro';
 import EmptyState from '../components/EmptyState.astro';
+import PhotoGridIsland from '../islands/PhotoGridIsland.svelte';
+import Lightbox from '../islands/Lightbox.svelte';
 import AlbumGridIsland from '../islands/AlbumGridIsland.svelte';
 import { h1, pageTitles, empty } from '../lib/copy';
-import { getAlbums, getMediaById, getPageCopy } from '../lib/content';
+import { getAlbums, getMedia, getMediaById, getPageCopy } from '../lib/content';
 import { getPublicSchool } from '../lib/content/school';
 
 const pageCopy = getPageCopy('galeria');
 const albums = getAlbums();
 const hasAlbums = albums.length > 0;
+const photos = getMedia();
 const school = getPublicSchool();
 const hasInstagram = school.instagramUrl !== null;
 ---
@@ -23,23 +26,40 @@ const hasInstagram = school.instagramUrl !== null;
   />
 
   {
-    hasAlbums ? (
+    hasAlbums || photos.length > 0 ? (
       <section class="section-gallery">
         <div class="container">
-          <AlbumGridIsland
-            client:load
-            albums={albums.map((a) => {
-              const coverMedia = getMediaById(a.coverId);
-              return {
-                slug: a.slug,
-                title: a.title,
-                date: a.date,
-                category: a.category,
-                coverUrl: coverMedia?.src ?? null,
-                coverAlt: coverMedia?.alt ?? a.title,
-              };
-            })}
-          />
+          {photos.length > 0 && (
+            <PhotoGridIsland
+              client:load
+              photos={photos.map(
+                ({ src, alt, caption, width, height, focalPoint }) => ({
+                  src,
+                  alt,
+                  caption,
+                  width,
+                  height,
+                  focalPoint,
+                }),
+              )}
+            />
+          )}
+          {hasAlbums && (
+            <AlbumGridIsland
+              client:load
+              albums={albums.map((a) => {
+                const coverMedia = getMediaById(a.coverId);
+                return {
+                  slug: a.slug,
+                  title: a.title,
+                  date: a.date,
+                  category: a.category,
+                  coverUrl: coverMedia?.src ?? null,
+                  coverAlt: coverMedia?.alt ?? a.title,
+                };
+              })}
+            />
+          )}
           {hasInstagram && (
             <a href={school.instagramUrl!} class="section-link">
               Acompanhe no Instagram
@@ -67,6 +87,7 @@ const hasInstagram = school.instagramUrl !== null;
       </section>
     )
   }
+  {photos.length > 0 && <Lightbox client:only="svelte" />}
 </PageShell>
 
 <style>

@@ -39,7 +39,7 @@ const active = (href: string) =>
       }
       <a class="cta" href="/visite">{cta}</a>
     </nav>
-    <MobileMenu client:load items={navigation} />
+    <MobileMenu client:load items={navigation} {current} />
   </div>
 </header>
 <script is:inline>
