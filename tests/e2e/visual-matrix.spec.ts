@@ -114,6 +114,7 @@ test('evidência do menu em 1099 e cabeçalho em 1100', async ({ page }) => {
     animations: 'disabled',
   });
   await page.setViewportSize({ width: 1100, height: 800 });
+  await page.keyboard.press('Escape');
   await expect(
     page.getByRole('dialog', { name: 'Menu principal' }),
   ).toHaveCount(0);

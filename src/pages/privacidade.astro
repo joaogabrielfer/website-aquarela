@@ -15,66 +15,76 @@ const renderedBody = renderPrivacyMarkdown(privacy.body);
   description={pageCopy?.metaDescription}
 >
   <section class="privacy-page">
-    <div class="container privacy-inner">
-      <Breadcrumb
-        items={[{ label: 'Início', href: '/' }, { label: 'Privacidade' }]}
-      />
+    <div class="container">
+      <article class="privacy-sheet">
+        <Breadcrumb
+          items={[{ label: 'Início', href: '/' }, { label: 'Privacidade' }]}
+        />
 
-      <h1>{pageCopy?.title ?? pageTitles.privacidade}</h1>
+        <h1>{pageCopy?.title ?? pageTitles.privacidade}</h1>
 
-      {
-        renderedBody ? (
-          <div class="privacy-content reading" set:html={renderedBody} />
-        ) : (
-          <p class="privacy-pending">Documento de privacidade em elaboração.</p>
-        )
-      }
+        {
+          renderedBody ? (
+            <div class="privacy-content reading" set:html={renderedBody} />
+          ) : (
+            <p class="privacy-pending">
+              Documento de privacidade em elaboração.
+            </p>
+          )
+        }
+      </article>
     </div>
   </section>
 </PageShell>
 
 <style>
   .privacy-page {
-    padding: var(--space-12) 0;
-    background: var(--surface-base);
+    padding-block: var(--section-pad);
+    background: var(--surface-soft);
   }
-  .privacy-inner {
+
+  .privacy-sheet {
+    max-width: 880px;
+    margin-inline: auto;
+    padding: clamp(1.5rem, 4.5vw, 3.5rem);
+    border-radius: 28px;
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
+    gap: 20px;
   }
+
   h1 {
     margin: 0;
   }
+
   .privacy-content {
-    color: var(--text-ink);
+    color: var(--text-body);
   }
+
   .privacy-content :global(h2) {
-    font-size: 1.5rem;
-    margin-top: var(--space-6);
+    font-size: calc(clamp(1.25rem, 2.2vw, 1.65rem) * var(--display-scale));
+    margin-top: 28px;
+    margin-bottom: 12px;
   }
+
   .privacy-content :global(p) {
-    margin: 0 0 var(--space-4);
+    margin: 0 0 16px;
   }
+
   .privacy-content :global(ul) {
-    margin: 0 0 var(--space-4);
-    padding-left: var(--space-6);
+    margin: 0 0 16px;
+    padding-left: 22px;
   }
+
   .privacy-content :global(li) {
-    margin-bottom: var(--space-2);
+    margin-bottom: 8px;
   }
+
   .privacy-pending {
     color: var(--text-muted);
     font-style: italic;
-  }
-  @media (min-width: 768px) {
-    .privacy-page {
-      padding: var(--space-16) 0;
-    }
-  }
-  @media (min-width: 1100px) {
-    .privacy-page {
-      padding: var(--space-20) 0;
-    }
   }
 </style>

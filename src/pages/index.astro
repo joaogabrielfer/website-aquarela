@@ -1,54 +1,95 @@
 ---
 import PageShell from '../layouts/PageShell.astro';
 import HeroHome from '../components/HeroHome.astro';
+import InstitutionalTicker from '../components/InstitutionalTicker.astro';
 import SeasonalBanner from '../components/SeasonalBanner.astro';
+import HomeChapterBar from '../components/HomeChapterBar.astro';
 import SectionHeading from '../components/SectionHeading.astro';
+import EditorialInterlude from '../components/EditorialInterlude.astro';
 import SegmentCard from '../components/SegmentCard.astro';
-import MediaText from '../components/MediaText.astro';
 import GalleryPreview from '../components/GalleryPreview.astro';
 import ActivityCard from '../components/ActivityCard.astro';
 import ApprovalCard from '../components/ApprovalCard.astro';
 import AlbumCard from '../components/AlbumCard.astro';
+import VisitCTA from '../components/VisitCTA.astro';
+import Lightbox from '../islands/Lightbox.svelte';
 import { h1, pageTitles } from '../lib/copy';
 import {
   getHomePageCopy,
   getSeasonalBanners,
   getSegments,
+  getActivities,
   getFeaturedActivities,
   getFeaturedApprovalPeople,
-  getEnvironmentPhotos,
+  getEnvironments,
   getAlbums,
   getMediaById,
 } from '../lib/content';
+import { getPublicSchool } from '../lib/content/school';
+import { focalPointStyle, responsiveSrcset } from '../lib/responsive-media';
 
+const school = getPublicSchool();
 const pageCopy = getHomePageCopy();
 const segments = getSegments();
+const allActivities = getActivities();
 const featuredActivities = getFeaturedActivities(3);
 const featuredApprovals = getFeaturedApprovalPeople(3);
-const environmentPhotos = getEnvironmentPhotos().slice(0, 3);
+const environments = getEnvironments();
 const albums = getAlbums().slice(0, 3);
 const seasonalBanner = getSeasonalBanners()[0] ?? null;
 
-// The Home PageCopy owns the explicit Hero media reference.
-// Se faltar foto, o componente mostra o mesmo placeholder em todas as branches.
 const support = pageCopy?.intro ?? '';
 const heroMedia = pageCopy?.heroImageId
   ? getMediaById(pageCopy.heroImageId)
   : null;
 
-// Check if proposal data exists (would come from a proposal content file)
-// getProposal() is not yet implemented; section omitted when null
-const getProposal = (): {
-  intro: string;
-  facts: [string, string, string];
-  imageId: string;
-} | null => null;
-const proposal = getProposal();
+const interludeClassroom = getMediaById('ensino-participacao-em-sala');
+const interludeTech = getMediaById('sala-google-for-education');
+
+// Curated showcase of real environments for the swipeable home rail
+const showcaseEnvironments = environments
+  .slice(0, 8)
+  .map((env) => {
+    const media = env.images[0] ? getMediaById(env.images[0]) : null;
+    if (!media) return null;
+    return {
+      src: media.src,
+      alt: media.alt,
+      title: env.name,
+      caption: `${env.name} — ${env.purpose}`,
+      width: media.width,
+      height: media.height,
+      focalPoint: media.focalPoint,
+    };
+  })
+  .filter((item): item is NonNullable<typeof item> => item !== null);
+
+// Photographic editorial portals (Explore o Aquarela)
+const portalSpaceMedia = getMediaById('piscina-angulo-principal');
+const portalActivitiesMedia = getMediaById('studio-danca');
+const portalGalleryMedia = getMediaById('espaco-de-leitura');
+
+const activityNamesList = allActivities.map((a) => a.name).join(', ');
+
+const chapters = [
+  { id: 'manifesto', label: 'Aquarela' },
+  { id: 'etapas', label: 'Ensino' },
+  ...(showcaseEnvironments.length > 0
+    ? [{ id: 'espacos', label: 'Espaços' }]
+    : []),
+  ...(featuredApprovals.length > 0
+    ? [{ id: 'conquistas', label: 'Conquistas' }]
+    : []),
+  { id: 'explorar', label: 'Explorar' },
+  { id: 'visite-home', label: 'Visite' },
+];
 ---
 
 <PageShell title={pageTitles.home} description={pageCopy?.metaDescription}>
+  {
+    /* 1. First screen: Full-bleed cinematic Hero + Continuous Institutional Ticker */
+  }
   <div class="home-first-screen">
-    {/* 1. HeroHome — fundo paper */}
     <HeroHome
       title={pageCopy?.title ?? h1.home}
       support={support}
@@ -58,20 +99,88 @@ const proposal = getProposal();
       imageHeight={heroMedia?.height}
       imageFocalPoint={heroMedia?.focalPoint}
     />
-    {/* 2. Banner sazonal — opcional, após o Hero */}
-    {seasonalBanner && <SeasonalBanner banner={seasonalBanner} />}
+    <InstitutionalTicker />
   </div>
-  {/* 3. Etapas — fundo branco */}
-  <section class="section-etas" id="etapas">
+
+  {/* 2. Optional seasonal notice */}
+  {seasonalBanner && <SeasonalBanner banner={seasonalBanner} />}
+
+  {/* 3. Sticky editorial chapter navigator & reading progress bar */}
+  <HomeChapterBar {chapters} />
+
+  {/* 4. Asymmetric editorial opening statement */}
+  <section class="band-light home-manifesto" id="manifesto">
     <div class="container">
-      <SectionHeading title="Ensino em cada fase" />
+      <div class="manifesto-grid" data-reveal>
+        <div class="manifesto-lead">
+          <p class="eyebrow">Aquarela Colégio e Curso</p>
+          <h2>
+            {school.tagline ?? 'Presente em todos os momentos da sua vida.'}
+          </h2>
+        </div>
+
+        <div class="manifesto-body">
+          <p class="manifesto-copy">
+            Da Educação Infantil ao Ensino Médio em Paulista/PE, combinamos
+            ambientes dedicados, acompanhamento próximo e rotina estruturada nos
+            turnos da manhã e da tarde.
+          </p>
+          <a class="editorial-link editorial-action" href="/nosso-espaco">
+            <span>Conheça nossos espaços e rotina</span>
+            <span class="editorial-link__arrow" aria-hidden="true">↗</span>
+          </a>
+
+          <dl class="manifesto-facts" aria-label="Resumo da estrutura escolar">
+            <div>
+              <dt>Etapas de ensino</dt>
+              <dd>{String(segments.length).padStart(2, '0')}</dd>
+            </div>
+            <div>
+              <dt>Ambientes dedicados</dt>
+              <dd>{String(environments.length).padStart(2, '0')}</dd>
+            </div>
+            <div>
+              <dt>Turnos</dt>
+              <dd>Manhã · Tarde</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* 5. Cinematic photographic interlude #1 */}
+  {
+    interludeClassroom && (
+      <EditorialInterlude
+        id="momento-sala"
+        media={interludeClassroom}
+        eyebrow="Dia a dia em sala"
+        phrase="Aprender com presença, todos os dias."
+        desktopFocus="50% 35%"
+        mobileFocus="52% 32%"
+      />
+    )
+  }
+
+  {/* 6. Teaching stages (01–04) */}
+  <section class="band-light home-etapas" id="etapas">
+    <div class="container">
+      <SectionHeading
+        eyebrow="Da Educação Infantil ao Ensino Médio"
+        title="Ensino em cada fase."
+        intro="Conheça o que muda em cada etapa, os horários de aula e como o Aquarela acompanha a autonomia dos estudantes."
+        link={{ href: '/ensino', label: 'Ver todas as etapas' }}
+      />
       <div class="segment-grid">
         {
-          segments.map((seg) => (
+          segments.map((seg, index) => (
             <SegmentCard
               slug={seg.slug}
               name={seg.name}
               summary={seg.summary}
+              shifts={seg.shifts}
+              {index}
               image={seg.imageId ? getMediaById(seg.imageId) : null}
             />
           ))
@@ -80,51 +189,50 @@ const proposal = getProposal();
     </div>
   </section>
 
-  {/* 4. Proposta — fundo paper (omitida sem dados) */}
+  {/* 7. Cinematic photographic interlude #2 */}
   {
-    proposal !== null && proposal !== undefined && (
-      <section class="section-proposta" id="proposta">
-        <div class="container">
-          <MediaText
-            title="O jeito Aquarela de aprender"
-            facts={proposal.facts}
-          />
-        </div>
-      </section>
+    interludeTech && (
+      <EditorialInterlude
+        id="momento-espacos"
+        media={interludeTech}
+        eyebrow="Estrutura que educa"
+        phrase="Espaços feitos para ampliar descobertas."
+        desktopFocus="50% 48%"
+        mobileFocus="50% 45%"
+      />
     )
   }
 
-  {/* 5. Espaços — fundo branco (omitida sem fotos de ambientes) */}
+  {/* 8. Swipeable horizontal showcase of real school spaces */}
   {
-    environmentPhotos.length > 0 && (
-      <section class="section-espacos" id="espacos">
+    showcaseEnvironments.length > 0 && (
+      <section class="band-soft home-espacos" id="espacos">
         <div class="container">
-          <SectionHeading title="Espaço para novas descobertas" />
+          <SectionHeading
+            eyebrow="Nosso espaço"
+            title="Cada ambiente tem um propósito."
+            intro="Da Sala Google for Education e Laboratório de Ciências à Piscina, Quadra Coberta e Brinquedoteca."
+            link={{ href: '/nosso-espaco', label: 'Explorar todos os espaços' }}
+          />
           <GalleryPreview
             class="home-gallery-preview"
-            photos={environmentPhotos.map((p) => ({
-              src: p.src,
-              alt: p.alt,
-              caption: p.caption,
-              width: p.width,
-              height: p.height,
-              focalPoint: p.focalPoint,
-            }))}
+            photos={showcaseEnvironments}
           />
-          <a href="/nosso-espaco" class="section-link">
-            Conheça nosso espaço
-          </a>
         </div>
       </section>
     )
   }
 
-  {/* 6. Atividades — fundo paper (omitida sem featured) */}
+  {/* 9. Optional featured activities (when flagged in content) */}
   {
     featuredActivities.length > 0 && (
-      <section class="section-atividades" id="atividades">
+      <section class="band-light" id="atividades">
         <div class="container">
-          <SectionHeading title="Além da sala de aula" />
+          <SectionHeading
+            eyebrow="Atividades"
+            title="Além da sala de aula."
+            link={{ href: '/atividades', label: 'Ver atividades' }}
+          />
           <div class="card-grid card-grid--3">
             {featuredActivities.map((act) => (
               <ActivityCard
@@ -134,20 +242,23 @@ const proposal = getProposal();
               />
             ))}
           </div>
-          <a href="/atividades" class="section-link">
-            Ver atividades
-          </a>
         </div>
       </section>
     )
   }
 
-  {/* 7. Conquistas — fundo branco (omitida sem featured) */}
+  {/* 10. Real student approvals — high-contrast dark architectural stage */}
   {
     featuredApprovals.length > 0 && (
-      <section class="section-conquistas" id="conquistas">
+      <section class="band-dark home-conquistas" id="conquistas">
         <div class="container">
-          <SectionHeading title="Histórias e conquistas" />
+          <SectionHeading
+            tone="dark"
+            eyebrow="Trajetórias reais"
+            title="Histórias e conquistas."
+            intro="Resultados reais de estudantes do Aquarela em processos seletivos."
+            link={{ href: '/aprovacoes', label: 'Conheça todas as aprovações' }}
+          />
           <div class="card-grid card-grid--3 approval-home-grid">
             {featuredApprovals.map((app) => (
               <ApprovalCard
@@ -166,20 +277,21 @@ const proposal = getProposal();
               />
             ))}
           </div>
-          <a href="/aprovacoes" class="section-link">
-            Conheça as aprovações
-          </a>
         </div>
       </section>
     )
   }
 
-  {/* 8. Vida Aquarela — fundo paper (omitida sem álbuns) */}
+  {/* 11. Optional albums section when published */}
   {
     albums.length > 0 && (
-      <section class="section-vida" id="vida-aquarela">
+      <section class="band-soft" id="vida-aquarela">
         <div class="container">
-          <SectionHeading title="A vida no Aquarela" />
+          <SectionHeading
+            eyebrow="Registros"
+            title="A vida no Aquarela."
+            link={{ href: '/galeria', label: 'Ver galeria' }}
+          />
           <div class="card-grid card-grid--3">
             {albums.map((album) => (
               <AlbumCard
@@ -192,108 +304,376 @@ const proposal = getProposal();
               />
             ))}
           </div>
-          <a href="/galeria" class="section-link">
-            Ver galeria
-          </a>
         </div>
       </section>
     )
   }
 
-  {/* 9. Visita — fundo navy */}
+  {/* 12. Editorial photographic portals (Explore o Aquarela) */}
+  <section class="band-light home-portals" id="explorar">
+    <div class="container">
+      <SectionHeading
+        eyebrow="Continue explorando"
+        title="Seu olhar. Seu próximo passo."
+      />
+      <div class="portal-grid">
+        <a
+          href="/nosso-espaco"
+          class="portal-card editorial-surface"
+          data-reveal
+        >
+          {
+            portalSpaceMedia && (
+              <img
+                src={portalSpaceMedia.src}
+                srcset={responsiveSrcset(
+                  portalSpaceMedia.src,
+                  portalSpaceMedia.width,
+                )}
+                sizes="(min-width: 1024px) 33vw, 100vw"
+                style={focalPointStyle(portalSpaceMedia.focalPoint)}
+                alt={portalSpaceMedia.alt}
+                width={portalSpaceMedia.width}
+                height={portalSpaceMedia.height}
+                loading="lazy"
+                decoding="async"
+              />
+            )
+          }
+          <div class="portal-scrim" aria-hidden="true"></div>
+          <div class="portal-copy">
+            <span class="portal-eyebrow">Estrutura completa</span>
+            <h3>Nosso espaço</h3>
+            <p>
+              {environments.length} ambientes planejados para aprendizagem, esporte
+              e convivência.
+            </p>
+            <span class="portal-go" aria-hidden="true">Explorar ↗</span>
+          </div>
+        </a>
+
+        <a
+          href="/atividades"
+          class="portal-card editorial-surface"
+          data-reveal
+          style="--reveal-delay: 80ms"
+        >
+          {
+            portalActivitiesMedia && (
+              <img
+                src={portalActivitiesMedia.src}
+                srcset={responsiveSrcset(
+                  portalActivitiesMedia.src,
+                  portalActivitiesMedia.width,
+                )}
+                sizes="(min-width: 1024px) 33vw, 100vw"
+                style={focalPointStyle(portalActivitiesMedia.focalPoint)}
+                alt={portalActivitiesMedia.alt}
+                width={portalActivitiesMedia.width}
+                height={portalActivitiesMedia.height}
+                loading="lazy"
+                decoding="async"
+              />
+            )
+          }
+          <div class="portal-scrim" aria-hidden="true"></div>
+          <div class="portal-copy">
+            <span class="portal-eyebrow">Além da sala de aula</span>
+            <h3>Atividades</h3>
+            <p>
+              {activityNamesList || 'Opções esportivas e culturais'} integradas à
+              rotina escolar.
+            </p>
+            <span class="portal-go" aria-hidden="true">Ver opções ↗</span>
+          </div>
+        </a>
+
+        <a
+          href="/galeria"
+          class="portal-card editorial-surface"
+          data-reveal
+          style="--reveal-delay: 160ms"
+        >
+          {
+            portalGalleryMedia && (
+              <img
+                src={portalGalleryMedia.src}
+                srcset={responsiveSrcset(
+                  portalGalleryMedia.src,
+                  portalGalleryMedia.width,
+                )}
+                sizes="(min-width: 1024px) 33vw, 100vw"
+                style={focalPointStyle(portalGalleryMedia.focalPoint)}
+                alt={portalGalleryMedia.alt}
+                width={portalGalleryMedia.width}
+                height={portalGalleryMedia.height}
+                loading="lazy"
+                decoding="async"
+              />
+            )
+          }
+          <div class="portal-scrim" aria-hidden="true"></div>
+          <div class="portal-copy">
+            <span class="portal-eyebrow">Acervo fotográfico</span>
+            <h3>Galeria</h3>
+            <p>
+              Veja de perto as salas, o cotidiano escolar e os ambientes do
+              Aquarela.
+            </p>
+            <span class="portal-go" aria-hidden="true">Abrir galeria ↗</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* 13. Cinematic closing section + closing school photograph */}
+  <VisitCTA />
+
+  {/* Lightbox mounted on Home for the swipeable spaces rail */}
+  <Lightbox client:only="svelte" />
 </PageShell>
 
 <style>
   .home-first-screen {
-    min-height: calc(100dvh - var(--site-header-height));
+    min-height: calc(100svh - var(--site-header-height));
     display: flex;
     flex-direction: column;
   }
+
   .home-first-screen :global(.hero-home) {
     flex: 1;
   }
-  .section-etas,
-  .section-espacos,
-  .section-conquistas {
-    background: var(--surface-base);
-    padding: var(--space-12) 0;
+
+  .home-manifesto,
+  .home-etapas,
+  .home-espacos,
+  .home-conquistas,
+  .home-portals {
+    scroll-margin-top: calc(var(--site-header-height) + 64px);
   }
-  .section-proposta,
-  .section-atividades,
-  .section-vida {
-    background: var(--surface-paper);
-    padding: var(--space-12) 0;
-  }
-  .segment-grid {
+
+  /* Editorial Manifesto Opening */
+  .manifesto-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-4);
-    margin-top: var(--space-6);
+    gap: clamp(1.75rem, 4vw, 4rem);
+    align-items: start;
   }
+
+  .manifesto-lead {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .manifesto-lead h2 {
+    margin: 0;
+    font-size: calc(clamp(1.9rem, 4.6vw, 3.85rem) * var(--display-scale));
+    max-width: 16ch;
+  }
+
+  .manifesto-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .manifesto-copy {
+    margin: 0;
+    font-size: clamp(1.0625rem, 1.7vw, 1.3125rem);
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--text-ink);
+    max-width: 44ch;
+  }
+
+  .manifesto-facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+    margin: 12px 0 0;
+    padding: 20px 0 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .manifesto-facts > div {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 4px;
+  }
+
+  .manifesto-facts dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2.4vw, 1.75rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--brand-navy);
+    line-height: 1.1;
+  }
+
+  .manifesto-facts dt {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    line-height: 1.3;
+  }
+
+  /* Grids */
+  .segment-grid,
   .card-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-4);
-    margin-top: var(--space-6);
+    gap: 18px;
+    margin-top: clamp(1.75rem, 3.5vw, 3rem);
   }
+
   .approval-home-grid {
     grid-auto-rows: 1fr;
     align-items: stretch;
   }
+
   .home-gallery-preview {
-    margin-top: var(--space-6);
+    margin-top: clamp(1.75rem, 3.5vw, 3rem);
   }
-  .section-link {
-    display: inline-flex;
-    align-items: center;
-    margin-top: var(--space-6);
-    color: var(--brand-navy);
-    font-weight: 500;
-    text-decoration: underline;
+
+  /* Photographic Editorial Portals */
+  .portal-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: clamp(1.75rem, 3.5vw, 3rem);
   }
+
+  .portal-card {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 300px;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--surface-dark);
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .portal-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    transition: transform 700ms var(--ease-expo);
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    :global(html:not([data-motion='reduced'])) .portal-card:hover img {
+      transform: scale(1.05);
+    }
+  }
+
+  .portal-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(8, 20, 30, 0.14) 0%,
+      rgba(8, 20, 30, 0.42) 45%,
+      rgba(8, 20, 30, 0.9) 100%
+    );
+  }
+
+  .portal-copy {
+    position: relative;
+    z-index: 2;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .portal-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #ffd3d7;
+  }
+
+  .portal-copy h3 {
+    margin: 0;
+    color: #ffffff;
+    font-size: calc(clamp(1.45rem, 2.4vw, 1.95rem) * var(--display-scale));
+  }
+
+  .portal-copy p {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.86);
+  }
+
+  .portal-go {
+    margin-top: 6px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .portal-card:focus-visible {
+    outline: 3px solid var(--brand-navy);
+    outline-offset: 3px;
+  }
+
   @media (min-width: 768px) {
     .segment-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-5);
+      gap: 22px;
     }
     .card-grid--3 {
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-5);
+      gap: 22px;
     }
-    .segment-grid,
-    .card-grid,
-    .home-gallery-preview {
-      margin-top: var(--space-8);
+    .portal-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+    .portal-card {
+      min-height: 360px;
     }
   }
+
+  @media (min-width: 1024px) {
+    .manifesto-grid {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 56px;
+      align-items: end;
+    }
+    .portal-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .portal-card {
+      min-height: 410px;
+    }
+  }
+
   @media (min-width: 1100px) {
     .segment-grid {
       grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-6);
+      gap: 22px;
     }
     .card-grid--3 {
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-6);
-    }
-  }
-  @media (min-width: 768px) {
-    .section-etas,
-    .section-espacos,
-    .section-conquistas,
-    .section-proposta,
-    .section-atividades,
-    .section-vida {
-      padding: var(--space-16) 0;
-    }
-  }
-  @media (min-width: 1100px) {
-    .section-etas,
-    .section-espacos,
-    .section-conquistas,
-    .section-proposta,
-    .section-atividades,
-    .section-vida {
-      padding: var(--space-20) 0;
+      gap: 24px;
     }
   }
 </style>

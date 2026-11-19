@@ -1,24 +1,56 @@
 ---
 interface Props {
   title: string;
+  eyebrow?: string;
   intro?: string;
   link?: { href: string; label: string };
+  tone?: 'light' | 'dark';
   id?: string;
   class?: string;
 }
 
-const { title, intro, link, id, class: className } = Astro.props;
+const {
+  title,
+  eyebrow,
+  intro,
+  link,
+  tone = 'light',
+  id,
+  class: className,
+} = Astro.props;
 ---
 
-<div class:list={['section-heading', className]} {id}>
+<div
+  class:list={['section-heading', `section-heading--${tone}`, className]}
+  {id}
+  data-reveal
+>
   <div class="section-heading-text">
+    {
+      eyebrow && (
+        <p class:list={['eyebrow', { 'eyebrow--on-dark': tone === 'dark' }]}>
+          {eyebrow}
+        </p>
+      )
+    }
     <h2>{title}</h2>
-    {intro && <p class="reading">{intro}</p>}
+    {intro && <p class="section-heading-intro reading">{intro}</p>}
   </div>
   {
     link && (
-      <a href={link.href} class="section-heading-link">
-        {link.label}
+      <a
+        href={link.href}
+        class:list={[
+          'editorial-link',
+          'editorial-action',
+          'section-heading-link',
+          { 'editorial-link--on-dark focus-on-navy': tone === 'dark' },
+        ]}
+      >
+        <span>{link.label}</span>
+        <span class="editorial-link__arrow" aria-hidden="true">
+          ↗
+        </span>
       </a>
     )
   }
@@ -28,44 +60,47 @@ const { title, intro, link, id, class: className } = Astro.props;
   .section-heading {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    align-items: flex-start;
+    gap: 18px;
   }
+
   .section-heading-text {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    align-items: flex-start;
+    gap: 12px;
+    max-width: 52rem;
   }
+
   h2 {
     margin: 0;
-    font-size: 1.875rem;
-    line-height: 1.15;
   }
-  p {
+
+  .section-heading-intro {
     margin: 0;
-    color: var(--text-ink);
+    font-size: clamp(1rem, 1.5vw, 1.1875rem);
+    line-height: 1.55;
+    color: var(--text-body);
   }
+
+  .section-heading--dark h2 {
+    color: #ffffff;
+  }
+
+  .section-heading--dark .section-heading-intro {
+    color: var(--text-on-dark-muted);
+  }
+
   .section-heading-link {
-    color: var(--brand-navy);
-    font-weight: 500;
-    text-decoration: underline;
-    align-self: flex-start;
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
+    flex-shrink: 0;
   }
-  @media (hover: hover) {
-    .section-heading-link:hover {
-      color: var(--text-ink);
-    }
-  }
-  @media (min-width: 768px) {
-    h2 {
-      font-size: 2.25rem;
-    }
-  }
-  @media (min-width: 1100px) {
-    h2 {
-      font-size: 2.5rem;
+
+  @media (min-width: 960px) {
+    .section-heading {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 32px;
     }
   }
 </style>

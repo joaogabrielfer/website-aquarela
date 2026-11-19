@@ -1,71 +1,182 @@
 ---
 import Button from './Button.astro';
+import { getPublicSchool } from '../lib/content/school';
+import { getMediaById } from '../lib/content';
+import { responsiveSrcset } from '../lib/responsive-media';
+import { whatsappUrl } from '../lib/urls';
 
 interface Props {
+  eyebrow?: string;
   title?: string;
   support?: string;
+  closingPhotoId?: string | null;
 }
 
-const { title = 'Venha conhecer o Aquarela', support } = Astro.props;
+const {
+  eyebrow = 'Próximo passo',
+  title = 'Venha conhecer o Aquarela de perto.',
+  support = 'Converse com nossa equipe sobre a etapa de ensino do seu filho e agende uma visita aos nossos espaços.',
+  closingPhotoId = 'quadra-coberta-angulo-principal',
+} = Astro.props;
+
+const school = getPublicSchool();
+const closingMedia = closingPhotoId ? getMediaById(closingPhotoId) : null;
 ---
 
-<section class="visit-cta">
-  <div class="container visit-cta-inner">
-    <div class="visit-cta-text">
-      <h2 class="visit-cta-title">{title}</h2>
-      {support && <p class="visit-cta-support">{support}</p>}
+<section class="visit-closing" id="visite-home">
+  <div class="container visit-closing-inner" data-reveal>
+    <div class="visit-closing-copy">
+      <p class="eyebrow">{eyebrow}</p>
+      <h2>{title}</h2>
+      {support && <p class="visit-closing-support">{support}</p>}
+      {
+        school.officeHours && (
+          <p class="visit-closing-hours">
+            Atendimento da secretaria: <strong>{school.officeHours}</strong>
+          </p>
+        )
+      }
     </div>
-    <Button href="/visite" variant="inverse">Quero conhecer</Button>
+    <div class="visit-closing-actions">
+      <Button href="/visite" variant="primary" arrow>Agendar visita</Button>
+      {
+        school.whatsappE164 && (
+          <Button
+            href={whatsappUrl(school.whatsappE164)}
+            target="_blank"
+            rel="noopener"
+            variant="secondary"
+            arrow
+          >
+            Conversar no WhatsApp
+          </Button>
+        )
+      }
+    </div>
   </div>
 </section>
 
+{
+  closingMedia && (
+    <section
+      class="closing-photograph"
+      aria-label="Espaço do Aquarela Colégio e Curso"
+    >
+      <img
+        src={closingMedia.src}
+        srcset={responsiveSrcset(closingMedia.src, closingMedia.width)}
+        sizes="100vw"
+        alt={closingMedia.alt}
+        width={closingMedia.width}
+        height={closingMedia.height}
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="closing-photograph-veil" aria-hidden="true" />
+    </section>
+  )
+}
+
 <style>
-  .visit-cta {
-    background: var(--brand-navy);
-    padding: var(--space-12) 0;
+  .visit-closing {
+    background: var(--surface-soft);
+    padding-block: var(--section-pad);
   }
-  .visit-cta-inner {
+
+  .visit-closing-inner {
     display: flex;
     flex-direction: column;
-    gap: var(--space-8);
     align-items: flex-start;
+    gap: 28px;
   }
-  .visit-cta-text {
+
+  .visit-closing-copy {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
-  }
-  .visit-cta-title {
-    margin: 0;
-    font-size: 1.875rem;
-    font-weight: 700;
-    line-height: 1.15;
-    color: white;
-  }
-  .visit-cta-support {
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: white;
+    align-items: flex-start;
+    gap: 14px;
+    max-width: 48rem;
   }
 
-  /* Tablet */
-  @media (min-width: 768px) {
-    .visit-cta {
-      padding: var(--space-16) 0;
+  .visit-closing h2 {
+    margin: 0;
+  }
+
+  .visit-closing-support {
+    margin: 0;
+    font-size: clamp(1.03125rem, 1.6vw, 1.25rem);
+    line-height: 1.55;
+    color: var(--text-body);
+    max-width: 54ch;
+  }
+
+  .visit-closing-hours {
+    margin: 4px 0 0;
+    font-size: 0.9375rem;
+    color: var(--text-muted);
+  }
+
+  .visit-closing-hours strong {
+    color: var(--text-ink);
+  }
+
+  .visit-closing-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .visit-closing-actions :global(.btn) {
+    width: 100%;
+  }
+
+  .closing-photograph {
+    position: relative;
+    height: clamp(220px, 38svh, 440px);
+    overflow: hidden;
+    background: var(--surface-dark);
+  }
+
+  .closing-photograph img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 48%;
+  }
+
+  .closing-photograph-veil {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(12, 27, 38, 0.08) 0%,
+      rgba(12, 27, 38, 0.45) 100%
+    );
+    pointer-events: none;
+  }
+
+  @media (min-width: 560px) {
+    .visit-closing-actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: auto;
     }
-    .visit-cta-title {
-      font-size: 2.25rem;
+    .visit-closing-actions :global(.btn) {
+      width: auto;
     }
   }
 
-  /* Desktop */
-  @media (min-width: 1100px) {
-    .visit-cta {
-      padding: var(--space-20) 0;
+  @media (min-width: 1024px) {
+    .visit-closing-inner {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 48px;
     }
-    .visit-cta-title {
-      font-size: 2.5rem;
+    .visit-closing-actions {
+      flex-shrink: 0;
     }
   }
 </style>

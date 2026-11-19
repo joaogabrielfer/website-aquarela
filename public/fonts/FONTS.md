@@ -1,3 +1,8 @@
-Fonte: Google Fonts, repositório google/fonts/ofl/outfit
-Data: 2026-09-08
-CSS API: https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap
+Fontes self-hosted sob licença SIL Open Font License (OFL), baixadas do Google Fonts:
+
+- Outfit (400, 500, 600, 700, 800) — google/fonts/ofl/outfit
+- Plus Jakarta Sans (400, 500, 600, 700, 800) — google/fonts/ofl/plusjakartasans
+- Syne (600, 700, 800) — google/fonts/ofl/syne
+- Unbounded (600, 700) — google/fonts/ofl/unbounded
+
+Atualizado em: 2026-11-19

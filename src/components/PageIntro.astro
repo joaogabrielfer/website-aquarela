@@ -1,5 +1,7 @@
 ---
 import Breadcrumb from './Breadcrumb.astro';
+import type { PublicMedia } from '../lib/content';
+import { focalPointStyle, responsiveSrcset } from '../lib/responsive-media';
 
 interface BreadcrumbItem {
   label: string;
@@ -8,8 +10,10 @@ interface BreadcrumbItem {
 
 interface Props {
   breadcrumb?: BreadcrumbItem[];
+  eyebrow?: string;
   title: string;
   intro?: string | undefined;
+  media?: PublicMedia | null;
   variant?:
     | 'default'
     | 'paper'
@@ -20,88 +24,143 @@ interface Props {
     | 'gallery';
 }
 
-const { breadcrumb, title, intro, variant = 'default' } = Astro.props;
-const tone =
-  variant === 'teaching' || variant === 'activities'
-    ? 'inverse'
-    : variant === 'space' || variant === 'achievements' || variant === 'gallery'
-      ? 'dark'
-      : 'light';
+const {
+  breadcrumb,
+  eyebrow,
+  title,
+  intro,
+  media = null,
+  variant = 'default',
+} = Astro.props;
+
+const isDark =
+  Boolean(media) ||
+  variant === 'teaching' ||
+  variant === 'space' ||
+  variant === 'achievements';
+const tone = isDark ? 'inverse' : 'light';
 ---
 
-<div class:list={['page-intro', `page-intro--${variant}`]}>
+<header
+  class:list={[
+    'page-intro',
+    `page-intro--${variant}`,
+    { 'page-intro--dark': isDark, 'page-intro--has-media': Boolean(media) },
+  ]}
+>
+  {
+    media && (
+      <div class="page-intro-media" aria-hidden="true">
+        <img
+          src={media.src}
+          srcset={responsiveSrcset(media.src, media.width)}
+          sizes="100vw"
+          alt=""
+          width={media.width}
+          height={media.height}
+          style={focalPointStyle(media.focalPoint)}
+          loading="eager"
+          fetchpriority="high"
+        />
+        <div class="page-intro-veil" />
+      </div>
+    )
+  }
   <div class="container page-intro-inner">
     {breadcrumb && <Breadcrumb items={breadcrumb} tone={tone} />}
-    <h1>{title}</h1>
-    {intro && <p class="reading">{intro}</p>}
+    <div class="page-intro-copy">
+      {
+        eyebrow && (
+          <p class:list={['eyebrow', { 'eyebrow--on-dark': isDark }]}>
+            {eyebrow}
+          </p>
+        )
+      }
+      <h1>{title}</h1>
+      {intro && <p class="page-intro-lead reading">{intro}</p>}
+    </div>
   </div>
-</div>
+</header>
 
 <style>
   .page-intro {
-    padding: var(--space-10) 0;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-block: clamp(2.5rem, 6vw, 5.25rem) clamp(2.5rem, 5.5vw, 4.75rem);
+    background: var(--surface-soft);
+    border-bottom: 1px solid var(--border-subtle);
   }
+
+  .page-intro--dark {
+    background: var(--surface-dark);
+    color: #ffffff;
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .page-intro--has-media {
+    min-height: clamp(290px, 44svh, 460px);
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .page-intro-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .page-intro-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .page-intro-veil {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(8, 20, 30, 0.56) 0%,
+      rgba(8, 20, 30, 0.72) 55%,
+      rgba(8, 20, 30, 0.92) 100%
+    );
+  }
+
   .page-intro-inner {
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: 18px;
   }
+
+  .page-intro-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    max-width: 56rem;
+  }
+
   h1 {
     margin: 0;
-    max-width: 22ch;
-    font-size: 2.25rem;
-    line-height: 1.1;
+    max-width: 19ch;
   }
-  p {
+
+  .page-intro--dark h1 {
+    color: #ffffff;
+  }
+
+  .page-intro-lead {
     margin: 0;
-    color: var(--text-ink);
+    font-size: clamp(1.03125rem, 1.7vw, 1.25rem);
+    line-height: 1.55;
+    color: var(--text-body);
   }
-  .page-intro--default {
-    background: var(--surface-base);
-  }
-  .page-intro--paper {
-    background: var(--surface-paper);
-  }
-  .page-intro--space {
-    background: var(--brand-cyan);
-    color: var(--text-ink);
-  }
-  .page-intro--achievements {
-    background: var(--brand-yellow);
-    color: var(--brand-navy);
-  }
-  .page-intro--activities {
-    background: var(--brand-purple);
-    color: var(--surface-base);
-  }
-  .page-intro--activities p {
-    color: var(--surface-base);
-  }
-  .page-intro--teaching {
-    background: var(--brand-navy);
-    color: var(--surface-base);
-  }
-  .page-intro--teaching p {
-    color: var(--surface-base);
-  }
-  .page-intro--gallery {
-    background: var(--brand-cyan);
-    color: var(--text-ink);
-  }
-  @media (min-width: 768px) {
-    .page-intro {
-      padding: var(--space-12) 0;
-    }
-    h1 {
-      font-size: 2.75rem;
-    }
-  }
-  @media (min-width: 1100px) {
-    .page-intro {
-      padding: var(--space-12) 0;
-    }
-    h1 {
-      font-size: 3.25rem;
-    }
+
+  .page-intro--dark .page-intro-lead {
+    color: rgba(255, 255, 255, 0.88);
   }
 </style>

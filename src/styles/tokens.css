@@ -1,21 +1,55 @@
 :root {
+  /* Brand identity — Aquarela Colégio e Curso */
   --brand-navy: #004c73;
-  --brand-red: #f51623;
-  --brand-orange: #fa5721;
-  --brand-yellow: #ffbf0c;
-  --brand-cyan: #00b5e2;
-  --brand-purple: #96248f;
+  --brand-navy-deep: #003552;
+  --brand-red: #e01222;
+  --brand-orange: #f25c22;
+  --brand-yellow: #f5b800;
+  --brand-cyan: #00a8d6;
+  --brand-purple: #8c2286;
+
+  /* Architectural editorial surfaces */
   --surface-base: #ffffff;
-  --surface-paper: #fff9ef;
-  --text-ink: #123747;
-  --text-muted: #516574;
+  --surface-paper: #f3f5f7;
+  --surface-soft: #f3f5f7;
+  --surface-elevated: #e9eef2;
+  --surface-dark: #0c1b26;
+  --surface-dark-elevated: #132838;
+  --surface-dark-card: rgba(255, 255, 255, 0.065);
+  --surface-dark-card-hover: rgba(255, 255, 255, 0.11);
+
+  /* Typography colors — WCAG AAA/AA compliant */
+  --text-ink: #10202b;
+  --text-body: #32434f;
+  --text-muted: #536572;
+  --text-on-dark: #ffffff;
+  --text-on-dark-muted: rgba(255, 255, 255, 0.78);
+
+  /* Actions */
   --action-primary: #d91424;
   --action-hover: #b5101e;
-  --action-pressed: #940d19;
-  --border-subtle: #dce4e8;
-  --border-control: #516574;
+  --action-pressed: #910c18;
+
+  /* Borders & controls */
+  --border-subtle: rgba(16, 32, 43, 0.1);
+  --border-strong: rgba(16, 32, 43, 0.22);
+  --border-control: #536572;
+  --border-on-dark: rgba(255, 255, 255, 0.16);
   --surface-disabled: #e7ecef;
-  --text-disabled: #516574;
+  --text-disabled: #536572;
+
+  /* Signature Aquarela spectrum hairline */
+  --aquarela-spectrum: linear-gradient(
+    90deg,
+    var(--brand-navy) 0%,
+    var(--brand-cyan) 24%,
+    var(--brand-yellow) 50%,
+    var(--brand-orange) 72%,
+    var(--brand-red) 88%,
+    var(--brand-purple) 100%
+  );
+
+  /* Spacing scale */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -28,16 +62,31 @@
   --space-16: 64px;
   --space-20: 80px;
   --space-24: 96px;
-  --radius-control: 12px;
-  --radius-card: 20px;
+  --section-pad: clamp(3.5rem, 7vw, 7.25rem);
+
+  /* Sculptural radii */
+  --radius-control: 14px;
+  --radius-card: 24px;
   --radius-media: 24px;
   --radius-pill: 999px;
-  --shadow: 0 4px 16px rgb(18 55 71 / 0.1);
-  --duration-fast: 160ms;
-  --duration-overlay: 200ms;
-  --ease: ease-out;
+
+  /* Shadows & depth */
+  --shadow: 0 12px 34px -18px rgba(16, 32, 43, 0.18);
+  --shadow-elevated: 0 24px 56px -26px rgba(16, 32, 43, 0.28);
+  --shadow-action: 0 18px 34px -20px rgba(217, 20, 36, 0.55);
+
+  /* Motion choreography */
+  --duration-fast: 180ms;
+  --duration-overlay: 240ms;
+  --duration-editorial: 560ms;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Layer stack */
   --z-content: 0;
-  --z-header: 20;
+  --z-sticky: 15;
+  --z-switcher: 20;
+  --z-header: 25;
   --z-menu: 40;
   --z-lightbox: 50;
 }

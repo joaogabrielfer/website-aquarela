@@ -2,6 +2,7 @@
 interface Props {
   variant: 'summary' | 'detail';
   name: string;
+  index?: number;
   summary?: string;
   description?: string;
   audience?: string;
@@ -17,6 +18,7 @@ interface Props {
 const {
   variant,
   name,
+  index,
   summary,
   description,
   audience,
@@ -28,23 +30,42 @@ const {
   imageAlt,
   class: className,
 } = Astro.props;
+
+const displayNumber =
+  index !== undefined ? String(index + 1).padStart(2, '0') : null;
 ---
 
-<div class:list={['activity-card', `activity-card--${variant}`, className]}>
+<article
+  class:list={[
+    'activity-card',
+    `activity-card--${variant}`,
+    'editorial-surface',
+    className,
+  ]}
+  data-reveal
+>
   {
     imageUrl && (
-      <div class="card-media">
+      <div class="card-media media-frame">
         <img
           src={imageUrl}
           alt={imageAlt || name}
-          width="400"
-          height="300"
+          width="800"
+          height="600"
           loading="lazy"
+          decoding="async"
         />
       </div>
     )
   }
   <div class="card-body">
+    {
+      displayNumber && (
+        <span class="editorial-number" aria-hidden="true">
+          {displayNumber}
+        </span>
+      )
+    }
     <h3 class="card-title">{name}</h3>
     {variant === 'summary' && summary && <p class="card-text">{summary}</p>}
     {
@@ -71,70 +92,92 @@ const {
               <strong>Condições:</strong> {conditions}
             </p>
           )}
+          {!description && !audience && (!shifts || shifts.length === 0) && (
+            <p class="card-text card-note">
+              Consulte a secretaria para informações sobre turmas, horários e
+              inscrições.
+            </p>
+          )}
         </>
       )
     }
     {
       variant === 'summary' && (
-        <a href="/atividades" class="card-link">
-          Ver atividades
+        <a href="/atividades" class="editorial-link card-link">
+          <span>Ver atividades</span>
+          <span class="editorial-link__arrow" aria-hidden="true">
+            ↗
+          </span>
         </a>
       )
     }
     {
       variant === 'detail' && slug && (
-        <a href={`/visite?interesse=atividade-${slug}`} class="card-link">
-          Consultar esta atividade
+        <a
+          href={`/visite?interesse=atividade-${slug}`}
+          class="editorial-link card-link"
+        >
+          <span>Consultar esta atividade</span>
+          <span class="editorial-link__arrow" aria-hidden="true">
+            ↗
+          </span>
         </a>
       )
     }
   </div>
-</div>
+</article>
 
 <style>
   .activity-card {
     display: flex;
     flex-direction: column;
-    background: var(--surface-base);
+    background: var(--surface-soft);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     overflow: hidden;
   }
+
+  @media (hover: hover) {
+    .activity-card:hover {
+      background: #ffffff;
+      border-color: rgba(0, 76, 115, 0.25);
+      box-shadow: var(--shadow-elevated);
+    }
+  }
+
   .card-media {
-    overflow: hidden;
+    border-radius: 0;
+    aspect-ratio: 4 / 3;
   }
-  .card-media img {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    aspect-ratio: 4/3;
-  }
+
   .card-body {
-    padding: var(--space-6);
+    padding: 26px;
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    align-items: flex-start;
+    gap: 14px;
     flex: 1;
   }
+
   .card-title {
-    margin: 0;
-    font-size: 1.5rem;
-    line-height: 1.2;
-  }
-  .card-text {
-    margin: 0;
+    margin: 4px 0 0;
+    font-size: calc(clamp(1.35rem, 2.2vw, 1.75rem) * var(--display-scale));
+    line-height: 1.15;
     color: var(--text-ink);
   }
-  .card-link {
-    color: var(--brand-navy);
-    font-weight: 500;
-    text-decoration: underline;
-    margin-top: auto;
+
+  .card-text {
+    margin: 0;
+    font-size: 0.96875rem;
+    line-height: 1.55;
+    color: var(--text-body);
   }
-  @media (max-width: 767px) {
-    .card-body {
-      padding: var(--space-5);
-    }
+
+  .card-note {
+    color: var(--text-muted);
+  }
+
+  .card-link {
+    margin-top: auto;
   }
 </style>

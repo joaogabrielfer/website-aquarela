@@ -8,18 +8,20 @@ import Button from './Button.astro';
 interface Props {
   slug: string;
   name: string;
+  index?: number;
   description?: string | null;
   experiences?: string[];
   grades?: string | null;
   ages?: string | null;
   shifts?: string[];
   image?: PublicMedia | null;
-  tone?: 'white' | 'paper';
+  tone?: 'white' | 'paper' | 'dark';
 }
 
 const {
   slug,
   name,
+  index,
   description,
   experiences = [],
   grades,
@@ -32,12 +34,28 @@ const {
 const hasMeta = grades || ages || shifts.length > 0;
 const ctaHref = `/visite?interesse=${slug}`;
 const displayDescription = description || empty.segment[0];
+const displayNumber =
+  index !== undefined ? String(index + 1).padStart(2, '0') : null;
+const isDark = tone === 'dark';
 ---
 
 <section id={slug} class:list={['segment-detail', `segment-detail--${tone}`]}>
   <div class="container segment-detail-inner">
-    <div class="segment-detail-layout">
-      <h2 class="segment-detail-title">{name}</h2>
+    <div class="segment-detail-layout" data-reveal>
+      <div class="segment-detail-header">
+        {
+          displayNumber && (
+            <span
+              class:list={['segment-num', { 'segment-num--dark': isDark }]}
+              aria-hidden="true"
+            >
+              Etapa {displayNumber}
+            </span>
+          )
+        }
+        <h2 class="segment-detail-title">{name}</h2>
+      </div>
+
       <div class="segment-detail-content">
         {
           displayDescription && (
@@ -57,42 +75,52 @@ const displayDescription = description || empty.segment[0];
           hasMeta && (
             <div class="segment-detail-meta">
               {grades && (
-                <p>
-                  <strong>Séries:</strong> {grades}
-                </p>
+                <div class="meta-card">
+                  <span>Séries</span>
+                  <strong>{grades}</strong>
+                </div>
               )}
               {ages && (
-                <p>
-                  <strong>Idades:</strong> {ages}
-                </p>
+                <div class="meta-card">
+                  <span>Idades</span>
+                  <strong>{ages}</strong>
+                </div>
               )}
               {shifts.length > 0 && (
-                <p>
-                  <strong>Turnos:</strong> {shifts.join(', ')}
-                </p>
+                <div class="meta-card meta-card--shifts">
+                  <span>Turnos de aula</span>
+                  <ul>
+                    {shifts.map((shift) => (
+                      <li>{shift}</li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
           )
         }
       </div>
+
       <div class="segment-detail-action">
-        <Button href={ctaHref} variant="primary">
+        <Button href={ctaHref} variant={isDark ? 'inverse' : 'primary'} arrow>
           Conversar sobre esta etapa
         </Button>
       </div>
-      <div class="segment-detail-media">
+
+      <div class="segment-detail-media media-frame">
         {
           image ? (
             <img
               class="segment-detail-photo"
               src={image.src}
               srcset={responsiveSrcset(image.src, image.width)}
-              sizes="(min-width: 1100px) 420px, 100vw"
+              sizes="(min-width: 1100px) 46vw, 100vw"
               alt={image.alt}
               width={image.width}
               height={image.height}
               style={focalPointStyle(image.focalPoint)}
               loading="lazy"
+              decoding="async"
             />
           ) : (
             <AssetPlaceholder aspectRatio="4/3" />
@@ -105,116 +133,197 @@ const displayDescription = description || empty.segment[0];
 
 <style>
   .segment-detail {
-    padding: var(--space-12) 0;
-    scroll-margin-top: 160px;
+    padding-block: var(--section-pad);
+    scroll-margin-top: calc(var(--site-header-height) + 76px);
   }
+
   .segment-detail--white {
     background: var(--surface-base);
   }
+
   .segment-detail--paper {
-    background: var(--surface-paper);
+    background: var(--surface-soft);
   }
-  .segment-detail-inner {
-    max-width: 1104px;
-    margin-inline: auto;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
+
+  .segment-detail--dark {
+    background: var(--surface-dark);
+    color: #ffffff;
   }
+
   .segment-detail-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      'title'
+      'header'
+      'media'
       'content'
-      'action'
-      'media';
-    gap: var(--space-6);
+      'action';
+    gap: 24px;
     align-items: start;
   }
-  .segment-detail-title {
-    grid-area: title;
-    margin: 0;
-    font-size: 1.875rem;
-    line-height: 1.15;
+
+  .segment-detail-header {
+    grid-area: header;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
+
+  .segment-num {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    background: rgba(217, 20, 36, 0.1);
+    color: var(--action-hover);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .segment-num--dark {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--brand-yellow);
+  }
+
+  .segment-detail-title {
+    margin: 0;
+  }
+
+  .segment-detail--dark .segment-detail-title {
+    color: #ffffff;
+  }
+
   .segment-detail-content {
     grid-area: content;
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: 20px;
     min-width: 0;
   }
+
   .segment-detail-desc {
     margin: 0;
-    max-width: 65ch;
-    color: var(--text-ink);
+    max-width: 56ch;
+    font-size: clamp(1.03125rem, 1.5vw, 1.1875rem);
+    line-height: 1.6;
+    color: var(--text-body);
   }
+
+  .segment-detail--dark .segment-detail-desc {
+    color: rgba(255, 255, 255, 0.86);
+  }
+
   .segment-detail-experiences {
     margin: 0;
-    padding-left: var(--space-6);
+    padding-left: 20px;
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-    max-width: 65ch;
-    color: var(--text-ink);
+    gap: 8px;
+    max-width: 58ch;
   }
+
   .segment-detail-meta {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    max-width: 34rem;
+  }
+
+  .meta-card {
+    padding: 16px 20px;
+    border-radius: 18px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border-subtle);
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-    max-width: 65ch;
+    gap: 6px;
   }
-  .segment-detail-meta p {
-    margin: 0;
-    color: var(--text-ink);
+
+  .segment-detail--paper .meta-card {
+    background: #ffffff;
+  }
+
+  .segment-detail--dark .meta-card {
+    background: var(--surface-dark-card);
+    border-color: var(--border-on-dark);
+  }
+
+  .meta-card span {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .segment-detail--dark .meta-card span {
+    color: rgba(255, 255, 255, 0.68);
+  }
+
+  .meta-card strong {
     font-size: 1rem;
-    line-height: 1.6;
+    color: var(--text-ink);
   }
+
+  .segment-detail--dark .meta-card strong {
+    color: #ffffff;
+  }
+
+  .meta-card ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-weight: 600;
+    color: var(--text-ink);
+  }
+
+  .segment-detail--dark .meta-card ul {
+    color: #ffffff;
+  }
+
   .segment-detail-action {
     grid-area: action;
     align-self: start;
     justify-self: start;
   }
+
   .segment-detail-media {
     grid-area: media;
-    align-self: start;
-    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-media);
   }
+
   .segment-detail-photo {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
-    aspect-ratio: 4/3;
-    border-radius: var(--radius-media);
-  }
-  /* Tablet */
-  @media (min-width: 768px) {
-    .segment-detail {
-      padding: var(--space-16) 0;
-    }
-    .segment-detail-title {
-      font-size: 2.25rem;
-    }
-    .segment-detail-meta p {
-      font-size: 1.125rem;
-    }
   }
 
-  /* Desktop */
-  @media (min-width: 1100px) {
+  @media (min-width: 1024px) {
     .segment-detail-layout {
-      grid-template-columns: 420px minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
       grid-template-areas:
-        'media title'
+        'media header'
         'media content'
         'media action';
-      column-gap: var(--space-10);
-      row-gap: var(--space-5);
+      column-gap: clamp(2.5rem, 5vw, 4.5rem);
+      row-gap: 22px;
+      align-items: center;
     }
-    .segment-detail-title {
-      font-size: 2.5rem;
+
+    .segment-detail--paper .segment-detail-layout {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      grid-template-areas:
+        'header media'
+        'content media'
+        'action media';
     }
   }
 </style>
