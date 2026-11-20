@@ -610,216 +610,223 @@
       <div class="story-scrim"></div>
     </div>
 
-    <!-- Foreground narrative acts -->
-    <div class="container story-foreground">
-      <!-- ACT 01: Opening -->
-      <div
-        class="story-act is-first"
-        class:is-active={reduced || activeAct === 0}
-        bind:this={act0El}
-        inert={!reduced && activeAct !== 0 ? true : undefined}
-      >
-        <p class="act-badge" bind:this={act0Items[0]}>
-          <span class="act-dot" aria-hidden="true"></span>
-          <span>01 · Aquarela · Paulista/PE</span>
-        </p>
-        <h1 class="act-h1" bind:this={act0Items[1]}>{heroTitle}</h1>
-        <p class="act-lead" bind:this={act0Items[2]}>
-          {heroSupport || tagline}
-        </p>
-        <div class="act-actions" bind:this={act0Items[3]}>
-          <a class="story-btn story-btn--red focus-on-navy" href="/visite">
-            <span>Quero conhecer</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-          <button
-            type="button"
-            class="story-btn story-btn--glass focus-on-navy"
-            onclick={() => goToAct(1)}
-          >
-            <span>Iniciar jornada</span>
-            <span aria-hidden="true">↓</span>
-          </button>
-        </div>
-        <p class="scroll-whisper" aria-hidden="true" bind:this={act0Items[4]}>
-          <span class="scroll-line"></span>
-          <span>
-            {isTouch
-              ? 'Deslize para cima · 1 passo por tela'
-              : 'Role suavemente · 1 ato por vez'}
-          </span>
-        </p>
-      </div>
-
-      <!-- ACT 02: Teaching Stages -->
-      <div
-        class="story-act"
-        class:is-active={reduced || activeAct === 1}
-        bind:this={act1El}
-        inert={!reduced && activeAct !== 1 ? true : undefined}
-      >
-        <p class="act-badge">
-          <span class="act-dot" aria-hidden="true"></span>
-          <span>02 · Infantil ao Ensino Médio</span>
-        </p>
-        <h2 class="act-h2">Acompanhamento em cada fase.</h2>
-        <div class="stage-pills-grid">
-          {#each segments as seg, i (seg.slug)}
-            <a
-              href={`/ensino#${seg.slug}`}
-              class="stage-glass-card focus-on-navy"
-              bind:this={stageCardEls[i]}
-            >
-              <span class="stage-card-top">
-                <span class="stage-num">{seg.num}</span>
-                <span aria-hidden="true">↗</span>
-              </span>
-              <strong>{seg.name}</strong>
-              <span class="stage-shifts">
-                {seg.shifts.map((s) => s.split(':')[0]).join(' · ')}
-              </span>
-            </a>
-          {/each}
-        </div>
-      </div>
-
-      <!-- ACT 03: Real School Spaces -->
-      <div
-        class="story-act"
-        class:is-active={reduced || activeAct === 2}
-        bind:this={act2El}
-        inert={!reduced && activeAct !== 2 ? true : undefined}
-      >
-        <p class="act-badge">
-          <span class="act-dot" aria-hidden="true"></span>
-          <span>03 · Estrutura que educa</span>
-        </p>
-        <h2 class="act-h2">
-          {environmentsCount} ambientes feitos para descobrir.
-        </h2>
-        <p class="act-lead">
-          Salas equipadas, laboratório, esportes e convivência integrados ao dia
-          a dia dos estudantes.
-        </p>
-        <div class="space-chips" aria-label="Destaques dos ambientes">
-          {#each environmentHighlights as envName, i (envName)}
-            <span class="space-chip" bind:this={spaceChipEls[i]}>
-              {envName}
-            </span>
-          {/each}
-        </div>
-        <div class="act-actions">
-          <a
-            class="story-btn story-btn--white focus-on-navy"
-            href="/nosso-espaco"
-          >
-            <span>Explorar nosso espaço</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- ACT 04: Approvals & Visit CTA -->
-      <div
-        class="story-act"
-        class:is-active={reduced || activeAct === 3}
-        bind:this={act3El}
-        inert={!reduced && activeAct !== 3 ? true : undefined}
-      >
-        <p class="act-badge">
-          <span class="act-dot" aria-hidden="true"></span>
-          <span>04 · Trajetórias reais</span>
-        </p>
-        <h2 class="act-h2">Conquistas que abrem caminhos.</h2>
-        {#if approvals.length > 0}
-          <div class="story-approvals">
-            {#each approvals as person, i (person.name)}
-              <div class="story-approval-pill" bind:this={approvalEls[i]}>
-                {#if person.portraitUrl}
-                  <img
-                    src={person.portraitUrl}
-                    alt={person.portraitAlt}
-                    width="44"
-                    height="44"
-                    loading="eager"
-                  />
-                {/if}
-                <div class="story-approval-text">
-                  <strong>{person.name}</strong>
-                  <span>{person.summary}</span>
-                </div>
-              </div>
-            {/each}
-          </div>
-        {/if}
-        <div class="act-actions">
-          <a class="story-btn story-btn--red focus-on-navy" href="/visite">
-            <span>Agendar visita</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-          {#if whatsappHref}
-            <a
-              class="story-btn story-btn--glass focus-on-navy"
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener"
-            >
-              <span>WhatsApp</span>
+    <!-- Safe viewport frame (100svh) keeps foreground acts and bottom HUD cleanly above iOS Safari's bottom bar, while the full-bleed photo fills 100lvh behind it -->
+    <div class="story-safe-viewport">
+      <!-- Foreground narrative acts -->
+      <div class="container story-foreground">
+        <!-- ACT 01: Opening -->
+        <div
+          class="story-act is-first"
+          class:is-active={reduced || activeAct === 0}
+          bind:this={act0El}
+          inert={!reduced && activeAct !== 0 ? true : undefined}
+        >
+          <p class="act-badge" bind:this={act0Items[0]}>
+            <span class="act-dot" aria-hidden="true"></span>
+            <span>01 · Aquarela · Paulista/PE</span>
+          </p>
+          <h1 class="act-h1" bind:this={act0Items[1]}>{heroTitle}</h1>
+          <p class="act-lead" bind:this={act0Items[2]}>
+            {heroSupport || tagline}
+          </p>
+          <div class="act-actions" bind:this={act0Items[3]}>
+            <a class="story-btn story-btn--red focus-on-navy" href="/visite">
+              <span>Quero conhecer</span>
               <span aria-hidden="true">↗</span>
             </a>
-          {/if}
+            <button
+              type="button"
+              class="story-btn story-btn--glass focus-on-navy"
+              onclick={() => goToAct(1)}
+            >
+              <span>Iniciar jornada</span>
+              <span aria-hidden="true">↓</span>
+            </button>
+          </div>
+          <p class="scroll-whisper" aria-hidden="true" bind:this={act0Items[4]}>
+            <span class="scroll-line"></span>
+            <span>
+              {isTouch
+                ? 'Deslize para cima · 1 passo por tela'
+                : 'Role suavemente · 1 ato por vez'}
+            </span>
+          </p>
         </div>
-        {#if !reduced}
-          <button
-            type="button"
-            class="continue-cue focus-on-navy"
-            onclick={scrollPastDeck}
-          >
-            <span class="scroll-line" aria-hidden="true"></span>
-            <span>Continuar explorando o site ↓</span>
-          </button>
-        {/if}
-      </div>
-    </div>
 
-    <!-- Precision bottom chapter progress bar -->
-    {#if !reduced}
-      <div class="story-hud">
-        <div class="container story-hud-inner">
-          <div class="hud-tabs" role="tablist" aria-label="Atos da história">
-            {#each actLabels as act, idx (act.num)}
-              <button
-                type="button"
-                role="tab"
-                class="hud-tab focus-on-navy"
-                class:is-current={activeAct === idx}
-                aria-selected={activeAct === idx}
-                onclick={() => goToAct(idx)}
+        <!-- ACT 02: Teaching Stages -->
+        <div
+          class="story-act"
+          class:is-active={reduced || activeAct === 1}
+          bind:this={act1El}
+          inert={!reduced && activeAct !== 1 ? true : undefined}
+        >
+          <p class="act-badge">
+            <span class="act-dot" aria-hidden="true"></span>
+            <span>02 · Infantil ao Ensino Médio</span>
+          </p>
+          <h2 class="act-h2">Acompanhamento em cada fase.</h2>
+          <div class="stage-pills-grid">
+            {#each segments as seg, i (seg.slug)}
+              <a
+                href={`/ensino#${seg.slug}`}
+                class="stage-glass-card focus-on-navy"
+                bind:this={stageCardEls[i]}
               >
-                <span class="hud-bar" aria-hidden="true">
-                  <span
-                    class="hud-fill"
-                    style={idx === 0 ? 'transform: scaleX(1)' : undefined}
-                    bind:this={hudFillEls[idx]}
-                  ></span>
+                <span class="stage-card-top">
+                  <span class="stage-num">{seg.num}</span>
+                  <span aria-hidden="true">↗</span>
                 </span>
-                <span class="hud-meta">
-                  <span class="hud-num">{act.num}</span>
-                  <span class="hud-label">{act.label}</span>
+                <strong>{seg.name}</strong>
+                <span class="stage-shifts">
+                  {seg.shifts.map((s) => s.split(':')[0]).join(' · ')}
                 </span>
-              </button>
+              </a>
             {/each}
           </div>
         </div>
+
+        <!-- ACT 03: Real School Spaces -->
+        <div
+          class="story-act"
+          class:is-active={reduced || activeAct === 2}
+          bind:this={act2El}
+          inert={!reduced && activeAct !== 2 ? true : undefined}
+        >
+          <p class="act-badge">
+            <span class="act-dot" aria-hidden="true"></span>
+            <span>03 · Estrutura que educa</span>
+          </p>
+          <h2 class="act-h2">
+            {environmentsCount} ambientes feitos para descobrir.
+          </h2>
+          <p class="act-lead">
+            Salas equipadas, laboratório, esportes e convivência integrados ao
+            dia a dia dos estudantes.
+          </p>
+          <div class="space-chips" aria-label="Destaques dos ambientes">
+            {#each environmentHighlights as envName, i (envName)}
+              <span class="space-chip" bind:this={spaceChipEls[i]}>
+                {envName}
+              </span>
+            {/each}
+          </div>
+          <div class="act-actions">
+            <a
+              class="story-btn story-btn--white focus-on-navy"
+              href="/nosso-espaco"
+            >
+              <span>Explorar nosso espaço</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ACT 04: Approvals & Visit CTA -->
+        <div
+          class="story-act"
+          class:is-active={reduced || activeAct === 3}
+          bind:this={act3El}
+          inert={!reduced && activeAct !== 3 ? true : undefined}
+        >
+          <p class="act-badge">
+            <span class="act-dot" aria-hidden="true"></span>
+            <span>04 · Trajetórias reais</span>
+          </p>
+          <h2 class="act-h2">Conquistas que abrem caminhos.</h2>
+          {#if approvals.length > 0}
+            <div class="story-approvals">
+              {#each approvals as person, i (person.name)}
+                <div class="story-approval-pill" bind:this={approvalEls[i]}>
+                  {#if person.portraitUrl}
+                    <img
+                      src={person.portraitUrl}
+                      alt={person.portraitAlt}
+                      width="44"
+                      height="44"
+                      loading="eager"
+                    />
+                  {/if}
+                  <div class="story-approval-text">
+                    <strong>{person.name}</strong>
+                    <span>{person.summary}</span>
+                  </div>
+                </div>
+              {/each}
+            </div>
+          {/if}
+          <div class="act-actions">
+            <a class="story-btn story-btn--red focus-on-navy" href="/visite">
+              <span>Agendar visita</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+            {#if whatsappHref}
+              <a
+                class="story-btn story-btn--glass focus-on-navy"
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener"
+              >
+                <span>WhatsApp</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+            {/if}
+          </div>
+          {#if !reduced}
+            <button
+              type="button"
+              class="continue-cue focus-on-navy"
+              onclick={scrollPastDeck}
+            >
+              <span class="scroll-line" aria-hidden="true"></span>
+              <span>Continuar explorando o site ↓</span>
+            </button>
+          {/if}
+        </div>
       </div>
-    {/if}
+
+      <!-- Precision bottom chapter progress bar -->
+      {#if !reduced}
+        <div class="story-hud">
+          <div class="container story-hud-inner">
+            <div class="hud-tabs" role="tablist" aria-label="Atos da história">
+              {#each actLabels as act, idx (act.num)}
+                <button
+                  type="button"
+                  role="tab"
+                  class="hud-tab focus-on-navy"
+                  class:is-current={activeAct === idx}
+                  aria-selected={activeAct === idx}
+                  onclick={() => goToAct(idx)}
+                >
+                  <span class="hud-bar" aria-hidden="true">
+                    <span
+                      class="hud-fill"
+                      style={idx === 0 ? 'transform: scaleX(1)' : undefined}
+                      bind:this={hudFillEls[idx]}
+                    ></span>
+                  </span>
+                  <span class="hud-meta">
+                    <span class="hud-num">{act.num}</span>
+                    <span class="hud-label">{act.label}</span>
+                  </span>
+                </button>
+              {/each}
+            </div>
+          </div>
+        </div>
+      {/if}
+    </div>
   </div>
 </section>
 
 <style>
   .story-deck {
     position: relative;
-    height: 100svh;
+    /* Full large viewport + bottom safe-area so iOS Safari's floating Liquid Glass
+       toolbar never reveals the next section peeking below the scrollytelling stage. */
+    height: 100vh;
+    height: calc(100lvh + env(safe-area-inset-bottom, 0px));
+    min-height: 100dvh;
     width: 100%;
     overflow: hidden;
     background: #07121b;
@@ -829,6 +836,7 @@
 
   .story-deck.is-reduced {
     height: auto;
+    min-height: 0;
     overflow: visible;
     contain: none;
   }
@@ -838,6 +846,19 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
+  }
+
+  .story-safe-viewport {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100svh;
+    max-height: 100%;
+  }
+
+  .story-deck.is-reduced .story-safe-viewport {
+    height: auto;
+    max-height: none;
   }
 
   .story-deck.is-reduced .story-stage {
