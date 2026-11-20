@@ -54,84 +54,335 @@
   }: Props = $props();
 
   let runwayEl: HTMLElement | undefined = $state();
-  let progress = $state(0);
-  let reduced = $state(false);
+  let topBarEl: HTMLElement | undefined = $state();
 
-  const actCount = 4;
+  // Direct DOM refs for 60/120fps GPU transforms without per-frame Svelte reactivity
+  let bg0El: HTMLElement | undefined = $state();
+  let bg1El: HTMLElement | undefined = $state();
+  let bg2El: HTMLElement | undefined = $state();
+  let bg3El: HTMLElement | undefined = $state();
+
+  let act0El: HTMLElement | undefined = $state();
+  let act1El: HTMLElement | undefined = $state();
+  let act2El: HTMLElement | undefined = $state();
+  let act3El: HTMLElement | undefined = $state();
+
+  let act0Items: (HTMLElement | null)[] = [];
+  let stageCardEls: (HTMLElement | null)[] = [];
+  let spaceChipEls: (HTMLElement | null)[] = [];
+  let approvalEls: (HTMLElement | null)[] = [];
+  let hudFillEls: (HTMLElement | null)[] = [];
+
+  // Only reactive state that changes rarely (4 discrete acts + reduced-motion flag)
+  let activeAct = $state(0);
+  let reduced = $state(false);
 
   const actLabels = [
     { num: '01', label: 'Aquarela', anchor: 0.0 },
-    { num: '02', label: 'Ensino', anchor: 0.34 },
-    { num: '03', label: 'Espaços', anchor: 0.66 },
-    { num: '04', label: 'Futuro', anchor: 0.94 },
+    { num: '02', label: 'Ensino', anchor: 0.36 },
+    { num: '03', label: 'Espaços', anchor: 0.68 },
+    { num: '04', label: 'Futuro', anchor: 0.96 },
   ];
 
-  // Smooth act weighting (0..1) with soft crossfade overlap
-  const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+  // Cached layout geometry — updated only on resize/ResizeObserver, never during scroll
+  let cachedTop = 0;
+  let cachedScrollable = 1;
+  let isCoarse = false;
+  let jumpRaf = 0;
 
-  const actWeights = $derived.by(() => {
-    if (reduced) return [1, 1, 1, 1];
-    const p = progress;
-    const w0 = 1 - clamp01((p - 0.17) / 0.13);
-    const w1 = clamp01((p - 0.19) / 0.12) * (1 - clamp01((p - 0.48) / 0.12));
-    const w2 = clamp01((p - 0.5) / 0.12) * (1 - clamp01((p - 0.76) / 0.12));
-    const w3 = clamp01((p - 0.78) / 0.12);
-    return [w0, w1, w2, w3];
-  });
+  const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const smoothstep = (edge0: number, edge1: number, x: number) => {
+    const t = clamp01((x - edge0) / (edge1 - edge0));
+    return t * t * (3 - 2 * t);
+  };
+  const easeOutCubic = (t: number) => 1 - Math.pow(1 - clamp01(t), 3);
 
-  const activeAct = $derived.by(() => {
-    if (progress < 0.24) return 0;
-    if (progress < 0.54) return 1;
-    if (progress < 0.82) return 2;
-    return 3;
-  });
-
-  // Non-linear aperture opening on the initial frame (0 -> 0.16)
-  const aperture = $derived(reduced ? 1 : clamp01(progress / 0.16));
-
-  const jumpToAct = (idx: number) => {
+  const measureGeometry = () => {
     if (!runwayEl) return;
     const rect = runwayEl.getBoundingClientRect();
-    const topDoc = window.scrollY + rect.top;
-    const scrollable = Math.max(0, rect.height - window.innerHeight);
-    const targetY = topDoc + scrollable * (actLabels[idx]?.anchor ?? 0);
-    window.scrollTo({
-      top: targetY,
-      behavior: reduced ? 'auto' : 'smooth',
-    });
+    cachedTop = window.scrollY + rect.top;
+    const vh = window.innerHeight || 1;
+    cachedScrollable = Math.max(1, runwayEl.offsetHeight - vh);
+  };
+
+  const applyFrame = (p: number) => {
+    if (reduced) return;
+
+    // Smooth non-linear act weights with gentle overlap (zero dead zones)
+    const in0 = 1;
+    const out0 = 1 - smoothstep(0.13, 0.27, p);
+    const w0 = in0 * out0;
+
+    const in1 = smoothstep(0.18, 0.31, p);
+    const out1 = 1 - smoothstep(0.47, 0.59, p);
+    const w1 = in1 * out1;
+
+    const in2 = smoothstep(0.51, 0.63, p);
+    const out2 = 1 - smoothstep(0.76, 0.87, p);
+    const w2 = in2 * out2;
+
+    const in3 = smoothstep(0.79, 0.91, p);
+    const w3 = in3;
+
+    // Update discrete activeAct only when crossing midpoints
+    const nextAct = p < 0.23 ? 0 : p < 0.54 ? 1 : p < 0.82 ? 2 : 3;
+    if (nextAct !== activeAct) activeAct = nextAct;
+
+    // Top spectrum hairline
+    if (topBarEl) {
+      topBarEl.style.transform = `scaleX(${Math.max(0.02, p).toFixed(4)})`;
+    }
+
+    // 1. Living photographic background layers (continuous GPU zoom + vertical drift)
+    if (bg0El) {
+      const op = Math.max(0.12, w0);
+      const sc = 1.0 + p * 0.14;
+      const ty = -p * 3.5;
+      bg0El.style.opacity = op.toFixed(3);
+      bg0El.style.transform = `translate3d(0, ${ty.toFixed(2)}%, 0) scale(${sc.toFixed(4)})`;
+    }
+    if (bg1El) {
+      const local = clamp01((p - 0.15) / 0.45);
+      const sc = 1.13 - local * 0.11;
+      const ty = (1 - local) * 2.4 - 1.0;
+      bg1El.style.opacity = w1.toFixed(3);
+      bg1El.style.visibility = w1 > 0.004 ? 'visible' : 'hidden';
+      bg1El.style.transform = `translate3d(0, ${ty.toFixed(2)}%, 0) scale(${sc.toFixed(4)})`;
+    }
+    if (bg2El) {
+      const local = clamp01((p - 0.48) / 0.42);
+      const sc = 1.02 + local * 0.11;
+      const ty = (0.5 - local) * 2.5;
+      bg2El.style.opacity = w2.toFixed(3);
+      bg2El.style.visibility = w2 > 0.004 ? 'visible' : 'hidden';
+      bg2El.style.transform = `translate3d(0, ${ty.toFixed(2)}%, 0) scale(${sc.toFixed(4)})`;
+    }
+    if (bg3El) {
+      const local = clamp01((p - 0.76) / 0.24);
+      const sc = 1.11 - local * 0.09;
+      const ty = (1 - local) * 2.0;
+      bg3El.style.opacity = w3.toFixed(3);
+      bg3El.style.visibility = w3 > 0.004 ? 'visible' : 'hidden';
+      bg3El.style.transform = `translate3d(0, ${ty.toFixed(2)}%, 0) scale(${sc.toFixed(4)})`;
+    }
+
+    // 2. Act 01: Immediate staggered upward parallax from pixel 1 of scroll
+    if (act0El) {
+      act0El.style.opacity = w0.toFixed(3);
+      act0El.style.visibility = w0 > 0.005 ? 'visible' : 'hidden';
+      const drift = clamp01(p / 0.26);
+      const speeds = [14, 28, 38, 50, 58];
+      for (let i = 0; i < act0Items.length; i++) {
+        const el = act0Items[i];
+        if (!el) continue;
+        const dy = -drift * (speeds[i] ?? 32);
+        el.style.transform = `translate3d(0, ${dy.toFixed(1)}px, 0)`;
+      }
+    }
+
+    // 3. Act 02: Staggered wave entrance for the 4 stage cards
+    if (act1El) {
+      const enterY = (1 - easeOutCubic(in1)) * 28;
+      const exitY = (1 - out1) * -26;
+      act1El.style.opacity = w1.toFixed(3);
+      act1El.style.visibility = w1 > 0.005 ? 'visible' : 'hidden';
+      act1El.style.transform = `translate3d(0, ${(enterY + exitY).toFixed(1)}px, 0)`;
+
+      for (let i = 0; i < stageCardEls.length; i++) {
+        const card = stageCardEls[i];
+        if (!card) continue;
+        const stagger = easeOutCubic(clamp01((p - (0.19 + i * 0.024)) / 0.11));
+        const cardY = (1 - stagger) * 24;
+        const cardScale = 0.96 + stagger * 0.04;
+        card.style.opacity = stagger.toFixed(3);
+        card.style.transform = `translate3d(0, ${cardY.toFixed(1)}px, 0) scale(${cardScale.toFixed(4)})`;
+      }
+    }
+
+    // 4. Act 03: Spaces kinetic reveal with cascading chips
+    if (act2El) {
+      const enterY = (1 - easeOutCubic(in2)) * 28;
+      const exitY = (1 - out2) * -26;
+      act2El.style.opacity = w2.toFixed(3);
+      act2El.style.visibility = w2 > 0.005 ? 'visible' : 'hidden';
+      act2El.style.transform = `translate3d(0, ${(enterY + exitY).toFixed(1)}px, 0)`;
+
+      for (let i = 0; i < spaceChipEls.length; i++) {
+        const chip = spaceChipEls[i];
+        if (!chip) continue;
+        const stagger = easeOutCubic(clamp01((p - (0.52 + i * 0.016)) / 0.1));
+        const chipY = (1 - stagger) * 16;
+        chip.style.opacity = stagger.toFixed(3);
+        chip.style.transform = `translate3d(0, ${chipY.toFixed(1)}px, 0)`;
+      }
+    }
+
+    // 5. Act 04: Approvals cascade + Visit climax
+    if (act3El) {
+      const enterY = (1 - easeOutCubic(in3)) * 28;
+      act3El.style.opacity = w3.toFixed(3);
+      act3El.style.visibility = w3 > 0.005 ? 'visible' : 'hidden';
+      act3El.style.transform = `translate3d(0, ${enterY.toFixed(1)}px, 0)`;
+
+      for (let i = 0; i < approvalEls.length; i++) {
+        const card = approvalEls[i];
+        if (!card) continue;
+        const stagger = easeOutCubic(clamp01((p - (0.79 + i * 0.025)) / 0.1));
+        const cardY = (1 - stagger) * 20;
+        card.style.opacity = stagger.toFixed(3);
+        card.style.transform = `translate3d(0, ${cardY.toFixed(1)}px, 0)`;
+      }
+    }
+
+    // 6. Bottom 4-segment progress fills (pure scaleX GPU)
+    const count = actLabels.length;
+    for (let i = 0; i < hudFillEls.length; i++) {
+      const fill = hudFillEls[i];
+      if (!fill) continue;
+      const segP = clamp01(p * count - i);
+      fill.style.transform = `scaleX(${segP.toFixed(4)})`;
+    }
+  };
+
+  const smoothScrollTo = (targetY: number) => {
+    if (jumpRaf) window.cancelAnimationFrame(jumpRaf);
+    if (reduced) {
+      window.scrollTo({ top: targetY, behavior: 'auto' });
+      return;
+    }
+
+    const startY = window.scrollY;
+    const distance = targetY - startY;
+    if (Math.abs(distance) < 2) return;
+
+    const duration = Math.min(720, Math.max(380, Math.abs(distance) * 0.42));
+    const startTime = performance.now();
+
+    const step = (now: number) => {
+      const t = clamp01((now - startTime) / duration);
+      const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      window.scrollTo(0, startY + distance * eased);
+      if (t < 1) {
+        jumpRaf = window.requestAnimationFrame(step);
+      } else {
+        jumpRaf = 0;
+      }
+    };
+
+    jumpRaf = window.requestAnimationFrame(step);
+  };
+
+  const jumpToAct = (idx: number) => {
+    measureGeometry();
+    const targetY =
+      cachedTop + cachedScrollable * (actLabels[idx]?.anchor ?? 0);
+    smoothScrollTo(targetY);
   };
 
   onMount(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mqReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mqCoarse = window.matchMedia('(pointer: coarse)');
+    isCoarse = mqCoarse.matches;
+
+    let displayP = 0;
+    let targetP = 0;
+    let raf = 0;
+    let lastTime = 0;
+
+    const readTarget = () =>
+      clamp01((window.scrollY - cachedTop) / cachedScrollable);
+
+    const tick = (now: number) => {
+      raf = 0;
+      if (reduced) return;
+
+      const dt = lastTime ? Math.min(0.05, (now - lastTime) / 1000) : 0.016;
+      lastTime = now;
+
+      targetP = readTarget();
+      const diff = targetP - displayP;
+
+      if (Math.abs(diff) < 0.0004) {
+        displayP = targetP;
+        applyFrame(displayP);
+        lastTime = 0;
+        return;
+      }
+
+      // Frame-rate independent exponential damping: crisp on touch, silky on desktop
+      const speed = isCoarse ? 22 : 13;
+      const alpha = 1 - Math.exp(-speed * dt);
+      displayP += diff * alpha;
+      applyFrame(displayP);
+
+      raf = window.requestAnimationFrame(tick);
+    };
+
+    const wake = () => {
+      if (reduced) return;
+      targetP = readTarget();
+      if (!raf) {
+        lastTime = performance.now();
+        raf = window.requestAnimationFrame(tick);
+      }
+    };
+
     const syncReduced = () => {
       reduced =
-        mq.matches || document.documentElement.dataset.motion === 'reduced';
+        mqReduced.matches ||
+        document.documentElement.dataset.motion === 'reduced';
+      if (!reduced) {
+        measureGeometry();
+        displayP = readTarget();
+        targetP = displayP;
+        applyFrame(displayP);
+      }
     };
+
+    const cancelJumpOnUserInput = () => {
+      if (jumpRaf) {
+        window.cancelAnimationFrame(jumpRaf);
+        jumpRaf = 0;
+      }
+    };
+
+    const onResize = () => {
+      isCoarse = mqCoarse.matches;
+      measureGeometry();
+      if (!reduced) {
+        displayP = readTarget();
+        targetP = displayP;
+        applyFrame(displayP);
+      }
+    };
+
     syncReduced();
 
-    let raf = 0;
-    const measure = () => {
-      raf = 0;
-      if (!runwayEl || reduced) return;
-      const rect = runwayEl.getBoundingClientRect();
-      const scrollable = Math.max(1, rect.height - window.innerHeight);
-      progress = clamp01(-rect.top / scrollable);
-    };
+    const ro =
+      typeof ResizeObserver !== 'undefined' && runwayEl
+        ? new ResizeObserver(() => onResize())
+        : null;
+    if (ro && runwayEl) ro.observe(runwayEl);
 
-    const schedule = () => {
-      if (!raf) raf = window.requestAnimationFrame(measure);
-    };
-
-    window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', schedule, { passive: true });
-    mq.addEventListener('change', syncReduced);
-    measure();
+    window.addEventListener('scroll', wake, { passive: true });
+    window.addEventListener('resize', onResize, { passive: true });
+    window.addEventListener('orientationchange', onResize, { passive: true });
+    window.addEventListener('wheel', cancelJumpOnUserInput, { passive: true });
+    window.addEventListener('touchstart', cancelJumpOnUserInput, {
+      passive: true,
+    });
+    mqReduced.addEventListener('change', syncReduced);
 
     return () => {
       if (raf) window.cancelAnimationFrame(raf);
-      window.removeEventListener('scroll', schedule);
-      window.removeEventListener('resize', schedule);
-      mq.removeEventListener('change', syncReduced);
+      if (jumpRaf) window.cancelAnimationFrame(jumpRaf);
+      ro?.disconnect();
+      window.removeEventListener('scroll', wake);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('orientationchange', onResize);
+      window.removeEventListener('wheel', cancelJumpOnUserInput);
+      window.removeEventListener('touchstart', cancelJumpOnUserInput);
+      mqReduced.removeEventListener('change', syncReduced);
     };
   });
 </script>
@@ -143,16 +394,16 @@
   aria-label="Jornada interativa pelo Aquarela Colégio e Curso"
 >
   <div class="story-sticky">
-    <div
-      class="story-frame"
-      style={`--aperture: ${aperture.toFixed(3)}; --p: ${progress.toFixed(4)};`}
-    >
-      <!-- Living background photographic layers (GPU crossfade + scale) -->
+    <div class="story-frame">
+      {#if !reduced}
+        <div class="story-top-progress" aria-hidden="true">
+          <span class="story-top-progress-fill" bind:this={topBarEl}></span>
+        </div>
+      {/if}
+
+      <!-- Living background photographic layers (pure GPU translate3d + scale + opacity) -->
       <div class="story-bg-stack" aria-hidden="true">
-        <div
-          class="story-bg-layer"
-          style={`opacity: ${reduced ? 1 : Math.max(0.15, actWeights[0] ?? 0).toFixed(3)}; transform: scale(${(1.02 + progress * 0.14).toFixed(4)});`}
-        >
+        <div class="story-bg-layer is-first" bind:this={bg0El}>
           <img
             class="hero-photo"
             src={images.aerial.src}
@@ -170,10 +421,7 @@
           />
         </div>
 
-        <div
-          class="story-bg-layer"
-          style={`opacity: ${reduced ? 0 : (actWeights[1] ?? 0).toFixed(3)}; transform: scale(${(1.1 - Math.max(0, progress - 0.2) * 0.12).toFixed(4)});`}
-        >
+        <div class="story-bg-layer" bind:this={bg1El}>
           <img
             src={images.classroom.src}
             srcset={images.classroom.srcset}
@@ -189,10 +437,7 @@
           />
         </div>
 
-        <div
-          class="story-bg-layer"
-          style={`opacity: ${reduced ? 0 : (actWeights[2] ?? 0).toFixed(3)}; transform: scale(${(1.04 + Math.max(0, progress - 0.5) * 0.12).toFixed(4)});`}
-        >
+        <div class="story-bg-layer" bind:this={bg2El}>
           <img
             src={images.spaces.src}
             srcset={images.spaces.srcset}
@@ -208,10 +453,7 @@
           />
         </div>
 
-        <div
-          class="story-bg-layer"
-          style={`opacity: ${reduced ? 0 : (actWeights[3] ?? 0).toFixed(3)}; transform: scale(${(1.08 - Math.max(0, progress - 0.78) * 0.08).toFixed(4)});`}
-        >
+        <div class="story-bg-layer" bind:this={bg3El}>
           <img
             src={images.students.src}
             srcset={images.students.srcset}
@@ -234,20 +476,20 @@
       <div class="container story-foreground">
         <!-- ACT 01: Opening -->
         <div
-          class="story-act"
+          class="story-act is-first"
           class:is-active={reduced || activeAct === 0}
-          style={reduced
-            ? undefined
-            : `opacity: ${(actWeights[0] ?? 0).toFixed(3)}; transform: translateY(${((1 - (actWeights[0] ?? 0)) * -28).toFixed(1)}px);`}
+          bind:this={act0El}
           inert={!reduced && activeAct !== 0 ? true : undefined}
         >
-          <p class="act-badge">
+          <p class="act-badge" bind:this={act0Items[0]}>
             <span class="act-dot" aria-hidden="true"></span>
             <span>01 · Aquarela · Paulista/PE</span>
           </p>
-          <h1 class="act-h1">{heroTitle}</h1>
-          <p class="act-lead">{heroSupport || tagline}</p>
-          <div class="act-actions">
+          <h1 class="act-h1" bind:this={act0Items[1]}>{heroTitle}</h1>
+          <p class="act-lead" bind:this={act0Items[2]}>
+            {heroSupport || tagline}
+          </p>
+          <div class="act-actions" bind:this={act0Items[3]}>
             <a class="story-btn story-btn--red focus-on-navy" href="/visite">
               <span>Quero conhecer</span>
               <span aria-hidden="true">↗</span>
@@ -261,7 +503,7 @@
               <span aria-hidden="true">↓</span>
             </button>
           </div>
-          <p class="scroll-whisper" aria-hidden="true">
+          <p class="scroll-whisper" aria-hidden="true" bind:this={act0Items[4]}>
             <span class="scroll-line"></span>
             <span>Role para revelar os 4 momentos do Aquarela</span>
           </p>
@@ -271,21 +513,20 @@
         <div
           class="story-act"
           class:is-active={reduced || activeAct === 1}
-          style={reduced
-            ? undefined
-            : `opacity: ${(actWeights[1] ?? 0).toFixed(3)}; transform: translateY(${((1 - (actWeights[1] ?? 0)) * 34).toFixed(1)}px);`}
+          bind:this={act1El}
           inert={!reduced && activeAct !== 1 ? true : undefined}
         >
           <p class="act-badge">
             <span class="act-dot" aria-hidden="true"></span>
-            <span>02 · Da Educação Infantil ao Ensino Médio</span>
+            <span>02 · Infantil ao Ensino Médio</span>
           </p>
           <h2 class="act-h2">Acompanhamento em cada fase.</h2>
           <div class="stage-pills-grid">
-            {#each segments as seg (seg.slug)}
+            {#each segments as seg, i (seg.slug)}
               <a
                 href={`/ensino#${seg.slug}`}
                 class="stage-glass-card focus-on-navy"
+                bind:this={stageCardEls[i]}
               >
                 <span class="stage-card-top">
                   <span class="stage-num">{seg.num}</span>
@@ -304,9 +545,7 @@
         <div
           class="story-act"
           class:is-active={reduced || activeAct === 2}
-          style={reduced
-            ? undefined
-            : `opacity: ${(actWeights[2] ?? 0).toFixed(3)}; transform: translateY(${((1 - (actWeights[2] ?? 0)) * 34).toFixed(1)}px);`}
+          bind:this={act2El}
           inert={!reduced && activeAct !== 2 ? true : undefined}
         >
           <p class="act-badge">
@@ -321,8 +560,10 @@
             dia a dia dos estudantes.
           </p>
           <div class="space-chips" aria-label="Destaques dos ambientes">
-            {#each environmentHighlights as envName (envName)}
-              <span class="space-chip">{envName}</span>
+            {#each environmentHighlights as envName, i (envName)}
+              <span class="space-chip" bind:this={spaceChipEls[i]}>
+                {envName}
+              </span>
             {/each}
           </div>
           <div class="act-actions">
@@ -340,9 +581,7 @@
         <div
           class="story-act"
           class:is-active={reduced || activeAct === 3}
-          style={reduced
-            ? undefined
-            : `opacity: ${(actWeights[3] ?? 0).toFixed(3)}; transform: translateY(${((1 - (actWeights[3] ?? 0)) * 34).toFixed(1)}px);`}
+          bind:this={act3El}
           inert={!reduced && activeAct !== 3 ? true : undefined}
         >
           <p class="act-badge">
@@ -352,8 +591,8 @@
           <h2 class="act-h2">Conquistas que abrem caminhos.</h2>
           {#if approvals.length > 0}
             <div class="story-approvals">
-              {#each approvals as person (person.name)}
-                <div class="story-approval-pill">
+              {#each approvals as person, i (person.name)}
+                <div class="story-approval-pill" bind:this={approvalEls[i]}>
                   {#if person.portraitUrl}
                     <img
                       src={person.portraitUrl}
@@ -383,7 +622,7 @@
                 target="_blank"
                 rel="noopener"
               >
-                <span>Conversar no WhatsApp</span>
+                <span>WhatsApp</span>
                 <span aria-hidden="true">↗</span>
               </a>
             {/if}
@@ -406,10 +645,7 @@
                   onclick={() => jumpToAct(idx)}
                 >
                   <span class="hud-bar" aria-hidden="true">
-                    <span
-                      class="hud-fill"
-                      style={`transform: scaleX(${clamp01(progress * actCount - idx).toFixed(3)})`}
-                    ></span>
+                    <span class="hud-fill" bind:this={hudFillEls[idx]}></span>
                   </span>
                   <span class="hud-meta">
                     <span class="hud-num">{act.num}</span>
@@ -428,7 +664,7 @@
 <style>
   .story-runway {
     position: relative;
-    height: 360svh;
+    height: 285svh;
     background: var(--surface-dark);
   }
 
@@ -443,12 +679,14 @@
     width: 100%;
     overflow: hidden;
     background: #07121b;
+    contain: layout style paint;
   }
 
   .story-runway.is-reduced .story-sticky {
     position: relative;
     height: auto;
     overflow: visible;
+    contain: none;
   }
 
   .story-frame {
@@ -456,18 +694,32 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    clip-path: inset(
-      calc((1 - var(--aperture, 1)) * 8px) calc((1 - var(--aperture, 1)) * 8px)
-        calc((1 - var(--aperture, 1)) * 8px)
-        calc((1 - var(--aperture, 1)) * 8px) round
-        calc((1 - var(--aperture, 1)) * 24px)
-    );
   }
 
   .story-runway.is-reduced .story-frame {
-    clip-path: none;
     padding-top: calc(var(--site-header-height) + 28px);
     padding-bottom: 40px;
+  }
+
+  .story-top-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 6;
+    background: rgba(255, 255, 255, 0.14);
+    pointer-events: none;
+  }
+
+  .story-top-progress-fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--aquarela-spectrum);
+    transform-origin: left center;
+    transform: scaleX(0.02);
+    will-change: transform;
   }
 
   .story-bg-stack {
@@ -478,8 +730,28 @@
 
   .story-bg-layer {
     position: absolute;
-    inset: 0;
+    inset: -3%;
+    opacity: 0;
+    visibility: hidden;
     will-change: opacity, transform;
+    backface-visibility: hidden;
+  }
+
+  .story-bg-layer.is-first {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .story-runway.is-reduced .story-bg-layer {
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: none !important;
+  }
+
+  .story-runway.is-reduced .story-bg-layer.is-first {
+    opacity: 1;
+    visibility: visible;
   }
 
   .story-bg-layer img {
@@ -495,9 +767,9 @@
     background: linear-gradient(
       180deg,
       rgba(7, 18, 28, 0.44) 0%,
-      rgba(7, 18, 28, 0.36) 28%,
+      rgba(7, 18, 28, 0.34) 28%,
       rgba(7, 18, 28, 0.78) 68%,
-      rgba(7, 18, 28, 0.94) 100%
+      rgba(7, 18, 28, 0.95) 100%
     );
   }
 
@@ -523,10 +795,17 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: clamp(0.8rem, 1.8vh, 1.35rem);
+    gap: clamp(0.8rem, 1.8vh, 1.3rem);
     max-width: 54rem;
+    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
     will-change: opacity, transform;
+  }
+
+  .story-act.is-first {
+    opacity: 1;
+    visibility: visible;
   }
 
   .story-act.is-active {
@@ -537,6 +816,7 @@
     position: relative;
     pointer-events: auto;
     opacity: 1 !important;
+    visibility: visible !important;
     transform: none !important;
   }
 
@@ -547,15 +827,14 @@
     margin: 0;
     padding: 6px 13px;
     border-radius: var(--radius-pill);
-    background: rgba(9, 22, 33, 0.64);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(9, 22, 33, 0.84);
     border: 1px solid rgba(255, 255, 255, 0.22);
     font-size: 0.6875rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #ffffff;
+    will-change: transform;
   }
 
   .act-dot {
@@ -577,14 +856,16 @@
     );
     max-width: 15ch;
     text-shadow: 0 12px 34px rgba(0, 0, 0, 0.44);
+    will-change: transform;
   }
 
   .act-lead {
     margin: 0;
     font-size: clamp(0.96875rem, 1.65vw, 1.25rem);
     line-height: 1.5;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.92);
     max-width: 46ch;
+    will-change: transform;
   }
 
   .act-actions {
@@ -593,6 +874,7 @@
     gap: 10px;
     width: 100%;
     margin-top: 2px;
+    will-change: transform;
   }
 
   .story-btn {
@@ -627,10 +909,8 @@
   }
 
   .story-btn--glass {
-    background: rgba(255, 255, 255, 0.14);
-    border-color: rgba(255, 255, 255, 0.32);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(12, 28, 41, 0.72);
+    border-color: rgba(255, 255, 255, 0.34);
     color: #ffffff;
   }
 
@@ -642,7 +922,7 @@
       background: var(--action-hover);
     }
     .story-btn--glass:hover {
-      background: rgba(255, 255, 255, 0.24);
+      background: rgba(255, 255, 255, 0.22);
     }
   }
 
@@ -654,7 +934,8 @@
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.04em;
-    color: rgba(255, 255, 255, 0.78);
+    color: rgba(255, 255, 255, 0.82);
+    will-change: transform;
   }
 
   .scroll-line {
@@ -662,9 +943,22 @@
     height: 2px;
     background: var(--brand-yellow);
     border-radius: 2px;
+    animation: whisper-pulse 2.2s ease-in-out infinite;
   }
 
-  /* Act 02: 4 interactive stage cards */
+  @keyframes whisper-pulse {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: scaleX(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scaleX(1.15);
+    }
+  }
+
+  /* Act 02: 4 interactive stage cards (obsidian glass without GPU blur stall) */
   .stage-pills-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -678,20 +972,26 @@
     gap: 5px;
     padding: 13px 14px;
     border-radius: 18px;
-    background: rgba(9, 22, 33, 0.66);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(9, 22, 33, 0.86);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 14px 32px -18px rgba(0, 0, 0, 0.65);
     color: #ffffff;
     text-decoration: none;
-    transition:
-      background-color 220ms var(--ease),
-      transform 220ms var(--ease);
+    will-change: transform, opacity;
+    transition: background-color 200ms var(--ease);
+  }
+
+  .story-runway.is-reduced .stage-glass-card,
+  .story-runway.is-reduced .space-chip,
+  .story-runway.is-reduced .story-approval-pill {
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   .stage-glass-card:hover {
-    background: rgba(255, 255, 255, 0.16);
-    transform: translateY(-2px);
+    background: rgba(20, 44, 64, 0.94);
   }
 
   .stage-card-top {
@@ -699,7 +999,7 @@
     align-items: center;
     justify-content: space-between;
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.72);
+    color: rgba(255, 255, 255, 0.74);
   }
 
   .stage-num {
@@ -718,7 +1018,7 @@
 
   .stage-shifts {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.78);
+    color: rgba(255, 255, 255, 0.8);
   }
 
   /* Act 03: Spaces chips */
@@ -733,13 +1033,13 @@
     align-items: center;
     padding: 8px 13px;
     border-radius: var(--radius-pill);
-    background: rgba(9, 22, 33, 0.66);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(9, 22, 33, 0.86);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
     font-size: 0.8125rem;
     font-weight: 600;
     color: #ffffff;
+    will-change: transform, opacity;
   }
 
   /* Act 04: Approvals */
@@ -757,10 +1057,12 @@
     gap: 12px;
     padding: 10px 14px;
     border-radius: 16px;
-    background: rgba(9, 22, 33, 0.72);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(9, 22, 33, 0.88);
     border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 14px 32px -18px rgba(0, 0, 0, 0.6);
+    will-change: transform, opacity;
   }
 
   .story-approval-pill img {
@@ -768,6 +1070,7 @@
     height: 44px;
     border-radius: 50%;
     object-fit: cover;
+    object-position: 50% 22%;
     flex-shrink: 0;
     border: 2px solid rgba(255, 255, 255, 0.35);
   }
@@ -788,7 +1091,7 @@
 
   .story-approval-text span {
     font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.82);
   }
 
   /* Precision bottom HUD */
@@ -820,7 +1123,7 @@
     min-height: 44px;
     border: 0;
     background: transparent;
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(255, 255, 255, 0.66);
     text-align: left;
     cursor: pointer;
     transition: color 200ms var(--ease);
@@ -846,6 +1149,8 @@
     height: 100%;
     background: var(--brand-yellow);
     transform-origin: left center;
+    transform: scaleX(0);
+    will-change: transform;
   }
 
   .hud-meta {
@@ -869,6 +1174,9 @@
   }
 
   @media (min-width: 640px) {
+    .story-runway {
+      height: 315svh;
+    }
     .story-hud {
       bottom: max(16px, env(safe-area-inset-bottom, 0px));
     }
