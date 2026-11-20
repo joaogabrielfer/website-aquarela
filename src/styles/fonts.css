@@ -296,52 +296,24 @@
     U+2215, U+FEFF, U+FFFD;
 }
 
-/* Font Presets (default: Neo-Editorial Plus Jakarta Sans) */
+/* Default Editorial Typography: Unbounded (display) + Plus Jakarta Sans (body) */
 :root {
   --font-display:
-    'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+    'Unbounded', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
     sans-serif;
   --font-body:
     'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
     sans-serif;
-  --display-weight: 800;
-  --display-tracking: -0.026em;
-  --display-lh: 1.06;
-  --display-scale: 1;
+  --display-weight: 700;
+  --display-tracking: -0.024em;
+  --display-lh: 1.12;
+  --display-scale: 0.76;
 }
 
 @media (min-width: 768px) {
   :root {
-    --display-tracking: -0.032em;
-    --display-lh: 1.03;
+    --display-tracking: -0.026em;
+    --display-lh: 1.08;
+    --display-scale: 0.78;
   }
-}
-
-html[data-font-preset='outfit'] {
-  --font-display: 'Outfit', system-ui, sans-serif;
-  --font-body: 'Outfit', system-ui, sans-serif;
-  --display-weight: 800;
-  --display-tracking: -0.024em;
-  --display-lh: 1.06;
-  --display-scale: 1.02;
-}
-
-html[data-font-preset='syne'] {
-  --font-display: 'Syne', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-body:
-    'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --display-weight: 700;
-  --display-tracking: -0.022em;
-  --display-lh: 1.04;
-  --display-scale: 0.9;
-}
-
-html[data-font-preset='unbounded'] {
-  --font-display: 'Unbounded', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-body:
-    'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --display-weight: 700;
-  --display-tracking: -0.024em;
-  --display-lh: 1.1;
-  --display-scale: 0.76;
 }

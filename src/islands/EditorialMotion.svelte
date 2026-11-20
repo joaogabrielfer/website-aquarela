@@ -71,57 +71,14 @@
       for (const el of revealEls) el.classList.add('is-visible');
     }
 
-    // 2. Scroll progress bar, chapter spy, and subtle interlude parallax
-    const chapterLinks = Array.from(
-      document.querySelectorAll<HTMLAnchorElement>(
-        '.home-chapter-links a[href^="#"]',
-      ),
-    );
-    const chapters = chapterLinks
-      .map((a) => {
-        const id = a.getAttribute('href')?.slice(1);
-        return id ? document.getElementById(id) : null;
-      })
-      .filter((el): el is HTMLElement => el !== null);
+    // 2. Subtle interlude parallax
     const interludes = Array.from(
       document.querySelectorAll<HTMLElement>('.editorial-interlude'),
-    );
-    const indexCounter = document.querySelector<HTMLElement>(
-      '[data-chapter-counter]',
     );
 
     let scrollRaf = 0;
     const updateScroll = () => {
       scrollRaf = 0;
-      const maxScroll =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const progress =
-        maxScroll > 0
-          ? Math.min(1, Math.max(0, window.scrollY / maxScroll))
-          : 0;
-      root.style.setProperty('--reading-progress', progress.toFixed(4));
-
-      if (chapters.length > 0) {
-        let activeIdx = 0;
-        for (let i = 0; i < chapters.length; i++) {
-          const rect = chapters[i]!.getBoundingClientRect();
-          if (rect.top <= window.innerHeight * 0.42) {
-            activeIdx = i;
-          }
-        }
-        const activeId = chapters[activeIdx]?.id;
-        for (const link of chapterLinks) {
-          if (link.getAttribute('href') === `#${activeId}`) {
-            link.setAttribute('aria-current', 'location');
-          } else {
-            link.removeAttribute('aria-current');
-          }
-        }
-        if (indexCounter) {
-          indexCounter.textContent = String(activeIdx + 1).padStart(2, '0');
-        }
-      }
-
       if (!isReduced() && interludes.length > 0) {
         const vh = window.innerHeight;
         for (const el of interludes) {

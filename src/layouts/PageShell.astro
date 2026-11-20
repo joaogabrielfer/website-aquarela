@@ -9,17 +9,25 @@ import { ENABLE_SMOOTH_SCROLL, IS_CF_PREVIEW, SITE_URL } from '../lib/env';
 import { getPublicSchool } from '../lib/content/school';
 import SmoothScroll from '../islands/SmoothScroll.svelte';
 import EditorialMotion from '../islands/EditorialMotion.svelte';
-import FontSwitcher from '../islands/FontSwitcher.svelte';
+import HomeVariantSwitcher from '../islands/HomeVariantSwitcher.svelte';
 
 interface Props {
   title: string;
   description?: string | undefined;
   ogImage?: string;
+  headerOverlay?: boolean;
+  forceNoindex?: boolean;
 }
 
-const { title, description, ogImage } = Astro.props;
-const noindex = IS_CF_PREVIEW;
-const showFontSwitcher = import.meta.env.DEV || IS_CF_PREVIEW;
+const {
+  title,
+  description,
+  ogImage,
+  headerOverlay = false,
+  forceNoindex = false,
+} = Astro.props;
+const noindex = IS_CF_PREVIEW || forceNoindex;
+const showVariantSwitcher = import.meta.env.DEV || IS_CF_PREVIEW;
 const school = getPublicSchool();
 const fullTitle =
   title === 'Aquarela Colégio e Curso | Paulista/PE'
@@ -106,14 +114,6 @@ const jsonLd = {
     /><script is:inline>
       (() => {
         try {
-          const valid = ['neo', 'outfit', 'syne', 'unbounded'];
-          const param = new URLSearchParams(window.location.search).get('font');
-          const chosen = valid.includes(param)
-            ? param
-            : window.localStorage.getItem('aquarela-font-preset');
-          if (chosen && valid.includes(chosen) && chosen !== 'neo') {
-            document.documentElement.setAttribute('data-font-preset', chosen);
-          }
           if (window.sessionStorage.getItem('aquarela-motion') === 'reduced') {
             document.documentElement.dataset.motion = 'reduced';
           }
@@ -122,10 +122,13 @@ const jsonLd = {
     </script></head
   ><body
     ><a class="skip-link" href="#main-content">Pular para o conteúdo</a><Header
+      overlay={headerOverlay}
     /><main id="main-content" tabindex="-1"><slot /></main><Footer />{
       ENABLE_SMOOTH_SCROLL && <SmoothScroll client:load />
     }<EditorialMotion client:load />{
-      showFontSwitcher && <FontSwitcher client:load />
+      showVariantSwitcher && (
+        <HomeVariantSwitcher client:load currentPath={Astro.url.pathname} />
+      )
     }</body
   >
 </html>

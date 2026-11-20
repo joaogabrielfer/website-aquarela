@@ -4,6 +4,12 @@ import { navigation, cta } from '../lib/copy';
 import { getPublicSchool } from '../lib/content/school';
 import { formatPhone, telUrl, whatsappUrl } from '../lib/urls';
 
+interface Props {
+  overlay?: boolean;
+}
+
+const { overlay = false } = Astro.props;
+
 const school = getPublicSchool();
 const current =
   Astro.url.pathname
@@ -16,18 +22,23 @@ const addressText = school.address
   : (school.locality ?? null);
 ---
 
-<header class="site-header" id="site-header">
+<header
+  class:list={['site-header', overlay && 'site-header--overlay']}
+  id="site-header"
+>
   <div class="header-spectrum" aria-hidden="true"></div>
   <div class="container header-inner">
     <a class="logo-link" href="/" aria-label="Aquarela — início">
-      <img
-        src="/brand/logo-aquarela-440.png"
-        srcset="/brand/logo-aquarela-360.png 360w, /brand/logo-aquarela-440.png 440w, /brand/logo-aquarela-660.png 660w"
-        sizes="(min-width: 1100px) 176px, (min-width: 768px) 160px, 136px"
-        alt="Aquarela"
-        width="176"
-        height="51"
-      />
+      <span class="logo-plate">
+        <img
+          src="/brand/logo-aquarela-440.png"
+          srcset="/brand/logo-aquarela-360.png 360w, /brand/logo-aquarela-440.png 440w, /brand/logo-aquarela-660.png 660w"
+          sizes="(min-width: 1100px) 176px, (min-width: 768px) 160px, 136px"
+          alt="Aquarela"
+          width="176"
+          height="51"
+        />
+      </span>
       <span class="header-locality" aria-hidden="true">Paulista · PE</span>
     </a>
 
@@ -74,7 +85,48 @@ const addressText = school.address
     border-bottom: 1px solid var(--border-subtle);
     transition:
       box-shadow 260ms var(--ease),
-      background-color 260ms var(--ease);
+      background-color 260ms var(--ease),
+      border-color 260ms var(--ease);
+  }
+
+  .site-header--overlay {
+    position: fixed;
+    left: 0;
+    right: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(8, 19, 28, 0.62) 0%,
+      rgba(8, 19, 28, 0.18) 72%,
+      rgba(8, 19, 28, 0) 100%
+    );
+    border-bottom-color: transparent;
+  }
+
+  .site-header--overlay:not(.scrolled) .logo-plate {
+    background: rgba(255, 255, 255, 0.94);
+    padding: 5px 12px;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px -14px rgba(0, 0, 0, 0.5);
+  }
+
+  .site-header--overlay:not(.scrolled) .header-locality {
+    color: rgba(255, 255, 255, 0.88);
+    border-left-color: rgba(255, 255, 255, 0.28);
+  }
+
+  .site-header--overlay:not(.scrolled) :global(.menu-toggle) {
+    background: rgba(12, 27, 38, 0.62);
+    border-color: rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+  }
+
+  .logo-plate {
+    display: inline-flex;
+    align-items: center;
+    transition:
+      background-color 260ms var(--ease),
+      padding 260ms var(--ease),
+      box-shadow 260ms var(--ease);
   }
 
   .header-spectrum {
@@ -87,6 +139,7 @@ const addressText = school.address
 
   .site-header.scrolled {
     background: rgba(255, 255, 255, 0.985);
+    border-bottom-color: var(--border-subtle);
     box-shadow: 0 12px 32px -22px rgba(16, 32, 43, 0.34);
   }
 

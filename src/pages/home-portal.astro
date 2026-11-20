@@ -1,0 +1,516 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import HomeEditorialBody from '../components/HomeEditorialBody.astro';
+import { pageTitles } from '../lib/copy';
+import { getHomePageCopy, getEnvironments, getMediaById } from '../lib/content';
+import { getPublicSchool } from '../lib/content/school';
+import { formatPhone, whatsappUrl } from '../lib/urls';
+import { focalPointStyle, responsiveSrcset } from '../lib/responsive-media';
+
+const school = getPublicSchool();
+const pageCopy = getHomePageCopy();
+const environments = getEnvironments();
+const heroMedia = pageCopy?.heroImageId
+  ? getMediaById(pageCopy.heroImageId)
+  : null;
+
+interface QuickAction {
+  num: string;
+  label: string;
+  sub: string;
+  href: string;
+  external?: boolean;
+  accent?: boolean;
+}
+
+const quickActions: QuickAction[] = [
+  {
+    num: '01',
+    label: 'Ensino',
+    sub: 'Infantil ao Médio',
+    href: '/ensino',
+  },
+  {
+    num: '02',
+    label: 'Nosso espaço',
+    sub: `${environments.length} ambientes reais`,
+    href: '/nosso-espaco',
+  },
+  ...(school.whatsappE164
+    ? [
+        {
+          num: '03',
+          label: 'WhatsApp',
+          sub: formatPhone(school.whatsappE164),
+          href: whatsappUrl(school.whatsappE164),
+          external: true,
+          accent: true,
+        },
+      ]
+    : [
+        {
+          num: '03',
+          label: 'Visite',
+          sub: 'Agende sua visita',
+          href: '/visite',
+          accent: true,
+        },
+      ]),
+  {
+    num: '04',
+    label: 'Aprovações',
+    sub: 'Trajetórias reais',
+    href: '/aprovacoes',
+  },
+  {
+    num: '05',
+    label: 'Atividades',
+    sub: 'Esporte e cultura',
+    href: '/atividades',
+  },
+  {
+    num: '06',
+    label: 'Galeria',
+    sub: 'Dia a dia na escola',
+    href: '/galeria',
+  },
+];
+---
+
+<PageShell
+  title={`${pageTitles.home} — Portal`}
+  description={pageCopy?.metaDescription}
+  headerOverlay={true}
+  forceNoindex={true}
+>
+  <section class="portal-hero" aria-label="Boas-vindas ao Aquarela">
+    {
+      heroMedia && (
+        <div class="portal-bg" aria-hidden="true">
+          <img
+            class="hero-photo portal-photo"
+            src={heroMedia.src}
+            srcset={responsiveSrcset(heroMedia.src, heroMedia.width)}
+            sizes="100vw"
+            alt={heroMedia.alt}
+            width={heroMedia.width}
+            height={heroMedia.height}
+            style={focalPointStyle(heroMedia.focalPoint)}
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
+          <div class="portal-scrim" />
+        </div>
+      )
+    }
+
+    <div class="container portal-stage">
+      <div class="portal-center">
+        <p class="portal-pill">
+          <span class="portal-dot" aria-hidden="true"></span>
+          <span>Paulista · PE · Infantil ao Ensino Médio</span>
+        </p>
+
+        <h1 class="portal-title">Olá, Família Aquarela.</h1>
+
+        <p class="portal-subtitle">
+          {school.tagline ?? 'Presente em todos os momentos da sua vida.'}
+        </p>
+
+        <div class="portal-primary-row">
+          <a class="portal-btn portal-btn--red focus-on-navy" href="/visite">
+            <span>Agendar visita</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <a
+            class="portal-btn portal-btn--glass focus-on-navy"
+            href="#conteudo"
+          >
+            <span>Entrar no site</span>
+            <span aria-hidden="true">↓</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="portal-dock" aria-label="Atalhos rápidos">
+        <div class="portal-dock-head">
+          <span class="portal-dock-label">Seu próximo passo</span>
+          {
+            school.officeHours && (
+              <span class="portal-dock-hours">
+                Secretaria · {school.officeHours}
+              </span>
+            )
+          }
+        </div>
+
+        <nav class="portal-actions-grid" aria-label="Acesso rápido">
+          {
+            quickActions.map((action) => (
+              <a
+                href={action.href}
+                target={action.external ? '_blank' : undefined}
+                rel={action.external ? 'noopener' : undefined}
+                class:list={[
+                  'dock-card',
+                  'focus-on-navy',
+                  action.accent && 'dock-card--accent',
+                ]}
+              >
+                <span class="dock-top">
+                  <span class="dock-num" aria-hidden="true">
+                    {action.num}
+                  </span>
+                  <span class="dock-arrow" aria-hidden="true">
+                    ↗
+                  </span>
+                </span>
+                <strong class="dock-title">{action.label}</strong>
+                <span class="dock-sub">{action.sub}</span>
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <HomeEditorialBody anchorId="conteudo" />
+</PageShell>
+
+<style>
+  .portal-hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: var(--surface-dark);
+    color: #ffffff;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .portal-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .portal-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.03);
+    animation: portal-breathe 22s ease-in-out infinite alternate;
+  }
+
+  @keyframes portal-breathe {
+    from {
+      transform: scale(1.03);
+    }
+    to {
+      transform: scale(1.09);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .portal-photo {
+      animation: none;
+      transform: none;
+    }
+  }
+
+  :global(html[data-motion='reduced']) .portal-photo {
+    animation: none;
+    transform: none;
+  }
+
+  .portal-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(7, 18, 28, 0.34) 0%,
+      rgba(7, 18, 28, 0.28) 32%,
+      rgba(7, 18, 28, 0.72) 66%,
+      rgba(7, 18, 28, 0.94) 100%
+    );
+  }
+
+  .portal-stage {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: clamp(1.25rem, 3vh, 2.5rem);
+    padding-top: calc(var(--site-header-height) + clamp(2.25rem, 8vh, 5.5rem));
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .portal-center {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(0.85rem, 1.8vh, 1.25rem);
+    max-width: 50rem;
+  }
+
+  .portal-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 6px 13px;
+    border-radius: var(--radius-pill);
+    background: rgba(10, 23, 34, 0.56);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  .portal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--brand-yellow);
+    box-shadow: 0 0 0 3px rgba(245, 184, 0, 0.28);
+    flex-shrink: 0;
+  }
+
+  .portal-title {
+    margin: 0;
+    color: #ffffff;
+    font-size: min(
+      calc(clamp(2.15rem, 7.6vw, 5.1rem) * var(--display-scale)),
+      11.5vw
+    );
+    max-width: 15ch;
+    text-shadow: 0 12px 36px rgba(0, 0, 0, 0.42);
+  }
+
+  .portal-subtitle {
+    margin: 0;
+    font-size: clamp(1rem, 1.8vw, 1.3125rem);
+    font-weight: 500;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 42ch;
+  }
+
+  .portal-primary-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .portal-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 46px;
+    padding: 11px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 0.875rem;
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: none;
+    flex: 1 1 135px;
+    transition:
+      transform var(--duration-fast) var(--ease),
+      background-color var(--duration-fast) var(--ease),
+      border-color var(--duration-fast) var(--ease);
+  }
+
+  .portal-btn--red {
+    background: var(--action-primary);
+    color: #ffffff;
+    box-shadow: var(--shadow-action);
+  }
+
+  .portal-btn--glass {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #ffffff;
+  }
+
+  @media (hover: hover) {
+    .portal-btn--red:hover {
+      background: var(--action-hover);
+      transform: translateY(-2px);
+    }
+    .portal-btn--glass:hover {
+      background: rgba(255, 255, 255, 0.24);
+      transform: translateY(-2px);
+    }
+  }
+
+  /* EPSA-inspired bottom frosted action dock */
+  .portal-dock {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 24px;
+    background: rgba(9, 21, 31, 0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.65);
+  }
+
+  .portal-dock-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-inline: 4px;
+  }
+
+  .portal-dock-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brand-yellow);
+  }
+
+  .portal-dock-hours {
+    display: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .portal-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .dock-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 76px;
+    padding: 12px 13px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    text-decoration: none;
+    transition:
+      transform 220ms var(--ease),
+      background-color 220ms var(--ease),
+      border-color 220ms var(--ease);
+  }
+
+  .dock-card--accent {
+    background: rgba(217, 20, 36, 0.24);
+    border-color: rgba(255, 190, 196, 0.34);
+  }
+
+  .dock-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .dock-num {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--brand-yellow);
+  }
+
+  .dock-arrow {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    transition: transform 220ms var(--ease);
+  }
+
+  .dock-title {
+    font-family: var(--font-display);
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #ffffff;
+  }
+
+  .dock-sub {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.76);
+    line-height: 1.3;
+  }
+
+  @media (hover: hover) {
+    .dock-card:hover {
+      background: rgba(255, 255, 255, 0.17);
+      border-color: rgba(255, 255, 255, 0.32);
+      transform: translateY(-2px);
+    }
+    .dock-card--accent:hover {
+      background: var(--action-primary);
+      border-color: transparent;
+    }
+    .dock-card:hover .dock-arrow {
+      transform: translate(2px, -2px);
+      color: #ffffff;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .portal-stage {
+      padding-bottom: clamp(1.5rem, 3.5vh, 2.5rem);
+    }
+    .portal-primary-row {
+      width: auto;
+    }
+    .portal-btn {
+      flex: 0 0 auto;
+      padding: 13px 26px;
+      font-size: 0.9375rem;
+    }
+    .portal-actions-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .portal-dock-hours {
+      display: inline;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .portal-dock {
+      padding: 18px 20px;
+      border-radius: 26px;
+    }
+    .portal-actions-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .dock-card {
+      min-height: 100px;
+      padding: 14px 16px;
+    }
+    .dock-title {
+      font-size: 0.82rem;
+    }
+  }
+</style>
