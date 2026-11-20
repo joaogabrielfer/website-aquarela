@@ -3,6 +3,7 @@ import PageShell from '../layouts/PageShell.astro';
 import PageIntro from '../components/PageIntro.astro';
 import SegmentAnchorNav from '../components/SegmentAnchorNav.astro';
 import SegmentDetail from '../components/SegmentDetail.astro';
+import VisitCTA from '../components/VisitCTA.astro';
 import FAQ from '../components/FAQ.astro';
 import { h1, pageTitles } from '../lib/copy';
 import {
@@ -15,40 +16,44 @@ import {
 const pageCopy = getPageCopy('ensino');
 const segments = getSegments();
 const faqs = getFaqs('ensino');
-const intro = pageCopy?.intro ?? undefined;
+const heroMedia = getMediaById('ensino-participacao-em-sala');
 
-// Alternar tons branco/paper por segmento
-const tones: Array<'white' | 'paper'> = ['white', 'paper', 'white', 'paper'];
+const toneFor = (index: number): 'white' | 'paper' | 'dark' => {
+  if (index === segments.length - 1) return 'dark';
+  return index % 2 === 0 ? 'white' : 'paper';
+};
 ---
 
 <PageShell title={pageTitles.ensino} description={pageCopy?.metaDescription}>
   <PageIntro
     breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Ensino' }]}
+    eyebrow="Jornada escolar"
     title={pageCopy?.title ?? h1.ensino}
-    intro={intro}
+    intro={pageCopy?.intro ?? undefined}
+    media={heroMedia}
     variant="teaching"
   />
 
   <SegmentAnchorNav />
 
   {
-    segments.map((seg, i) => {
-      const media = seg.imageId ? getMediaById(seg.imageId) : null;
-      return (
-        <SegmentDetail
-          slug={seg.slug}
-          name={seg.name}
-          description={seg.description}
-          experiences={seg.experiences}
-          grades={seg.grades}
-          ages={seg.ages}
-          shifts={seg.shifts}
-          image={media}
-          tone={tones[i] ?? 'white'}
-        />
-      );
-    })
+    segments.map((seg, index) => (
+      <SegmentDetail
+        slug={seg.slug}
+        name={seg.name}
+        {index}
+        description={seg.description}
+        experiences={seg.experiences}
+        grades={seg.grades}
+        ages={seg.ages}
+        shifts={seg.shifts}
+        image={seg.imageId ? getMediaById(seg.imageId) : null}
+        tone={toneFor(index)}
+      />
+    ))
   }
 
   {faqs.length > 0 && <FAQ items={faqs} />}
+
+  <VisitCTA closingPhotoId="sala-bancas-azuis-aula" />
 </PageShell>

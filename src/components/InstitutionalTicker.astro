@@ -1,0 +1,264 @@
+---
+import { getPublicSchool } from '../lib/content/school';
+import { formatPhone, whatsappUrl } from '../lib/urls';
+
+interface TickerItem {
+  label: string;
+  href?: string;
+  external?: boolean;
+}
+
+const school = getPublicSchool();
+
+const items: TickerItem[] = [
+  { label: 'Educação Infantil ao Ensino Médio', href: '/ensino' },
+  { label: 'Paulista · PE' },
+  { label: 'Sala Google for Education', href: '/nosso-espaco' },
+  { label: 'Laboratório de Ciências', href: '/nosso-espaco' },
+  { label: 'Piscina e Quadra Coberta', href: '/nosso-espaco' },
+  { label: 'Aprovações · Marinha do Brasil', href: '/aprovacoes' },
+  { label: 'Agende uma visita ↗', href: '/visite' },
+  ...(school.whatsappE164
+    ? [
+        {
+          label: `WhatsApp · ${formatPhone(school.whatsappE164)} ↗`,
+          href: whatsappUrl(school.whatsappE164),
+          external: true,
+        },
+      ]
+    : []),
+];
+---
+
+<section
+  class="trust-strip"
+  data-aquarela-ticker
+  aria-label="Destaques do Aquarela Colégio e Curso"
+>
+  <div class="ticker-window">
+    <div class="ticker-track">
+      <div class="ticker-group">
+        {
+          items.map((item) =>
+            item.href ? (
+              <a
+                class="ticker-item"
+                href={item.href}
+                target={item.external ? '_blank' : undefined}
+                rel={item.external ? 'noopener' : undefined}
+              >
+                {item.label}
+              </a>
+            ) : (
+              <span class="ticker-item">{item.label}</span>
+            ),
+          )
+        }
+      </div>
+      <div class="ticker-group" aria-hidden="true" inert>
+        {items.map((item) => <span class="ticker-item">{item.label}</span>)}
+      </div>
+    </div>
+  </div>
+  <button
+    class="ticker-pause"
+    type="button"
+    aria-label="Pausar faixa de destaques"
+    aria-pressed="false"
+    data-ticker-toggle
+  >
+    Ⅱ
+  </button>
+</section>
+
+<script is:inline>
+  (() => {
+    document.querySelectorAll('[data-aquarela-ticker]').forEach((ticker) => {
+      const track = ticker.querySelector('.ticker-track');
+      const group = ticker.querySelector('.ticker-group');
+      const button = ticker.querySelector('[data-ticker-toggle]');
+      if (!track || !group || !button) return;
+
+      let paused = false;
+      let inView = true;
+
+      const measure = () => {
+        const seconds = Math.max(36, Math.round(group.scrollWidth / 48));
+        track.style.setProperty('--ticker-duration', `${seconds}s`);
+      };
+
+      const updateVisibility = () => {
+        ticker.dataset.away = String(document.hidden || !inView);
+      };
+
+      button.addEventListener('click', () => {
+        paused = !paused;
+        ticker.dataset.paused = String(paused);
+        button.textContent = paused ? '▶' : 'Ⅱ';
+        button.setAttribute(
+          'aria-label',
+          paused ? 'Retomar faixa de destaques' : 'Pausar faixa de destaques',
+        );
+        button.setAttribute('aria-pressed', String(paused));
+      });
+
+      if ('ResizeObserver' in window) {
+        new ResizeObserver(measure).observe(group);
+      }
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((entries) => {
+          inView = Boolean(entries[0]?.isIntersecting);
+          updateVisibility();
+        }).observe(ticker);
+      }
+      document.addEventListener('visibilitychange', updateVisibility);
+      measure();
+      updateVisibility();
+    });
+  })();
+</script>
+
+<style>
+  .trust-strip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 62px;
+    background: var(--surface-soft);
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-ink);
+    overflow: hidden;
+  }
+
+  .ticker-window {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 28px,
+      #000 calc(100% - 28px),
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 28px,
+      #000 calc(100% - 28px),
+      transparent
+    );
+  }
+
+  .ticker-track {
+    display: flex;
+    width: max-content;
+    animation: aquarela-ticker var(--ticker-duration, 48s) linear infinite;
+  }
+
+  .ticker-group {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 16px 28px 16px 0;
+    flex-shrink: 0;
+  }
+
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 28px;
+    min-height: 44px;
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-ink);
+    text-decoration: none;
+  }
+
+  .ticker-item::after {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--action-primary);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  a.ticker-item:hover {
+    color: var(--action-primary);
+  }
+
+  .ticker-pause {
+    flex-shrink: 0;
+    align-self: stretch;
+    width: 54px;
+    border: 0;
+    border-left: 1px solid var(--border-subtle);
+    background: var(--surface-soft);
+    color: var(--brand-navy);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  @media (hover: hover) {
+    .ticker-pause:hover {
+      background: var(--surface-elevated);
+    }
+  }
+
+  .trust-strip:hover .ticker-track,
+  .trust-strip:focus-within .ticker-track,
+  .trust-strip[data-paused='true'] .ticker-track,
+  .trust-strip[data-away='true'] .ticker-track,
+  :global(html[data-motion='reduced']) .ticker-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes aquarela-ticker {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .trust-strip {
+      min-height: 72px;
+    }
+    .ticker-group {
+      gap: 40px;
+      padding: 18px 40px 18px 0;
+    }
+    .ticker-item {
+      font-size: 0.96875rem;
+      gap: 40px;
+    }
+    .ticker-pause {
+      width: 64px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-window {
+      overflow-x: auto;
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+    .ticker-track {
+      animation: none;
+      transform: none;
+    }
+    .ticker-group {
+      padding-left: 20px;
+    }
+    .ticker-group[aria-hidden='true'],
+    .ticker-pause {
+      display: none;
+    }
+  }
+</style>

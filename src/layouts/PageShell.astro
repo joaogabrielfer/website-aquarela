@@ -1,19 +1,34 @@
 ---
+import '../styles/fonts.css';
 import '../styles/tokens.css';
 import '../styles/global.css';
+import '../styles/editorial.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { ENABLE_SMOOTH_SCROLL, IS_CF_PREVIEW, SITE_URL } from '../lib/env';
+import { getPublicSchool } from '../lib/content/school';
 import SmoothScroll from '../islands/SmoothScroll.svelte';
+import EditorialMotion from '../islands/EditorialMotion.svelte';
+import HomeVariantSwitcher from '../islands/HomeVariantSwitcher.svelte';
 
 interface Props {
   title: string;
   description?: string | undefined;
   ogImage?: string;
+  headerOverlay?: boolean;
+  forceNoindex?: boolean;
 }
 
-const { title, description, ogImage } = Astro.props;
-const noindex = IS_CF_PREVIEW;
+const {
+  title,
+  description,
+  ogImage,
+  headerOverlay = false,
+  forceNoindex = false,
+} = Astro.props;
+const noindex = IS_CF_PREVIEW || forceNoindex;
+const showVariantSwitcher = import.meta.env.DEV || IS_CF_PREVIEW;
+const school = getPublicSchool();
 const fullTitle =
   title === 'Aquarela Colégio e Curso | Paulista/PE'
     ? title
@@ -21,6 +36,40 @@ const fullTitle =
 const canonicalUrl = SITE_URL ? `${SITE_URL}${Astro.url.pathname}` : undefined;
 const ogImageUrl =
   ogImage ?? (SITE_URL ? `${SITE_URL}/brand/logo-aquarela.png` : undefined);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'School',
+      name: school.name,
+      ...(school.tagline ? { slogan: school.tagline } : {}),
+      ...(SITE_URL ? { url: SITE_URL } : {}),
+      ...(school.phoneE164 ? { telephone: school.phoneE164 } : {}),
+      ...(school.instagramUrl ? { sameAs: [school.instagramUrl] } : {}),
+      ...(school.address
+        ? {
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: [school.address.street, school.address.number]
+                .filter(Boolean)
+                .join(', '),
+              addressLocality: school.address.city,
+              addressRegion: school.address.state,
+              addressCountry: 'BR',
+            },
+          }
+        : {}),
+    },
+    {
+      '@type': 'WebPage',
+      name: fullTitle,
+      ...(description ? { description } : {}),
+      inLanguage: 'pt-BR',
+      ...(canonicalUrl ? { url: canonicalUrl } : {}),
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -29,7 +78,7 @@ const ogImageUrl =
     ><meta charset="UTF-8" /><meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
-    /><title>{fullTitle}</title>{
+    /><meta name="theme-color" content="#0c1b26" /><title>{fullTitle}</title>{
       description && <meta name="description" content={description} />
     }{noindex && <meta name="robots" content="noindex" />}<link
       rel="icon"
@@ -58,11 +107,28 @@ const ogImageUrl =
           {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
         </>
       )
-    }</head
+    }<script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(jsonLd)}
+    /><script is:inline>
+      (() => {
+        try {
+          if (window.sessionStorage.getItem('aquarela-motion') === 'reduced') {
+            document.documentElement.dataset.motion = 'reduced';
+          }
+        } catch {}
+      })();
+    </script></head
   ><body
     ><a class="skip-link" href="#main-content">Pular para o conteúdo</a><Header
+      overlay={headerOverlay}
     /><main id="main-content" tabindex="-1"><slot /></main><Footer />{
       ENABLE_SMOOTH_SCROLL && <SmoothScroll client:load />
+    }<EditorialMotion client:load />{
+      showVariantSwitcher && (
+        <HomeVariantSwitcher client:load currentPath={Astro.url.pathname} />
+      )
     }</body
   >
 </html>

@@ -32,9 +32,12 @@ const hasBothGroups = hasActions && hasInfo;
 
 <div class="contact-panel" data-visit-interest={interestOptions}>
   <div class="container contact-panel-inner">
-    <p class="contact-panel-intro">
-      Converse com a equipe para combinar sua visita.
-    </p>
+    <div class="contact-panel-head">
+      <p class="eyebrow">Atendimento</p>
+      <p class="contact-panel-intro">
+        Converse com a equipe para combinar sua visita.
+      </p>
+    </div>
 
     <div class="contact-panel-interest" hidden>
       <p class="interest-label" aria-live="polite" aria-atomic="true"></p>
@@ -54,13 +57,13 @@ const hasBothGroups = hasActions && hasInfo;
           ]}
         >
           {hasActions && (
-            <div class="contact-panel-group">
-              {/* WhatsApp primary when confirmed, phone secondary */}
+            <div class="contact-panel-group contact-panel-actions">
               {hasWhatsapp && school.whatsappE164 && (
                 <Button
                   href={whatsappUrl(school.whatsappE164)}
                   data-visit-whatsapp={school.whatsappE164}
                   variant="primary"
+                  arrow
                 >
                   Conversar no WhatsApp
                 </Button>
@@ -78,32 +81,37 @@ const hasBothGroups = hasActions && hasInfo;
           )}
 
           {hasInfo && (
-            <div class="contact-panel-group">
+            <div class="contact-panel-group contact-panel-details">
               {hasMap && school.mapUrl && (
                 <TextLink href={school.mapUrl}>Como chegar</TextLink>
               )}
 
               {hasPhone && school.phoneE164 && (
                 <div class="contact-panel-detail">
-                  <strong>Telefone e WhatsApp:</strong>{' '}
-                  {formatPhone(school.phoneE164)}
+                  <span>Telefone e WhatsApp</span>
+                  <strong>{formatPhone(school.phoneE164)}</strong>
                 </div>
               )}
 
               {school.officeHours && (
                 <div class="contact-panel-detail">
-                  <strong>Horário:</strong> {school.officeHours}
+                  <span>Horário da secretaria</span>
+                  <strong>{school.officeHours}</strong>
                 </div>
               )}
 
               {school.address && (
                 <div class="contact-panel-detail">
-                  <strong>Endereço:</strong> {school.address.street}
-                  {school.address.number && `, ${school.address.number}`} —{' '}
-                  {school.address.neighborhood},{' '}
-                  {`${school.address.city}/${school.address.state}`}
-                  {school.address.postalCode &&
-                    ` — ${school.address.postalCode}`}
+                  <span>Endereço</span>
+                  <strong>
+                    {school.address.street}
+                    {school.address.number &&
+                      `, ${school.address.number}`} —{' '}
+                    {school.address.neighborhood},{' '}
+                    {`${school.address.city}/${school.address.state}`}
+                    {school.address.postalCode &&
+                      ` — ${school.address.postalCode}`}
+                  </strong>
                 </div>
               )}
             </div>
@@ -154,81 +162,135 @@ const hasBothGroups = hasActions && hasInfo;
 
 <style>
   .contact-panel {
-    background: var(--surface-paper);
-    padding: var(--space-8) var(--space-5);
-    border-radius: var(--radius-card);
+    background: var(--surface-soft);
+    border: 1px solid var(--border-subtle);
+    padding: clamp(1.5rem, 4vw, 3.25rem);
+    border-radius: 28px;
   }
+
   .contact-panel-inner {
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
-    /* Pages provide the global container; avoid compounding its gutters when
-       the panel is placed inside a section container. */
+    gap: 28px;
     width: 100%;
     max-width: none;
     margin-inline: 0;
   }
+
+  .contact-panel-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
   .contact-panel-intro {
     margin: 0;
-    font-size: 1.125rem;
-    font-weight: 500;
+    font-family: var(--font-display);
+    font-size: calc(clamp(1.35rem, 2.5vw, 2rem) * var(--display-scale));
+    font-weight: var(--display-weight);
+    letter-spacing: var(--display-tracking);
+    line-height: 1.15;
     color: var(--text-ink);
   }
+
   .contact-panel-interest[hidden] {
     display: none;
   }
+
   .contact-panel-interest {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 18px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 76, 115, 0.2);
   }
+
   .interest-label {
     margin: 0;
-    font-weight: 500;
-    color: var(--text-ink);
+    font-weight: 700;
+    color: var(--brand-navy);
   }
+
   .contact-panel-contacts {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
-    align-items: flex-start;
+    gap: 24px;
+    align-items: stretch;
   }
+
   .contact-panel-group {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
-    align-items: flex-start;
+    gap: 12px;
     min-width: 0;
   }
+
+  .contact-panel-actions :global(.btn) {
+    width: 100%;
+  }
+
+  .contact-panel-details {
+    display: grid;
+    gap: 12px;
+  }
+
   .contact-panel-pending {
     color: var(--text-muted);
     font-style: italic;
   }
+
   .contact-panel-detail {
-    color: var(--text-ink);
-    font-size: 1rem;
-    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px;
+    border-radius: 18px;
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
   }
+
+  .contact-panel-detail span {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
   .contact-panel-detail strong {
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--text-ink);
   }
 
-  @media (min-width: 768px) {
-    .contact-panel {
-      padding: var(--space-10);
+  @media (min-width: 560px) {
+    .contact-panel-actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
     }
-    .contact-panel-detail {
-      font-size: 1.125rem;
+    .contact-panel-actions :global(.btn) {
+      width: auto;
     }
   }
 
-  @media (min-width: 1100px) {
+  @media (min-width: 1024px) {
     .contact-panel-contacts--split {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-6);
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 36px;
       align-items: start;
       width: 100%;
+    }
+    .contact-panel-actions {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 </style>

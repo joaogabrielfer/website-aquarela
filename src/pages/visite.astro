@@ -20,12 +20,13 @@ const faqs = getFaqs('visita');
 <PageShell title={pageTitles.visite} description={pageCopy?.metaDescription}>
   <PageIntro
     breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Visite' }]}
+    eyebrow="Atendimento às famílias"
     title={pageCopy?.title ?? h1.visite}
     intro={pageCopy?.intro ?? undefined}
     variant="paper"
   />
 
-  <section class="section-contact">
+  <section class="band-light">
     <div class="container">
       <ContactPanel
         segments={segments.map((s) => ({ slug: s.slug, name: s.name }))}
@@ -36,20 +37,3 @@ const faqs = getFaqs('visita');
 
   {faqs.length > 0 && <FAQ items={faqs} />}
 </PageShell>
-
-<style>
-  .section-contact {
-    padding: var(--space-12) 0;
-    background: var(--surface-base);
-  }
-  @media (min-width: 768px) {
-    .section-contact {
-      padding: var(--space-16) 0;
-    }
-  }
-  @media (min-width: 1100px) {
-    .section-contact {
-      padding: var(--space-20) 0;
-    }
-  }
-</style>

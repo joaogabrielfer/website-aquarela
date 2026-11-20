@@ -4,6 +4,7 @@ import PageIntro from '../components/PageIntro.astro';
 import ActivityCard from '../components/ActivityCard.astro';
 import FAQ from '../components/FAQ.astro';
 import EmptyState from '../components/EmptyState.astro';
+import VisitCTA from '../components/VisitCTA.astro';
 import { h1, pageTitles, empty } from '../lib/copy';
 import {
   getActivities,
@@ -16,6 +17,7 @@ const pageCopy = getPageCopy('atividades');
 const activities = getActivities();
 const faqs = getFaqs('atividades');
 const hasActivities = activities.length > 0;
+const heroMedia = getMediaById('studio-danca');
 ---
 
 <PageShell
@@ -24,22 +26,25 @@ const hasActivities = activities.length > 0;
 >
   <PageIntro
     breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Atividades' }]}
+    eyebrow="Além da sala de aula"
     title={pageCopy?.title ?? h1.atividades}
     intro={pageCopy?.intro ?? undefined}
+    media={heroMedia}
     variant="activities"
   />
 
   {
     hasActivities ? (
-      <section class="section-activities">
+      <section class="band-light">
         <div class="container">
           <div class="activity-grid">
-            {activities.map((act) => {
+            {activities.map((act, index) => {
               const media = act.imageId ? getMediaById(act.imageId) : null;
               return (
                 <ActivityCard
                   variant="detail"
                   name={act.name}
+                  {index}
                   summary={act.summary}
                   description={act.description}
                   audience={act.audience}
@@ -56,7 +61,7 @@ const hasActivities = activities.length > 0;
         </div>
       </section>
     ) : (
-      <section class="section-empty">
+      <section class="band-light">
         <div class="container">
           <EmptyState
             title={empty.activities[0]}
@@ -69,37 +74,28 @@ const hasActivities = activities.length > 0;
   }
 
   {faqs.length > 0 && <FAQ items={faqs} />}
+
+  <VisitCTA closingPhotoId="piscina-angulo-complementar" />
 </PageShell>
 
 <style>
-  .section-activities,
-  .section-empty {
-    padding: var(--space-12) 0;
-    background: var(--surface-base);
-  }
   .activity-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-4);
+    gap: 20px;
   }
+
   @media (min-width: 768px) {
-    .section-activities,
-    .section-empty {
-      padding: var(--space-16) 0;
-    }
     .activity-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-5);
+      gap: 22px;
     }
   }
+
   @media (min-width: 1100px) {
-    .section-activities,
-    .section-empty {
-      padding: var(--space-20) 0;
-    }
     .activity-grid {
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-6);
+      gap: 24px;
     }
   }
 </style>

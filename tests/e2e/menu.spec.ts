@@ -98,18 +98,16 @@ test('redimensionar 1099→1100 com foco no painel mantém foco visível', async
 }) => {
   await page.goto('/ensino');
   await page.setViewportSize({ width: 1099, height: 844 });
-  const { dialog } = await openMenu(page);
+  const { dialog, trigger } = await openMenu(page);
   await expect(
     dialog.getByRole('button', { name: 'Fechar menu' }),
   ).toBeFocused();
   await page.setViewportSize({ width: 1100, height: 900 });
-  // C01: ao cruzar para desktop, painel fecha e foco vai para destino visível
-  // (link ativo do DesktopNav quando o foco estava no painel).
+  // O menu editorial é universal (mobile e desktop): ao redimensionar,
+  // permanece íntegro com foco visível no botão Fechar e devolve foco ao gatilho no Escape.
+  await expect(dialog).toBeVisible();
   await expect(
-    page.getByRole('dialog', { name: 'Menu principal' }),
-  ).toHaveCount(0);
-  await expect(
-    page.locator('.desktop-nav a[aria-current="page"]'),
+    dialog.getByRole('button', { name: 'Fechar menu' }),
   ).toBeFocused();
   const active = await page.evaluate(() => {
     const el = document.activeElement;
@@ -124,4 +122,7 @@ test('redimensionar 1099→1100 com foco no painel mantém foco visível', async
   });
   expect(active).not.toBe('BODY');
   expect(active.startsWith('OCULTO')).toBe(false);
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
 });

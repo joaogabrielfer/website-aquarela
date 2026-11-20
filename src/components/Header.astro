@@ -1,47 +1,70 @@
 ---
 import MobileMenu from '../islands/MobileMenu.svelte';
 import { navigation, cta } from '../lib/copy';
-// Static `build.format: 'file'` exposes `/route.html` while rendering even
-// though visitors navigate to `/route`. Normalize both forms so active
-// navigation and its focus target are present in the emitted HTML.
+import { getPublicSchool } from '../lib/content/school';
+import { formatPhone, telUrl, whatsappUrl } from '../lib/urls';
+
+interface Props {
+  overlay?: boolean;
+}
+
+const { overlay = false } = Astro.props;
+
+const school = getPublicSchool();
 const current =
   Astro.url.pathname
     .replace(/\/index\.html$/, '/')
     .replace(/\.html$/, '')
     .replace(/\/$/, '') || '/';
-const active = (href: string) =>
-  href === '/galeria' ? current.startsWith('/galeria') : current === href;
+
+const addressText = school.address
+  ? `${school.address.street}${school.address.number ? `, ${school.address.number}` : ''} — ${school.address.neighborhood}, ${school.address.city}/${school.address.state}`
+  : (school.locality ?? null);
 ---
 
-<header class="site-header" id="site-header">
+<header
+  class:list={['site-header', overlay && 'site-header--overlay']}
+  id="site-header"
+>
+  <div class="header-spectrum" aria-hidden="true"></div>
   <div class="container header-inner">
     <a class="logo-link" href="/" aria-label="Aquarela — início">
-      <img
-        src="/brand/logo-aquarela-440.png"
-        srcset="/brand/logo-aquarela-360.png 360w, /brand/logo-aquarela-440.png 440w, /brand/logo-aquarela-660.png 660w"
-        sizes="(min-width: 1100px) 220px, (min-width: 768px) 200px, 180px"
-        alt="Aquarela"
-        width="220"
-        height="64"
-      />
+      <span class="logo-plate">
+        <img
+          src="/brand/logo-aquarela-440.png"
+          srcset="/brand/logo-aquarela-360.png 360w, /brand/logo-aquarela-440.png 440w, /brand/logo-aquarela-660.png 660w"
+          sizes="(min-width: 1100px) 176px, (min-width: 768px) 160px, 136px"
+          alt="Aquarela"
+          width="176"
+          height="51"
+        />
+      </span>
+      <span class="header-locality" aria-hidden="true">Paulista · PE</span>
     </a>
-    <nav class="desktop-nav" aria-label="Navegação principal">
-      {
-        navigation.map((item) => (
-          <a
-            class={active(item.href) ? 'active' : undefined}
-            href={item.href}
-            aria-current={active(item.href) ? 'page' : undefined}
-          >
-            {item.label}
-          </a>
-        ))
-      }
-      <a class="cta" href="/visite">{cta}</a>
-    </nav>
-    <MobileMenu client:load items={navigation} {current} />
+
+    <div class="header-actions">
+      <a class="header-cta editorial-action" href="/visite" aria-label={cta}>
+        <span class="header-cta-full" aria-hidden="true">{cta}</span>
+        <span class="header-cta-short" aria-hidden="true">Visite</span>
+        <span class="header-arrow" aria-hidden="true">↗</span>
+      </a>
+      <MobileMenu
+        client:load
+        items={navigation}
+        {current}
+        phoneLabel={school.phoneE164 ? formatPhone(school.phoneE164) : null}
+        phoneHref={school.phoneE164 ? telUrl(school.phoneE164) : null}
+        whatsappHref={school.whatsappE164
+          ? whatsappUrl(school.whatsappE164)
+          : null}
+        {addressText}
+        officeHours={school.officeHours ?? null}
+        instagramUrl={school.instagramUrl ?? null}
+      />
+    </div>
   </div>
 </header>
+
 <script is:inline>
   const header = document.querySelector('#site-header');
   const update = () => {
@@ -51,83 +74,211 @@ const active = (href: string) =>
   window.addEventListener('scroll', update, { passive: true });
   update();
 </script>
+
 <style>
   .site-header {
     position: sticky;
     top: 0;
     z-index: var(--z-header);
     height: var(--site-header-height);
-    background: var(--surface-base);
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid var(--border-subtle);
+    transition:
+      box-shadow 260ms var(--ease),
+      background-color 260ms var(--ease),
+      border-color 260ms var(--ease);
+  }
+
+  .site-header--overlay {
+    position: fixed;
+    left: 0;
+    right: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(8, 19, 28, 0.48) 0%,
+      rgba(8, 19, 28, 0.14) 64%,
+      rgba(8, 19, 28, 0) 100%
+    );
+    background-repeat: no-repeat;
+    background-clip: padding-box;
+    border-bottom: 0;
+  }
+
+  .site-header--overlay.scrolled {
     border-bottom: 1px solid var(--border-subtle);
   }
+
+  .site-header--overlay:not(.scrolled) .logo-plate {
+    background: rgba(255, 255, 255, 0.94);
+    padding: 5px 12px;
+    border-radius: 14px;
+    box-shadow: 0 10px 26px -14px rgba(0, 0, 0, 0.5);
+  }
+
+  .site-header--overlay:not(.scrolled) .header-locality {
+    color: rgba(255, 255, 255, 0.88);
+    border-left-color: rgba(255, 255, 255, 0.28);
+  }
+
+  .site-header--overlay:not(.scrolled) :global(.menu-toggle) {
+    background: rgba(12, 27, 38, 0.62);
+    border-color: rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+  }
+
+  .logo-plate {
+    display: inline-flex;
+    align-items: center;
+    transition:
+      background-color 260ms var(--ease),
+      padding 260ms var(--ease),
+      box-shadow 260ms var(--ease);
+  }
+
+  .header-spectrum {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--aquarela-spectrum);
+    pointer-events: none;
+  }
+
+  .site-header.scrolled {
+    background: rgba(255, 255, 255, 0.985);
+    border-bottom-color: var(--border-subtle);
+    box-shadow: 0 12px 32px -22px rgba(16, 32, 43, 0.34);
+  }
+
   .header-inner {
     padding-top: env(safe-area-inset-top, 0px);
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
   }
-  .site-header.scrolled {
-    box-shadow: var(--shadow);
-  }
+
   .logo-link {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    height: 100%;
+    gap: 14px;
     text-decoration: none;
+    flex-shrink: 0;
   }
+
   .logo-link img {
     display: block;
-    width: 180px;
+    width: min(132px, 34vw);
     height: auto;
   }
-  .desktop-nav {
-    display: flex;
-    align-items: center;
-    gap: var(--space-6);
-  }
-  .desktop-nav a {
-    display: flex;
-    align-items: center;
-    padding: var(--space-2) 0;
-    color: var(--text-ink);
-    font-weight: 500;
-    text-decoration: none;
-  }
-  .desktop-nav a.active {
-    color: var(--brand-navy);
+
+  .header-locality {
+    display: none;
+    padding-left: 14px;
+    border-left: 1px solid var(--border-subtle);
+    font-size: 0.75rem;
     font-weight: 700;
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 6px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
   }
-  .desktop-nav .cta,
-  .cta {
-    padding: 12px 24px;
-    border-radius: var(--radius-pill);
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .header-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 8px 14px;
+    border-radius: 14px;
     background: var(--action-primary);
-    color: white;
-    font-weight: 500;
+    color: #ffffff;
+    font-size: min(0.875rem, 4.2vw);
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
   }
+
+  .header-cta-full {
+    display: none;
+  }
+
+  .header-cta-short {
+    display: inline;
+  }
+
+  .header-arrow {
+    display: inline-block;
+    transition: transform 280ms var(--ease);
+    transform: translate(var(--magnet-x, 0px), var(--magnet-y, 0px));
+  }
+
   @media (hover: hover) {
-    .desktop-nav .cta:hover,
-    .cta:hover {
+    .header-cta:hover {
       background: var(--action-hover);
+      box-shadow: var(--shadow-action);
+    }
+    .header-cta:hover .header-arrow {
+      transform: translate(
+        calc(var(--magnet-x, 0px) + 2px),
+        calc(var(--magnet-y, 0px) - 2px)
+      );
     }
   }
+
+  @media (max-width: 359px) {
+    .header-inner {
+      gap: 8px;
+    }
+    .logo-link img {
+      width: 106px;
+    }
+    .header-actions {
+      gap: 6px;
+    }
+    .header-cta {
+      padding: 8px 10px;
+      font-size: 0.8125rem;
+      gap: 5px;
+    }
+  }
+
+  @media (min-width: 560px) {
+    .header-cta {
+      padding: 10px 18px;
+      font-size: 0.9375rem;
+    }
+    .header-cta-full {
+      display: inline;
+    }
+    .header-cta-short {
+      display: none;
+    }
+  }
+
   @media (min-width: 768px) {
     .logo-link img {
-      width: 200px;
+      width: 158px;
+    }
+    .header-locality {
+      display: inline-block;
+    }
+    .header-actions {
+      gap: 14px;
     }
   }
+
   @media (min-width: 1100px) {
     .logo-link img {
-      width: 220px;
-    }
-  }
-  @media (max-width: 1099px) {
-    .desktop-nav {
-      display: none;
+      width: 176px;
     }
   }
 </style>

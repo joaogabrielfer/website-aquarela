@@ -346,32 +346,46 @@
     min-width: 0;
     position: relative;
     height: 100%;
-    background: var(--surface-base);
+    background: var(--surface-soft);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
   }
+  :global(.band-dark) .approval-card {
+    background: var(--surface-dark-card);
+    border-color: var(--border-on-dark);
+  }
   .card-front {
     display: grid;
-    gap: var(--space-4);
-    padding: var(--space-4);
-    color: var(--brand-navy);
+    gap: 18px;
+    padding: 20px;
+    color: var(--text-ink);
     min-height: 48px;
   }
+  :global(.band-dark) .card-front {
+    color: #ffffff;
+  }
   .has-portrait > .card-front {
-    grid-template-columns: 80px minmax(0, 1fr);
+    grid-template-columns: 82px minmax(0, 1fr);
   }
   .approval-card.keyboard-input:has(.details-control:focus-visible) {
     outline: 3px solid var(--brand-navy);
     outline-offset: -4px;
   }
+  :global(.band-dark)
+    .approval-card.keyboard-input:has(.details-control:focus-visible) {
+    outline-color: #ffffff;
+  }
   .card-avatar {
     position: relative;
-    width: 80px;
+    width: 82px;
     aspect-ratio: 1;
-    background: var(--surface-paper);
-    border: 1px solid var(--border-subtle);
+    background: #ffffff;
+    border: 2px solid rgba(16, 32, 43, 0.08);
     border-radius: 50%;
     overflow: hidden;
+  }
+  :global(.band-dark) .card-avatar {
+    border-color: rgba(255, 255, 255, 0.24);
   }
   .card-avatar img {
     position: absolute;
@@ -386,43 +400,57 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-2);
+    gap: 8px;
   }
   .card-title {
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     line-height: 1.2;
     overflow-wrap: anywhere;
+    color: inherit;
   }
   .approval-count {
-    padding: var(--space-1) var(--space-2);
+    padding: 4px 10px;
     border-radius: var(--radius-pill);
     background: var(--brand-yellow);
-    font-size: 0.875rem;
+    color: var(--text-ink);
+    font-size: 0.78rem;
+    font-weight: 700;
   }
   .course-summary {
     list-style: none;
     padding: 0;
     margin: 0;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
+    color: var(--text-body);
+  }
+  :global(.band-dark) .course-summary {
+    color: var(--text-on-dark-muted);
   }
   .course-summary li + li {
-    margin-top: var(--space-1);
+    margin-top: 4px;
   }
   .details-control {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
   }
   .details-control,
   .close-details {
     min-height: 44px;
     text-decoration: underline;
+    text-underline-offset: 4px;
     border: 0;
     background: none;
     color: var(--brand-navy);
     font: inherit;
+    font-weight: 700;
     cursor: pointer;
+  }
+  :global(.band-dark) .details-control {
+    color: #ffd3d7;
   }
   .details-control::after {
     content: '';
@@ -546,9 +574,13 @@
   }
   @media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
     .approval-card:hover {
-      background: var(--surface-paper);
-      box-shadow: var(--shadow);
-      border-color: var(--brand-navy);
+      background: #ffffff;
+      box-shadow: var(--shadow-elevated);
+      border-color: rgba(0, 76, 115, 0.28);
+    }
+    :global(.band-dark) .approval-card:hover {
+      background: var(--surface-dark-card-hover);
+      border-color: rgba(255, 255, 255, 0.32);
     }
     @media (prefers-reduced-motion: no-preference) {
       .approval-card {

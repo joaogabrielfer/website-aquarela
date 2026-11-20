@@ -2,7 +2,9 @@
 import PageShell from '../layouts/PageShell.astro';
 import PageIntro from '../components/PageIntro.astro';
 import EnvironmentCard from '../components/EnvironmentCard.astro';
+import EditorialInterlude from '../components/EditorialInterlude.astro';
 import EmptyState from '../components/EmptyState.astro';
+import VisitCTA from '../components/VisitCTA.astro';
 import Lightbox from '../islands/Lightbox.svelte';
 import { h1, pageTitles, empty } from '../lib/copy';
 import { getEnvironments, getMediaById, getPageCopy } from '../lib/content';
@@ -10,24 +12,11 @@ import { getEnvironments, getMediaById, getPageCopy } from '../lib/content';
 const pageCopy = getPageCopy('nosso-espaco');
 const environments = getEnvironments();
 const hasEnvironments = environments.length > 0;
+const heroMedia = getMediaById('piscina-angulo-principal');
+const midInterlude = getMediaById('quadra-coberta-angulo-principal');
 
-// Pre-process environment data for rendering
-const envData = environments.map((env, i) => {
-  const allPhotos = env.images
-    .map((imgId) => getMediaById(imgId))
-    .filter(
-      (p): p is NonNullable<ReturnType<typeof getMediaById>> => p !== null,
-    );
-  // If an earlier configured image is not public, the first eligible image
-  // remains the editorial cover for this environment.
-  const coverMedia = allPhotos[0] ?? null;
-  return {
-    env,
-    index: i,
-    coverMedia,
-    allPhotos,
-  };
-});
+const firstAct = environments.slice(0, 5);
+const secondAct = environments.slice(5);
 ---
 
 <PageShell
@@ -36,94 +25,121 @@ const envData = environments.map((env, i) => {
 >
   <PageIntro
     breadcrumb={[{ label: 'Início', href: '/' }, { label: 'Nosso espaço' }]}
+    eyebrow="Arquitetura & rotina"
     title={pageCopy?.title ?? h1['nosso-espaco']}
     intro={pageCopy?.intro ?? undefined}
+    media={heroMedia}
     variant="space"
   />
 
   {
     hasEnvironments ? (
-      <section class="section-environments">
-        <div class="container env-grid">
-          {envData.map(({ env, index, coverMedia, allPhotos }) => (
-            <EnvironmentCard
-              name={env.name}
-              purpose={env.purpose}
-              imageUrl={coverMedia?.src ?? null}
-              imageAlt={coverMedia?.alt ?? env.name}
-              caption={coverMedia?.caption}
-              imageWidth={coverMedia?.width}
-              imageHeight={coverMedia?.height}
-              imageFocalPoint={coverMedia?.focalPoint}
-              feature={index === 0}
-              photos={allPhotos.map((p) => ({
-                src: p.src,
-                alt: p.alt,
-                caption: p.caption,
-              }))}
-            />
-          ))}
-        </div>
-      </section>
+      <>
+        <section class="band-light">
+          <div class="container">
+            <div class="env-grid">
+              {firstAct.map((env, index) => {
+                const photos = env.images
+                  .map(getMediaById)
+                  .filter((media) => media !== null);
+                const firstMedia = photos[0] ?? null;
+                return (
+                  <EnvironmentCard
+                    name={env.name}
+                    purpose={env.purpose}
+                    {index}
+                    imageUrl={firstMedia?.src ?? null}
+                    imageAlt={firstMedia?.alt ?? env.name}
+                    caption={firstMedia?.caption ?? null}
+                    imageWidth={firstMedia?.width}
+                    imageHeight={firstMedia?.height}
+                    imageFocalPoint={firstMedia?.focalPoint}
+                    feature={index === 0}
+                    photos={photos.map((photo) => ({
+                      src: photo.src,
+                      alt: photo.alt,
+                      caption: photo.caption,
+                    }))}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {midInterlude && secondAct.length > 0 && (
+          <EditorialInterlude
+            media={midInterlude}
+            eyebrow="Convivência e movimento"
+            phrase="O espaço também educa."
+            desktopFocus="50% 48%"
+            mobileFocus="50% 48%"
+          />
+        )}
+
+        {secondAct.length > 0 && (
+          <section class="band-light">
+            <div class="container">
+              <div class="env-grid">
+                {secondAct.map((env, idx) => {
+                  const index = idx + firstAct.length;
+                  const photos = env.images
+                    .map(getMediaById)
+                    .filter((media) => media !== null);
+                  const firstMedia = photos[0] ?? null;
+                  return (
+                    <EnvironmentCard
+                      name={env.name}
+                      purpose={env.purpose}
+                      {index}
+                      imageUrl={firstMedia?.src ?? null}
+                      imageAlt={firstMedia?.alt ?? env.name}
+                      caption={firstMedia?.caption ?? null}
+                      imageWidth={firstMedia?.width}
+                      imageHeight={firstMedia?.height}
+                      imageFocalPoint={firstMedia?.focalPoint}
+                      feature={idx === 0}
+                      photos={photos.map((photo) => ({
+                        src: photo.src,
+                        alt: photo.alt,
+                        caption: photo.caption,
+                      }))}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+      </>
     ) : (
-      <section class="section-empty">
+      <section class="band-light">
         <div class="container">
           <EmptyState
             title={empty.space[0]}
             text={empty.space[1]}
-            link={{ href: '/visite', label: 'Fale com a equipe' }}
-            variant="compact"
+            link={{ href: '/visite', label: 'Agendar visita' }}
           />
         </div>
       </section>
     )
   }
 
+  <VisitCTA closingPhotoId="patio" />
   <Lightbox client:only="svelte" />
 </PageShell>
 
 <style>
-  .section-environments {
-    padding: var(--space-12) 0;
-    background: var(--surface-base);
-  }
-  .section-empty {
-    padding: var(--space-10) 0;
-    background: var(--surface-base);
-  }
   .env-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-4);
+    gap: 20px;
   }
+
   @media (min-width: 768px) {
-    .section-environments {
-      padding: var(--space-16) 0;
-    }
-    .section-empty {
-      padding: var(--space-12) 0;
-    }
     .env-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-5);
-    }
-    .env-grid > :global(.environment-card:last-child:nth-child(even)) {
-      grid-column: 1 / -1;
-    }
-    .env-grid
-      > :global(.environment-card:last-child:nth-child(even) .card-media img) {
-      aspect-ratio: 16 / 9;
-    }
-  }
-  @media (min-width: 1100px) {
-    .section-environments {
-      padding: var(--space-20) 0;
-    }
-    .section-empty {
-      padding: var(--space-12) 0;
-    }
-    .env-grid {
-      gap: var(--space-6);
+      gap: 24px;
     }
   }
 </style>

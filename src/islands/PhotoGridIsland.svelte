@@ -45,7 +45,8 @@
   <div class="photo-grid">
     {#each items as photo, i (photo.src + i)}
       <button
-        class="photo-thumb"
+        class="photo-thumb media-frame"
+        class:is-wide={i % 6 === 0}
         type="button"
         aria-label="Ampliar foto {i + 1} de {photos.length}: {photo.caption ||
           photo.alt}"
@@ -60,7 +61,9 @@
           width={photo.width ?? 400}
           height={photo.height ?? 300}
           loading="lazy"
+          decoding="async"
         />
+        <span class="thumb-expand" aria-hidden="true">↗</span>
       </button>
     {/each}
   </div>
@@ -70,43 +73,82 @@
   .photo-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-4);
+    gap: 16px;
   }
+
   .photo-thumb {
+    position: relative;
     padding: 0;
-    border: none;
-    background: none;
+    border: 0;
+    background: var(--surface-elevated);
     cursor: pointer;
-    border-radius: var(--radius-card);
+    border-radius: var(--radius-media);
     overflow: hidden;
+    aspect-ratio: 4 / 3;
   }
+
   .photo-thumb img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
-    aspect-ratio: 4/3;
+    transition: transform 640ms var(--ease-expo);
   }
+
+  .thumb-expand {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgba(12, 27, 38, 0.78);
+    backdrop-filter: blur(8px);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition:
+      background-color 240ms var(--ease),
+      transform 240ms var(--ease);
+  }
+
   .photo-thumb:focus-visible {
     outline: 3px solid var(--brand-navy);
     outline-offset: 2px;
-    box-shadow: 0 0 0 2px white;
+    box-shadow: 0 0 0 2px #ffffff;
   }
+
+  @media (hover: hover) {
+    .photo-thumb:hover img {
+      transform: scale(1.04);
+    }
+    .photo-thumb:hover .thumb-expand {
+      background: var(--action-primary);
+      transform: scale(1.06);
+    }
+  }
+
   @media (min-width: 768px) {
     .photo-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-5);
+      gap: 20px;
+    }
+    .photo-thumb.is-wide {
+      grid-column: span 2;
+      aspect-ratio: 16 / 9;
     }
   }
+
   @media (min-width: 1100px) {
     .photo-grid {
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-6);
+      gap: 22px;
     }
-  }
-  @media (hover: hover) {
-    .photo-thumb:hover img {
-      opacity: 0.9;
+    .photo-thumb.is-wide {
+      grid-column: span 2;
+      aspect-ratio: 16 / 9;
     }
   }
 </style>

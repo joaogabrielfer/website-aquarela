@@ -267,7 +267,7 @@ test('backdrop consome toque sobre outro card/link; sequências rápidas, Escape
     await expect(trigger).toBeFocused();
   }
   const target = (await cards.nth(3).boundingBox())!;
-  const link = page.locator('.desktop-nav a[href="/ensino"]');
+  const link = page.locator('.site-header a[href="/visite"]');
   const linkBox = (await link.boundingBox())!;
   await page.evaluate(() => {
     (window as Window & { backgroundClicks?: number }).backgroundClicks = 0;
@@ -275,7 +275,7 @@ test('backdrop consome toque sobre outro card/link; sequências rápidas, Escape
       'click',
       (event) => {
         if (
-          (event.target as Element).closest('.details-control, .desktop-nav a')
+          (event.target as Element).closest('.details-control, .site-header a')
         )
           (window as Window & { backgroundClicks?: number })
             .backgroundClicks!++;

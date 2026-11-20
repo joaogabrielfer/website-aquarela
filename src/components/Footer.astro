@@ -1,7 +1,7 @@
 ---
 import { navigation } from '../lib/copy';
 import { getPublicSchool } from '../lib/content/school';
-import { formatPhone, whatsappUrl } from '../lib/urls';
+import { formatPhone, telUrl, whatsappUrl } from '../lib/urls';
 
 const school = getPublicSchool();
 const hasContact = Boolean(
@@ -12,192 +12,409 @@ const hasContact = Boolean(
 );
 ---
 
-<footer class="site-footer">
-  <div class="container footer-grid">
-    <div>
-      <div class="footer-brand">
+<footer class="site-footer" id="contato">
+  <div class="footer-spectrum" aria-hidden="true"></div>
+  <div class="container footer-shell">
+    <div class="footer-top">
+      <a
+        class="footer-brand focus-on-navy"
+        href="/"
+        aria-label="Aquarela — início"
+      >
         <img src="/favicon-192.png" alt="" width="56" height="56" />
-        <span class="footer-brand-name"
-          >Aquarela<span>Colégio e Curso</span></span
-        >
+        <span class="footer-brand-name">
+          Aquarela
+          <span>Colégio e Curso</span>
+        </span>
+      </a>
+      <div class="footer-statement">
+        {school.tagline && <p class="tagline">{school.tagline}</p>}
+        {school.locality && <p class="footer-locality">{school.locality}</p>}
       </div>
-      {school.tagline && <p class="tagline">{school.tagline}</p>}
-      <a class="footer-cta" href="/visite">Quero conhecer</a>
     </div>
-    <nav aria-label="Navegação do rodapé">
-      <strong>Navegação</strong>
-      {navigation.map((item) => <a href={item.href}>{item.label}</a>)}
-      <a href="/visite">Visite</a>
-      <a href="/privacidade">Privacidade</a>
-    </nav>
-    <div>
-      <strong>Contato</strong>
-      {
-        !hasContact ? (
-          <p class="pending">Contato aguardando confirmação</p>
-        ) : (
-          <>
-            {school.address ? (
-              <p class="footer-info">
-                {school.address.street}
-                {school.address.number && `, ${school.address.number}`} —{' '}
-                {school.address.neighborhood},{' '}
-                {`${school.address.city}/${school.address.state}`}
-              </p>
-            ) : (
-              school.locality && <p class="footer-info">{school.locality}</p>
-            )}
-            {school.officeHours && (
-              <p class="footer-info">Horário: {school.officeHours}</p>
-            )}
-            <div class="footer-links">
+
+    <div class="footer-columns">
+      <nav aria-label="Navegação do rodapé" class="footer-col">
+        <h2>Conheça o Aquarela</h2>
+        <a class="focus-on-navy" href="/">Início</a>
+        {
+          navigation.map((item) => (
+            <a class="focus-on-navy" href={item.href}>
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+
+      <div class="footer-col">
+        <h2>Sua próxima etapa</h2>
+        <a class="focus-on-navy" href="/ensino#educacao-infantil"
+          >Educação Infantil</a
+        >
+        <a class="focus-on-navy" href="/ensino#fundamental-anos-iniciais"
+          >Fundamental · Anos Iniciais</a
+        >
+        <a class="focus-on-navy" href="/ensino#fundamental-anos-finais"
+          >Fundamental · Anos Finais</a
+        >
+        <a class="focus-on-navy" href="/ensino#ensino-medio">Ensino Médio</a>
+        <a class="focus-on-navy" href="/visite">Agendar visita ↗</a>
+        <a class="focus-on-navy" href="/privacidade">Privacidade</a>
+      </div>
+
+      <div class="footer-col">
+        <h2>Fale com o colégio</h2>
+        {
+          !hasContact ? (
+            <p class="pending">Contato aguardando confirmação</p>
+          ) : (
+            <div class="footer-contact-list">
               {school.whatsappE164 && (
-                <a href={whatsappUrl(school.whatsappE164)}>WhatsApp</a>
-              )}
-              {school.phoneE164 && (
-                <a href={`tel:${school.phoneE164}`}>
-                  {formatPhone(school.phoneE164)}
+                <a
+                  class="footer-contact-link focus-on-navy"
+                  href={whatsappUrl(school.whatsappE164)}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span class="footer-icon" aria-hidden="true">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="currentColor"
+                    >
+                      <path d="M12 2a10 10 0 0 0-8.66 15l-1.3 4.75 4.88-1.28A10 10 0 1 0 12 2Zm-3.1 5.2c-.58 0-1.3.82-1.3 1.84 0 2.9 3.85 6.84 6.84 6.84 1.02 0 1.84-.72 1.84-1.45 0-.42-2.05-1.5-2.4-1.38l-.8.84c-1.26-.54-2.64-1.84-3.18-3.14l.78-.82c.24-.34-.82-2.73-1.32-2.73h-.46Z" />
+                    </svg>
+                  </span>
+                  <span>WhatsApp · {formatPhone(school.whatsappE164)} ↗</span>
                 </a>
               )}
+              {school.phoneE164 && (
+                <a
+                  class="footer-contact-link focus-on-navy"
+                  href={telUrl(school.phoneE164)}
+                >
+                  <span class="footer-icon" aria-hidden="true">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="currentColor"
+                    >
+                      <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.24 1.01l-2.21 2.2Z" />
+                    </svg>
+                  </span>
+                  <span>Telefone: {formatPhone(school.phoneE164)}</span>
+                </a>
+              )}
+              {school.address && (
+                <p class="footer-contact-info">
+                  <span class="footer-icon" aria-hidden="true">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="currentColor"
+                    >
+                      <path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z" />
+                    </svg>
+                  </span>
+                  <span>
+                    {school.address.street}
+                    {school.address.number &&
+                      `, ${school.address.number}`} —{' '}
+                    {school.address.neighborhood}, {school.address.city}/
+                    {school.address.state}
+                  </span>
+                </p>
+              )}
+              {school.officeHours && (
+                <p class="footer-contact-info">
+                  <span class="footer-icon" aria-hidden="true">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="currentColor"
+                    >
+                      <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 11h4v-2h-3V6h-2v7Z" />
+                    </svg>
+                  </span>
+                  <span>{school.officeHours}</span>
+                </p>
+              )}
               {school.instagramUrl && (
-                <a href={school.instagramUrl} target="_blank" rel="noopener">
-                  Instagram
+                <a
+                  class="footer-contact-link focus-on-navy"
+                  href={school.instagramUrl}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span class="footer-icon" aria-hidden="true">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="currentColor"
+                    >
+                      <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9Zm9.75 1.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" />
+                    </svg>
+                  </span>
+                  <span>Instagram ↗</span>
                 </a>
               )}
             </div>
-          </>
-        )
-      }
+          )
+        }
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="copyright">
+        © {new Date().getFullYear()} Aquarela Colégio e Curso. Todos os direitos reservados.
+      </p>
+      <a class="footer-cta focus-on-navy" href="/visite">
+        Quero conhecer <span aria-hidden="true">↗</span>
+      </a>
     </div>
   </div>
-  <p class="copyright">
-    © {new Date().getFullYear()} Aquarela Colégio e Curso
-  </p>
 </footer>
+
 <style>
   .site-footer {
-    border-top: 1px solid var(--border-subtle);
-    padding: var(--space-8) 0
-      calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
-    background: var(--brand-navy);
-    color: white;
+    position: relative;
+    background: var(--surface-dark);
+    color: #ffffff;
+    padding: clamp(3rem, 6vw, 5.5rem) 0
+      calc(2rem + env(safe-area-inset-bottom, 0px));
   }
-  .footer-grid {
-    grid-template-columns: minmax(0, 1fr);
-    display: grid;
-    gap: var(--space-6);
+
+  .footer-spectrum {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--aquarela-spectrum);
   }
-  .footer-brand {
+
+  .footer-shell {
     display: flex;
-    align-items: center;
-    gap: var(--space-3);
+    flex-direction: column;
+    gap: clamp(2.25rem, 4.5vw, 3.75rem);
   }
+
+  .footer-top {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
+    border-bottom: 1px solid var(--border-on-dark);
+  }
+
+  .footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: #ffffff;
+    align-self: flex-start;
+  }
+
   .footer-brand img {
-    width: 56px;
-    height: 56px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     flex: none;
   }
+
   .footer-brand-name {
+    font-family: var(--font-display);
     font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
   }
+
   .footer-brand-name span {
     display: block;
-    margin-top: var(--space-1);
+    margin-top: 2px;
+    font-family: var(--font-body);
     font-size: 0.875rem;
-    font-weight: 400;
+    font-weight: 500;
+    color: var(--text-on-dark-muted);
+    letter-spacing: 0;
   }
+
+  .footer-statement {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
   .tagline {
-    color: white;
-    font-size: 0.875rem;
-    margin: var(--space-2) 0 0;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.125rem, 2.2vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    line-height: 1.3;
   }
+
+  .footer-locality {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-on-dark-muted);
+  }
+
+  .footer-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .footer-col h2 {
+    margin: 0 0 10px;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.62);
+    line-height: 1.4;
+  }
+
+  .footer-col > a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: #ffffff;
+    font-size: 0.96875rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  @media (hover: hover) {
+    .footer-col > a:hover,
+    .footer-contact-link:hover {
+      color: #ffd3d7;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  }
+
+  .footer-contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-contact-link,
+  .footer-contact-info {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0;
+    color: #ffffff;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    text-decoration: none;
+  }
+
+  .footer-contact-link {
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .footer-contact-info {
+    color: var(--text-on-dark-muted);
+    padding: 6px 0;
+  }
+
+  .footer-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    flex-shrink: 0;
+  }
+
+  .pending {
+    margin: 0;
+    color: var(--text-on-dark-muted);
+    font-style: italic;
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-on-dark);
+  }
+
+  .copyright {
+    margin: 0;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
   .footer-cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     min-height: 44px;
-    margin-top: var(--space-4);
-    padding: 8px 20px;
-    background: white;
-    color: var(--brand-navy) !important;
-    border-radius: var(--radius-pill);
+    padding: 10px 20px;
+    border-radius: 14px;
+    background: #ffffff;
+    color: var(--surface-dark);
     font-size: 0.9375rem;
     font-weight: 700;
     text-decoration: none;
   }
+
   @media (hover: hover) {
     .footer-cta:hover {
-      background: var(--surface-paper);
+      background: var(--surface-soft);
     }
   }
-  .footer-grid > div:last-child {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-2);
-  }
-  .footer-info {
-    margin: 0;
-    font-size: 0.9375rem;
-    line-height: 1.5;
-  }
-  .footer-links {
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: var(--space-5);
-    row-gap: var(--space-1);
-  }
-  .footer-grid nav {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-content: start;
-    column-gap: var(--space-6);
-    row-gap: var(--space-1);
-  }
-  .footer-grid nav strong {
-    grid-column: 1 / -1;
-    margin-bottom: var(--space-1);
-  }
-  .footer-grid a {
-    display: inline-flex;
-    align-items: center;
-    color: white;
-  }
-  .pending {
-    color: white;
-    font-style: italic;
-  }
-  .copyright {
-    max-width: 1296px;
-    margin: var(--space-5) auto 0;
-    padding: 0 max(20px, env(safe-area-inset-right, 0px)) 0
-      max(20px, env(safe-area-inset-left, 0px));
-    color: white;
-    font-size: 0.875rem;
-  }
-  .site-footer a:focus-visible {
-    outline-color: white;
-    box-shadow: 0 0 0 2px var(--text-ink);
-  }
+
   @media (min-width: 768px) {
-    .footer-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .footer-top {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
     }
-    .copyright {
-      padding-inline: max(32px, env(safe-area-inset-left, 0px))
-        max(32px, env(safe-area-inset-right, 0px));
+    .footer-statement {
+      text-align: right;
+    }
+    .footer-columns {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 36px;
+    }
+    .footer-bottom {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
     }
   }
+
   @media (min-width: 1100px) {
-    .footer-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .copyright {
-      padding-inline: max(48px, env(safe-area-inset-left, 0px))
-        max(48px, env(safe-area-inset-right, 0px));
+    .footer-columns {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.35fr);
+      gap: 48px;
     }
   }
 </style>

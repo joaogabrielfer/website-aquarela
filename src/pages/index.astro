@@ -1,54 +1,20 @@
 ---
 import PageShell from '../layouts/PageShell.astro';
 import HeroHome from '../components/HeroHome.astro';
-import SeasonalBanner from '../components/SeasonalBanner.astro';
-import SectionHeading from '../components/SectionHeading.astro';
-import SegmentCard from '../components/SegmentCard.astro';
-import MediaText from '../components/MediaText.astro';
-import GalleryPreview from '../components/GalleryPreview.astro';
-import ActivityCard from '../components/ActivityCard.astro';
-import ApprovalCard from '../components/ApprovalCard.astro';
-import AlbumCard from '../components/AlbumCard.astro';
+import InstitutionalTicker from '../components/InstitutionalTicker.astro';
+import HomeEditorialBody from '../components/HomeEditorialBody.astro';
 import { h1, pageTitles } from '../lib/copy';
-import {
-  getHomePageCopy,
-  getSeasonalBanners,
-  getSegments,
-  getFeaturedActivities,
-  getFeaturedApprovalPeople,
-  getEnvironmentPhotos,
-  getAlbums,
-  getMediaById,
-} from '../lib/content';
+import { getHomePageCopy, getMediaById } from '../lib/content';
 
 const pageCopy = getHomePageCopy();
-const segments = getSegments();
-const featuredActivities = getFeaturedActivities(3);
-const featuredApprovals = getFeaturedApprovalPeople(3);
-const environmentPhotos = getEnvironmentPhotos().slice(0, 3);
-const albums = getAlbums().slice(0, 3);
-const seasonalBanner = getSeasonalBanners()[0] ?? null;
-
-// The Home PageCopy owns the explicit Hero media reference.
-// Se faltar foto, o componente mostra o mesmo placeholder em todas as branches.
 const support = pageCopy?.intro ?? '';
 const heroMedia = pageCopy?.heroImageId
   ? getMediaById(pageCopy.heroImageId)
   : null;
-
-// Check if proposal data exists (would come from a proposal content file)
-// getProposal() is not yet implemented; section omitted when null
-const getProposal = (): {
-  intro: string;
-  facts: [string, string, string];
-  imageId: string;
-} | null => null;
-const proposal = getProposal();
 ---
 
 <PageShell title={pageTitles.home} description={pageCopy?.metaDescription}>
   <div class="home-first-screen">
-    {/* 1. HeroHome — fundo paper */}
     <HeroHome
       title={pageCopy?.title ?? h1.home}
       support={support}
@@ -58,242 +24,20 @@ const proposal = getProposal();
       imageHeight={heroMedia?.height}
       imageFocalPoint={heroMedia?.focalPoint}
     />
-    {/* 2. Banner sazonal — opcional, após o Hero */}
-    {seasonalBanner && <SeasonalBanner banner={seasonalBanner} />}
+    <InstitutionalTicker />
   </div>
-  {/* 3. Etapas — fundo branco */}
-  <section class="section-etas" id="etapas">
-    <div class="container">
-      <SectionHeading title="Ensino em cada fase" />
-      <div class="segment-grid">
-        {
-          segments.map((seg) => (
-            <SegmentCard
-              slug={seg.slug}
-              name={seg.name}
-              summary={seg.summary}
-              image={seg.imageId ? getMediaById(seg.imageId) : null}
-            />
-          ))
-        }
-      </div>
-    </div>
-  </section>
 
-  {/* 4. Proposta — fundo paper (omitida sem dados) */}
-  {
-    proposal !== null && proposal !== undefined && (
-      <section class="section-proposta" id="proposta">
-        <div class="container">
-          <MediaText
-            title="O jeito Aquarela de aprender"
-            facts={proposal.facts}
-          />
-        </div>
-      </section>
-    )
-  }
-
-  {/* 5. Espaços — fundo branco (omitida sem fotos de ambientes) */}
-  {
-    environmentPhotos.length > 0 && (
-      <section class="section-espacos" id="espacos">
-        <div class="container">
-          <SectionHeading title="Espaço para novas descobertas" />
-          <GalleryPreview
-            class="home-gallery-preview"
-            photos={environmentPhotos.map((p) => ({
-              src: p.src,
-              alt: p.alt,
-              caption: p.caption,
-              width: p.width,
-              height: p.height,
-              focalPoint: p.focalPoint,
-            }))}
-          />
-          <a href="/nosso-espaco" class="section-link">
-            Conheça nosso espaço
-          </a>
-        </div>
-      </section>
-    )
-  }
-
-  {/* 6. Atividades — fundo paper (omitida sem featured) */}
-  {
-    featuredActivities.length > 0 && (
-      <section class="section-atividades" id="atividades">
-        <div class="container">
-          <SectionHeading title="Além da sala de aula" />
-          <div class="card-grid card-grid--3">
-            {featuredActivities.map((act) => (
-              <ActivityCard
-                variant="summary"
-                name={act.name}
-                summary={act.summary}
-              />
-            ))}
-          </div>
-          <a href="/atividades" class="section-link">
-            Ver atividades
-          </a>
-        </div>
-      </section>
-    )
-  }
-
-  {/* 7. Conquistas — fundo branco (omitida sem featured) */}
-  {
-    featuredApprovals.length > 0 && (
-      <section class="section-conquistas" id="conquistas">
-        <div class="container">
-          <SectionHeading title="Histórias e conquistas" />
-          <div class="card-grid card-grid--3 approval-home-grid">
-            {featuredApprovals.map((app) => (
-              <ApprovalCard
-                displayName={app.displayName}
-                achievements={app.achievements}
-                portraitUrl={
-                  app.portraitId
-                    ? (getMediaById(app.portraitId)?.src ?? null)
-                    : null
-                }
-                portraitAlt={
-                  app.portraitId
-                    ? (getMediaById(app.portraitId)?.alt ?? app.displayName)
-                    : app.displayName
-                }
-              />
-            ))}
-          </div>
-          <a href="/aprovacoes" class="section-link">
-            Conheça as aprovações
-          </a>
-        </div>
-      </section>
-    )
-  }
-
-  {/* 8. Vida Aquarela — fundo paper (omitida sem álbuns) */}
-  {
-    albums.length > 0 && (
-      <section class="section-vida" id="vida-aquarela">
-        <div class="container">
-          <SectionHeading title="A vida no Aquarela" />
-          <div class="card-grid card-grid--3">
-            {albums.map((album) => (
-              <AlbumCard
-                slug={album.slug}
-                title={album.title}
-                date={album.date}
-                category={album.category}
-                coverUrl={getMediaById(album.coverId)?.src ?? null}
-                coverAlt={getMediaById(album.coverId)?.alt ?? album.title}
-              />
-            ))}
-          </div>
-          <a href="/galeria" class="section-link">
-            Ver galeria
-          </a>
-        </div>
-      </section>
-    )
-  }
-
-  {/* 9. Visita — fundo navy */}
+  <HomeEditorialBody />
 </PageShell>
 
 <style>
   .home-first-screen {
-    min-height: calc(100dvh - var(--site-header-height));
+    min-height: calc(100svh - var(--site-header-height));
     display: flex;
     flex-direction: column;
   }
+
   .home-first-screen :global(.hero-home) {
     flex: 1;
-  }
-  .section-etas,
-  .section-espacos,
-  .section-conquistas {
-    background: var(--surface-base);
-    padding: var(--space-12) 0;
-  }
-  .section-proposta,
-  .section-atividades,
-  .section-vida {
-    background: var(--surface-paper);
-    padding: var(--space-12) 0;
-  }
-  .segment-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    margin-top: var(--space-6);
-  }
-  .card-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    margin-top: var(--space-6);
-  }
-  .approval-home-grid {
-    grid-auto-rows: 1fr;
-    align-items: stretch;
-  }
-  .home-gallery-preview {
-    margin-top: var(--space-6);
-  }
-  .section-link {
-    display: inline-flex;
-    align-items: center;
-    margin-top: var(--space-6);
-    color: var(--brand-navy);
-    font-weight: 500;
-    text-decoration: underline;
-  }
-  @media (min-width: 768px) {
-    .segment-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-5);
-    }
-    .card-grid--3 {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-5);
-    }
-    .segment-grid,
-    .card-grid,
-    .home-gallery-preview {
-      margin-top: var(--space-8);
-    }
-  }
-  @media (min-width: 1100px) {
-    .segment-grid {
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-6);
-    }
-    .card-grid--3 {
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-6);
-    }
-  }
-  @media (min-width: 768px) {
-    .section-etas,
-    .section-espacos,
-    .section-conquistas,
-    .section-proposta,
-    .section-atividades,
-    .section-vida {
-      padding: var(--space-16) 0;
-    }
-  }
-  @media (min-width: 1100px) {
-    .section-etas,
-    .section-espacos,
-    .section-conquistas,
-    .section-proposta,
-    .section-atividades,
-    .section-vida {
-      padding: var(--space-20) 0;
-    }
   }
 </style>

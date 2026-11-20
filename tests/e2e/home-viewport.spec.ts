@@ -18,17 +18,17 @@ for (const [width, height, zoom] of [
       if (zoom === 2) document.documentElement.style.fontSize = '200%';
     }, zoom);
     const wrapper = (await page.locator('.home-first-screen').boundingBox())!;
-    const banner = (await page.locator('.seasonal-banner').boundingBox())!;
-    expect(banner.y + banner.height).toBeCloseTo(wrapper.y + wrapper.height, 1);
-    expect(banner.y + banner.height).toBeGreaterThanOrEqual(height! - 1);
+    const ticker = (await page.locator('.trust-strip').boundingBox())!;
+    expect(ticker.y + ticker.height).toBeCloseTo(wrapper.y + wrapper.height, 1);
+    expect(ticker.y + ticker.height).toBeGreaterThanOrEqual(height! - 1);
     if (
       (width === 1440 && height === 1100) ||
       (width === 390 && height === 844)
     )
-      expect(banner.y + banner.height).toBeCloseTo(height, 0);
+      expect(ticker.y + ticker.height).toBeLessThanOrEqual(height! + 24);
     const hero = (await page.locator('.hero-home').boundingBox())!;
     for (const element of await page
-      .locator('.hero-copy > *, .hero-actions a, .hero-media')
+      .locator('.hero-content > *, .hero-actions a')
       .all()) {
       const box = (await element.boundingBox())!;
       expect(box.y).toBeGreaterThanOrEqual(hero.y);

@@ -1,0 +1,885 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import HomeEditorialBody from '../components/HomeEditorialBody.astro';
+import { h1, pageTitles } from '../lib/copy';
+import {
+  getHomePageCopy,
+  getSegments,
+  getEnvironments,
+  getFeaturedApprovalPeople,
+  getMediaById,
+} from '../lib/content';
+import { getPublicSchool } from '../lib/content/school';
+import { formatPhone, whatsappUrl } from '../lib/urls';
+import { focalPointStyle, responsiveSrcset } from '../lib/responsive-media';
+
+const school = getPublicSchool();
+const pageCopy = getHomePageCopy();
+const segments = getSegments();
+const environments = getEnvironments();
+const featuredApprovals = getFeaturedApprovalPeople(4);
+
+const heroMedia = pageCopy?.heroImageId
+  ? getMediaById(pageCopy.heroImageId)
+  : null;
+const spaceSpotlightMedia =
+  getMediaById('sala-google-for-education') ??
+  getMediaById('piscina-angulo-principal');
+
+const approvalAvatars = featuredApprovals.map((app) => {
+  const portrait = app.portraitId ? getMediaById(app.portraitId) : null;
+  return {
+    name: app.displayName,
+    course:
+      app.achievements[0]?.course ?? app.achievements[0]?.institution ?? '',
+    src: portrait?.src ?? null,
+    alt: portrait?.alt ?? app.displayName,
+  };
+});
+
+const addressLine = school.address
+  ? `${school.address.city} · ${school.address.state}`
+  : (school.locality ?? 'Paulista · PE');
+---
+
+<PageShell
+  title={`${pageTitles.home} — Bento Editorial`}
+  description={pageCopy?.metaDescription}
+  headerOverlay={true}
+  forceNoindex={true}
+>
+  <section class="bento-opening" aria-label="Visão geral do Colégio Aquarela">
+    <div class="container">
+      <div class="bento-grid">
+        <!-- Tile 1: Main Aerial Hero Card -->
+        <div class="bento-card bento-hero">
+          {
+            heroMedia && (
+              <img
+                class="bento-bg-img"
+                src={heroMedia.src}
+                srcset={responsiveSrcset(heroMedia.src, heroMedia.width)}
+                sizes="(min-width: 1024px) 62vw, 100vw"
+                alt={heroMedia.alt}
+                width={heroMedia.width}
+                height={heroMedia.height}
+                style={focalPointStyle(heroMedia.focalPoint)}
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
+              />
+            )
+          }
+          <div class="bento-hero-scrim" aria-hidden="true"></div>
+
+          <div class="bento-hero-inner">
+            <div class="bento-hero-top">
+              <span class="bento-badge">
+                <span class="bento-badge-dot" aria-hidden="true"></span>
+                <span>{addressLine} · Infantil ao Médio</span>
+              </span>
+            </div>
+
+            <div class="bento-hero-copy">
+              <h1 class="bento-title">{pageCopy?.title ?? h1.home}</h1>
+              <p class="bento-sub">
+                {school.tagline ?? 'Presente em todos os momentos da sua vida.'}
+              </p>
+
+              <div class="bento-actions">
+                <a
+                  class="bento-btn bento-btn--red focus-on-navy"
+                  href="/visite"
+                >
+                  <span>Agendar visita</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+                {
+                  school.whatsappE164 ? (
+                    <a
+                      class="bento-btn bento-btn--glass focus-on-navy"
+                      href={whatsappUrl(school.whatsappE164)}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      <span>WhatsApp</span>
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  ) : (
+                    <a
+                      class="bento-btn bento-btn--glass focus-on-navy"
+                      href="/ensino"
+                    >
+                      <span>Ver etapas</span>
+                      <span aria-hidden="true">→</span>
+                    </a>
+                  )
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tile 2: Vibrant Yellow Editorial Essentials Card -->
+        <a
+          href="/visite"
+          class="bento-card bento-pulse"
+          aria-label="Estrutura, horários e agendamento de visita"
+        >
+          <div class="bento-pulse-head">
+            <span class="pulse-eyebrow">Aquarela em números</span>
+            <span class="pulse-arrow" aria-hidden="true">↗</span>
+          </div>
+
+          <dl class="pulse-metrics">
+            <div>
+              <dd>{String(segments.length).padStart(2, '0')}</dd>
+              <dt>Etapas de ensino</dt>
+            </div>
+            <div>
+              <dd>{String(environments.length).padStart(2, '0')}</dd>
+              <dt>Ambientes reais</dt>
+            </div>
+          </dl>
+
+          <div class="pulse-footer">
+            <p class="pulse-shifts">Turnos: Manhã e Tarde</p>
+            {
+              school.officeHours && (
+                <p class="pulse-hours">Secretaria · {school.officeHours}</p>
+              )
+            }
+            {
+              school.phoneE164 && (
+                <p class="pulse-phone">{formatPhone(school.phoneE164)}</p>
+              )
+            }
+          </div>
+        </a>
+
+        <!-- Tile 3: 4 Etapas Photo Mosaic -->
+        <div class="bento-card bento-stages" aria-label="Etapas de ensino">
+          <div class="bento-tile-head">
+            <div>
+              <span class="tile-eyebrow">Da infância ao vestibular</span>
+              <h2 class="tile-heading">Escolha a etapa</h2>
+            </div>
+            <a class="tile-link focus-on-navy" href="/ensino"> Todas ↗ </a>
+          </div>
+
+          <div class="stages-mosaic">
+            {
+              segments.map((seg, i) => {
+                const segMedia = seg.imageId ? getMediaById(seg.imageId) : null;
+                const shortShifts = seg.shifts
+                  .map((s) => s.split(':')[0]?.trim() ?? s)
+                  .join(' · ');
+                return (
+                  <a
+                    href={`/ensino#${seg.slug}`}
+                    class="stage-mini focus-on-navy"
+                  >
+                    {segMedia && (
+                      <img
+                        src={segMedia.src}
+                        srcset={responsiveSrcset(segMedia.src, segMedia.width)}
+                        sizes="(min-width: 1024px) 18vw, 46vw"
+                        alt={segMedia.alt}
+                        width={segMedia.width}
+                        height={segMedia.height}
+                        style={focalPointStyle(segMedia.focalPoint)}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
+                    <div class="stage-mini-scrim" aria-hidden="true" />
+                    <span class="stage-mini-num" aria-hidden="true">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <div class="stage-mini-copy">
+                      <strong>{seg.name}</strong>
+                      <span>{shortShifts}</span>
+                    </div>
+                  </a>
+                );
+              })
+            }
+          </div>
+        </div>
+
+        <!-- Tile 4: Real Approvals Spotlight -->
+        <a
+          href="/aprovacoes"
+          class="bento-card bento-approvals focus-on-navy"
+          aria-label="Ver histórias e aprovações reais"
+        >
+          <div class="bento-tile-head">
+            <span class="tile-eyebrow">Trajetórias reais</span>
+            <span class="tile-arrow" aria-hidden="true">↗</span>
+          </div>
+
+          <div class="approvals-avatars" aria-hidden="true">
+            {
+              approvalAvatars.map((person) =>
+                person.src ? (
+                  <img
+                    src={person.src}
+                    alt=""
+                    width="52"
+                    height="52"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <span class="avatar-fallback">{person.name.slice(0, 1)}</span>
+                ),
+              )
+            }
+          </div>
+
+          <div class="approvals-copy">
+            <h2 class="tile-heading">Histórias que inspiram.</h2>
+            <p class="tile-desc">
+              Estudantes do Aquarela aprovados em universidades e escolas
+              técnicas de referência.
+            </p>
+          </div>
+        </a>
+
+        <!-- Tile 5: Spaces Spotlight Card -->
+        <a
+          href="/nosso-espaco"
+          class="bento-card bento-space focus-on-navy"
+          aria-label="Explorar todos os espaços do colégio"
+        >
+          {
+            spaceSpotlightMedia && (
+              <img
+                class="bento-bg-img"
+                src={spaceSpotlightMedia.src}
+                srcset={responsiveSrcset(
+                  spaceSpotlightMedia.src,
+                  spaceSpotlightMedia.width,
+                )}
+                sizes="(min-width: 1024px) 38vw, 100vw"
+                alt={spaceSpotlightMedia.alt}
+                width={spaceSpotlightMedia.width}
+                height={spaceSpotlightMedia.height}
+                style={focalPointStyle(spaceSpotlightMedia.focalPoint)}
+                loading="lazy"
+                decoding="async"
+              />
+            )
+          }
+          <div class="bento-space-scrim" aria-hidden="true"></div>
+          <div class="bento-space-inner">
+            <div class="bento-tile-head">
+              <span class="tile-eyebrow">Nosso espaço</span>
+              <span class="tile-arrow" aria-hidden="true">↗</span>
+            </div>
+            <div class="bento-space-bottom">
+              <h2 class="tile-heading">
+                {environments.length} ambientes planejados.
+              </h2>
+              <p class="tile-desc">
+                Sala Google for Education, Piscina, Laboratório, Quadra Coberta
+                e Brinquedoteca.
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <HomeEditorialBody
+    showManifesto={false}
+    showFirstInterlude={false}
+    showEtapas={false}
+    showSecondInterlude={false}
+  />
+</PageShell>
+
+<style>
+  .bento-opening {
+    background: #0a1722;
+    color: #ffffff;
+    padding-top: calc(
+      var(--site-header-height) + clamp(0.85rem, 2.2vh, 1.5rem)
+    );
+    padding-bottom: clamp(1.5rem, 3.8vh, 2.75rem);
+  }
+
+  .bento-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .bento-card {
+    position: relative;
+    border-radius: 26px;
+    overflow: hidden;
+    isolation: isolate;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .bento-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    transition: transform 700ms var(--ease-expo);
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    :global(html:not([data-motion='reduced']))
+      a.bento-card:hover
+      .bento-bg-img {
+      transform: scale(1.05);
+    }
+  }
+
+  /* Tile 1: Main Hero */
+  .bento-hero {
+    min-height: clamp(460px, 72svh, 620px);
+    display: flex;
+    flex-direction: column;
+    background: #10202b;
+  }
+
+  .bento-hero-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(9, 21, 31, 0.24) 0%,
+      rgba(9, 21, 31, 0.36) 38%,
+      rgba(9, 21, 31, 0.88) 82%,
+      rgba(9, 21, 31, 0.96) 100%
+    );
+  }
+
+  .bento-hero-inner {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+    padding: clamp(1.1rem, 3vw, 2rem);
+  }
+
+  .bento-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    background: rgba(10, 23, 34, 0.66);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  .bento-badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--brand-yellow);
+    flex-shrink: 0;
+  }
+
+  .bento-hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 38rem;
+  }
+
+  .bento-title {
+    margin: 0;
+    color: #ffffff;
+    font-size: min(
+      calc(clamp(1.95rem, 6.2vw, 3.85rem) * var(--display-scale)),
+      10.8vw
+    );
+    max-width: 15ch;
+  }
+
+  .bento-sub {
+    margin: 0;
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+    font-weight: 500;
+    line-height: 1.48;
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 40ch;
+  }
+
+  .bento-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .bento-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 46px;
+    padding: 11px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 0.875rem;
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: none;
+    flex: 1 1 130px;
+    transition:
+      transform var(--duration-fast) var(--ease),
+      background-color var(--duration-fast) var(--ease);
+  }
+
+  .bento-btn--red {
+    background: var(--action-primary);
+    color: #ffffff;
+    box-shadow: var(--shadow-action);
+  }
+
+  .bento-btn--glass {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    color: #ffffff;
+  }
+
+  @media (hover: hover) {
+    .bento-btn--red:hover {
+      background: var(--action-hover);
+      transform: translateY(-2px);
+    }
+    .bento-btn--glass:hover {
+      background: rgba(255, 255, 255, 0.24);
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Tile 2: Yellow Pulse Card */
+  .bento-pulse {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+    padding: clamp(1.2rem, 3vw, 1.75rem);
+    background: var(--brand-yellow);
+    color: #0a1722;
+    border-color: transparent;
+    transition: transform 240ms var(--ease);
+  }
+
+  .bento-pulse:focus-visible {
+    outline: 3px solid #ffffff;
+    outline-offset: 3px;
+  }
+
+  @media (hover: hover) {
+    .bento-pulse:hover {
+      transform: translateY(-3px);
+    }
+  }
+
+  .bento-pulse-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .pulse-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #0a1722;
+  }
+
+  .pulse-arrow {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(10, 23, 34, 0.12);
+    display: grid;
+    place-items: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0a1722;
+  }
+
+  .pulse-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0;
+  }
+
+  .pulse-metrics > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .pulse-metrics dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.85rem, 4.5vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: #0a1722;
+  }
+
+  .pulse-metrics dt {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: rgba(10, 23, 34, 0.82);
+  }
+
+  .pulse-footer {
+    padding-top: 14px;
+    border-top: 1px solid rgba(10, 23, 34, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .pulse-shifts {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 800;
+    color: #0a1722;
+  }
+
+  .pulse-hours,
+  .pulse-phone {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: rgba(10, 23, 34, 0.82);
+  }
+
+  /* Tile 3: 4 Etapas Photo Mosaic */
+  .bento-stages {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: clamp(1.1rem, 2.8vw, 1.6rem);
+    background: #122433;
+  }
+
+  .bento-tile-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .tile-eyebrow {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brand-yellow);
+    margin-bottom: 4px;
+  }
+
+  .tile-heading {
+    margin: 0;
+    color: #ffffff;
+    font-size: calc(clamp(1.25rem, 2.4vw, 1.7rem) * var(--display-scale));
+    line-height: 1.18;
+  }
+
+  .tile-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .tile-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .tile-arrow {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    display: grid;
+    place-items: center;
+    font-size: 0.9rem;
+    color: #ffffff;
+    flex-shrink: 0;
+  }
+
+  .tile-desc {
+    margin: 6px 0 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .stages-mosaic {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .stage-mini {
+    position: relative;
+    isolation: isolate;
+    min-height: 152px;
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 11px;
+    background: #0a1722;
+    color: #ffffff;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .stage-mini img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    transition: transform 600ms var(--ease-expo);
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    :global(html:not([data-motion='reduced'])) .stage-mini:hover img {
+      transform: scale(1.07);
+    }
+  }
+
+  .stage-mini-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(8, 20, 30, 0.14) 0%,
+      rgba(8, 20, 30, 0.45) 48%,
+      rgba(8, 20, 30, 0.9) 100%
+    );
+  }
+
+  .stage-mini-num {
+    position: relative;
+    z-index: 2;
+    align-self: flex-start;
+    padding: 4px 8px;
+    border-radius: var(--radius-pill);
+    background: rgba(10, 23, 34, 0.72);
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--brand-yellow);
+  }
+
+  .stage-mini-copy {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stage-mini-copy strong {
+    font-family: var(--font-display);
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1.24;
+    color: #ffffff;
+  }
+
+  .stage-mini-copy span {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  /* Tile 4: Approvals */
+  .bento-approvals {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+    padding: clamp(1.2rem, 2.8vw, 1.65rem);
+    background: linear-gradient(155deg, #163044 0%, #0e202e 100%);
+    transition: transform 240ms var(--ease);
+  }
+
+  @media (hover: hover) {
+    .bento-approvals:hover {
+      transform: translateY(-3px);
+    }
+  }
+
+  .approvals-avatars {
+    display: flex;
+    align-items: center;
+  }
+
+  .approvals-avatars img,
+  .avatar-fallback {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 22%;
+    border: 3px solid #122636;
+    margin-left: -12px;
+    background: #1c3a50;
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .approvals-avatars img:first-child,
+  .avatar-fallback:first-child {
+    margin-left: 0;
+  }
+
+  /* Tile 5: Space Spotlight */
+  .bento-space {
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    background: #10202b;
+  }
+
+  .bento-space-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(9, 21, 31, 0.34) 0%,
+      rgba(9, 21, 31, 0.52) 48%,
+      rgba(9, 21, 31, 0.92) 100%
+    );
+  }
+
+  .bento-space-inner {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+    padding: clamp(1.2rem, 2.8vw, 1.65rem);
+  }
+
+  /* Responsive Bento Grid */
+  @media (min-width: 640px) {
+    .bento-btn {
+      flex: 0 0 auto;
+      padding: 12px 24px;
+    }
+    .bento-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .bento-hero {
+      grid-column: 1 / -1;
+    }
+    .bento-stages {
+      grid-column: 1 / -1;
+    }
+    .stages-mosaic {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .stage-mini {
+      min-height: 176px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bento-grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .bento-hero {
+      grid-column: span 8;
+      min-height: 500px;
+    }
+
+    .bento-pulse {
+      grid-column: span 4;
+    }
+
+    .bento-stages {
+      grid-column: span 7;
+    }
+
+    .stages-mosaic {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stage-mini {
+      min-height: 168px;
+    }
+
+    .bento-approvals {
+      grid-column: span 5;
+      min-height: 210px;
+    }
+
+    .bento-space {
+      grid-column: span 12;
+      min-height: 250px;
+    }
+  }
+
+  @media (min-width: 1240px) {
+    .bento-stages {
+      grid-column: span 6;
+    }
+    .bento-approvals {
+      grid-column: span 3;
+    }
+    .bento-space {
+      grid-column: span 3;
+      min-height: 100%;
+    }
+  }
+</style>

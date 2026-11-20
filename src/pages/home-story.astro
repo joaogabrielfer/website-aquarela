@@ -1,0 +1,109 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import HomeScrollytelling from '../islands/HomeScrollytelling.svelte';
+import HomeEditorialBody from '../components/HomeEditorialBody.astro';
+import { h1, pageTitles } from '../lib/copy';
+import {
+  getHomePageCopy,
+  getSegments,
+  getEnvironments,
+  getFeaturedApprovalPeople,
+  getMediaById,
+} from '../lib/content';
+import { getPublicSchool } from '../lib/content/school';
+import { whatsappUrl } from '../lib/urls';
+import { responsiveSrcset } from '../lib/responsive-media';
+
+const school = getPublicSchool();
+const pageCopy = getHomePageCopy();
+const segments = getSegments();
+const environments = getEnvironments();
+const featuredApprovals = getFeaturedApprovalPeople(3);
+
+const heroMedia = getMediaById(pageCopy?.heroImageId ?? 'hero-colegio');
+const classroomMedia = getMediaById('ensino-participacao-em-sala');
+const spacesMedia = getMediaById('sala-google-for-education');
+const studentsMedia = getMediaById('ensino-medio-estudantes');
+
+const toStageImage = (
+  media: ReturnType<typeof getMediaById>,
+  fallbackSrc: string,
+  fallbackAlt: string,
+  objectPosition: string,
+) => ({
+  src: media?.src ?? fallbackSrc,
+  srcset: media ? responsiveSrcset(media.src, media.width) : undefined,
+  alt: media?.alt ?? fallbackAlt,
+  width: media?.width ?? 1600,
+  height: media?.height ?? 1000,
+  objectPosition,
+});
+
+const images = {
+  aerial: toStageImage(
+    heroMedia,
+    '/media/hero-colegio-2400.webp',
+    'Vista aérea do Aquarela Colégio e Curso',
+    '52% 48%',
+  ),
+  classroom: toStageImage(
+    classroomMedia,
+    '/media/ensino-participacao-em-sala-1600.webp',
+    'Participação de estudantes em sala de aula',
+    '50% 34%',
+  ),
+  spaces: toStageImage(
+    spacesMedia,
+    '/media/sala-google-for-education-1600.webp',
+    'Sala Google for Education do Aquarela',
+    '50% 48%',
+  ),
+  students: toStageImage(
+    studentsMedia,
+    '/media/ensino-medio-estudantes-1600.webp',
+    'Estudantes do Ensino Médio do Aquarela',
+    '50% 30%',
+  ),
+};
+
+const stageSegments = segments.map((seg, i) => ({
+  num: String(i + 1).padStart(2, '0'),
+  slug: seg.slug,
+  name: seg.name,
+  shifts: seg.shifts,
+}));
+
+const stageApprovals = featuredApprovals.map((app) => {
+  const portrait = app.portraitId ? getMediaById(app.portraitId) : null;
+  return {
+    name: app.displayName,
+    summary: app.achievements.map((a) => a.course ?? a.institution).join(' · '),
+    portraitUrl: portrait?.src ?? null,
+    portraitAlt: portrait?.alt ?? app.displayName,
+  };
+});
+
+const environmentHighlights = environments.slice(0, 6).map((env) => env.name);
+---
+
+<PageShell
+  title={`${pageTitles.home} — Scrollytelling`}
+  description={pageCopy?.metaDescription}
+  headerOverlay={true}
+  forceNoindex={true}
+>
+  <HomeScrollytelling
+    client:load
+    heroTitle={pageCopy?.title ?? h1.home}
+    heroSupport={pageCopy?.intro ?? ''}
+    tagline={school.tagline ?? 'Presente em todos os momentos da sua vida.'}
+    whatsappHref={school.whatsappE164 ? whatsappUrl(school.whatsappE164) : null}
+    environmentsCount={environments.length}
+    {environmentHighlights}
+    segments={stageSegments}
+    approvals={stageApprovals}
+    {images}
+  />
+
+  <HomeEditorialBody showManifesto={false} showFirstInterlude={false} />
+</PageShell>

@@ -1,62 +1,20 @@
 ---
+import SegmentAnchorNavIsland from '../islands/SegmentAnchorNav.svelte';
+
 const anchors = [
-  { slug: 'educacao-infantil', label: 'Educação Infantil' },
+  { slug: 'educacao-infantil', num: '1', label: 'Educação Infantil' },
   {
     slug: 'fundamental-anos-iniciais',
-    label: 'Ensino Fundamental — Anos Iniciais',
+    num: '2',
+    label: 'Fundamental · Anos Iniciais',
   },
   {
     slug: 'fundamental-anos-finais',
-    label: 'Ensino Fundamental — Anos Finais',
+    num: '3',
+    label: 'Fundamental · Anos Finais',
   },
-  { slug: 'ensino-medio', label: 'Ensino Médio' },
+  { slug: 'ensino-medio', num: '4', label: 'Ensino Médio' },
 ];
 ---
 
-<nav class="segment-anchor-nav" aria-label="Etapas de ensino">
-  <div class="container segment-anchor-nav__inner">
-    {
-      anchors.map((a) => (
-        <a href={`/ensino#${a.slug}`} class="anchor-link">
-          {a.label}
-        </a>
-      ))
-    }
-  </div>
-</nav>
-
-<style>
-  .segment-anchor-nav {
-    position: sticky;
-    top: var(--site-header-height);
-    z-index: calc(var(--z-header) - 1);
-    background: var(--surface-base);
-    padding: var(--space-3) 0;
-    border-bottom: 1px solid var(--border-subtle);
-  }
-  .segment-anchor-nav__inner {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-  }
-  .anchor-link {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--space-2) var(--space-4);
-    color: var(--brand-navy);
-    font-weight: 500;
-    text-decoration: none;
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-pill);
-    white-space: nowrap;
-  }
-  .anchor-link:hover {
-    background: var(--surface-paper);
-    border-color: var(--brand-navy);
-  }
-  .anchor-link:focus-visible {
-    outline: 3px solid var(--brand-navy);
-    outline-offset: 2px;
-    box-shadow: 0 0 0 2px white;
-  }
-</style>
+<SegmentAnchorNavIsland client:load {anchors} />
