@@ -95,11 +95,17 @@ const addressText = school.address
     right: 0;
     background: linear-gradient(
       180deg,
-      rgba(8, 19, 28, 0.62) 0%,
-      rgba(8, 19, 28, 0.18) 72%,
+      rgba(8, 19, 28, 0.48) 0%,
+      rgba(8, 19, 28, 0.14) 64%,
       rgba(8, 19, 28, 0) 100%
     );
-    border-bottom-color: transparent;
+    background-repeat: no-repeat;
+    background-clip: padding-box;
+    border-bottom: 0;
+  }
+
+  .site-header--overlay.scrolled {
+    border-bottom: 1px solid var(--border-subtle);
   }
 
   .site-header--overlay:not(.scrolled) .logo-plate {
